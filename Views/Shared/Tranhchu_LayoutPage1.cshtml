@@ -103,7 +103,7 @@
                         <a href="@Url.Action("Index", "QuanLyGiaoVien")" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "QuanLyGiaoVien" ? "active" : "")">Quản lý giáo viên</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "QuanLyHocSinh" ? "active" : "")">Quản lý học sinh</a>
+                        <a href="@Url.Action("DsHocSinh","QuanLyHocSinh")" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "QuanLyHocSinh" ? "active" : "")">Quản lý học sinh</a>
                     </li>
                     <li class="nav-item">
                         <a href="@Url.Action("Index", "QuanLyThoiKhoaBieu")" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "QuanLyThoiKhoaBieu" ? "active" : "")">Quản lý thời khóa biểu</a>
