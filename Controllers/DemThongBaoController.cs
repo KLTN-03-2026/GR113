@@ -9,7 +9,7 @@ namespace demomvc.Controllers
 {
     public class DemThongBaoController : Controller
     {
-        QuanLyTruongHocEntities db = new QuanLyTruongHocEntities();
+        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
         // GET: DemThongBao
         public ActionResult ThongBaoNguoiDung()
         {

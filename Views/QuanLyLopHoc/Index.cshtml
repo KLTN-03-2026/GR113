@@ -84,6 +84,7 @@
                     <th>Giáo viên chủ nhiệm</th>
                     <th>Sĩ số</th>
                     <th>Khối </th>
+                    <th>Ca học</th>
                     <th>Trạng thái</th>
                     <th></th>
                 </tr>
@@ -97,6 +98,7 @@
                         <td data-label="Giáo viên">@item.GiaoVienChuNhiem</td>
                         <td data-label="Sĩ số">@item.SiSo</td>
                         <td data-label="Khối lớp">@item.TenKhoi</td>
+                        <td data-label="Ca học">@item.CaHoc</td>
                         <td data-label="Trạng thái">@item.TrangThaiNamHoc</td>
                         <td data-label="Hành động">
                             <!-- Nút Cập nhật: chuyển sang trang cập nhật -->
@@ -104,8 +106,14 @@
                                class="btn btn-sm btn-primary me-2">
                                 Cập nhật
                             </a>
-
-
+                            @using (Html.BeginForm("Delete", "QuanLyLopHoc", FormMethod.Post, new { onsubmit = "return confirmDelete(this);" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("id", item.LopHocID)
+                                <button type="submit" class="action-btn delete-btn" title="Xóa">
+                                    <i class="fa fa-trash"></i> Xóa
+                                </button>
+                            }
                         </td>
                     </tr>
                 }

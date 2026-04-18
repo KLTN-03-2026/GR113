@@ -17,6 +17,7 @@ namespace demomvc.Models
         public GiaoVien()
         {
             this.LopHoc = new HashSet<LopHoc>();
+            this.PhanCongGiangDay = new HashSet<PhanCongGiangDay>();
             this.ThoiKhoaBieu = new HashSet<ThoiKhoaBieu>();
         }
     
@@ -30,6 +31,7 @@ namespace demomvc.Models
         public virtual MonHoc MonHoc { get; set; }
         public virtual NguoiDung NguoiDung { get; set; }
         public virtual ICollection<LopHoc> LopHoc { get; set; }
+        public virtual ICollection<PhanCongGiangDay> PhanCongGiangDay { get; set; }
         public virtual ICollection<ThoiKhoaBieu> ThoiKhoaBieu { get; set; }
     }
 }

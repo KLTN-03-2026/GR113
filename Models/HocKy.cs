@@ -18,16 +18,19 @@ namespace demomvc.Models
         {
             this.Diem = new HashSet<Diem>();
             this.KetQuaHocTap = new HashSet<KetQuaHocTap>();
+            this.PhanCongGiangDay = new HashSet<PhanCongGiangDay>();
             this.ThoiKhoaBieu = new HashSet<ThoiKhoaBieu>();
         }
     
         public int HocKyID { get; set; }
         public string TenHocKy { get; set; }
         public int NamHocID { get; set; }
+        public int SoTuanThucHoc { get; set; }
     
         public virtual ICollection<Diem> Diem { get; set; }
         public virtual NamHoc NamHoc { get; set; }
         public virtual ICollection<KetQuaHocTap> KetQuaHocTap { get; set; }
+        public virtual ICollection<PhanCongGiangDay> PhanCongGiangDay { get; set; }
         public virtual ICollection<ThoiKhoaBieu> ThoiKhoaBieu { get; set; }
     }
 }

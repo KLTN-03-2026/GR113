@@ -1,39 +1,18 @@
-﻿.table-class {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+﻿.tkb-lech-ca {
+    background-color: #fff5cc;
+    border-left: 4px solid #ff9900;
+    font-size: 13px;
 }
 
-    .table-class th {
-        background: #007bff;
-        color: white;
-        text-transform: uppercase;
-        font-weight: 600;
-        padding: 12px;
-        font-size: 15px;
-        letter-spacing: 0.5px;
-    }
+.tkb-chinh-sang,
+.tkb-chinh-chieu {
+    font-size: 13px;
+}
 
-    .table-class td {
-        padding: 12px 16px;
-        font-size: 16px;
-        border-bottom: 1px solid #eee;
-    }
+table td {
+    vertical-align: middle;
+}
 
-    .table-class tr:nth-child(even) {
-        background: #f9f9f9;
-    }
-
-    .table-class tr:hover {
-        background: #e9f3ff;
-        transition: 0.2s;
-    }
-
-h3 {
-    font-weight: 600;
-    margin-top: 25px;
-    margin-bottom: 15px;
+.card-header {
+    font-weight: bold;
 }

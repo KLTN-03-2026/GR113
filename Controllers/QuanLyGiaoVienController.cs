@@ -16,7 +16,7 @@ namespace demomvc.Controllers
     public class QuanLyGiaoVienController : Controller
     {
         // GET: QuanLyGiaoVien
-        QuanLyTruongHocEntities db = new QuanLyTruongHocEntities();
+        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
         public ActionResult Index(string type, string keyword)
         {
             keyword = keyword ?? "";
@@ -247,8 +247,8 @@ namespace demomvc.Controllers
                         select new GiaoVienVM
                         {
                             GiaoVienID = gv.GiaoVienID,
-                            HoTen =nd.HoTen,
-                            TenMonHoc = mon !=null ? mon.TenMonHoc: "Chưa phân công"
+                            HoTen = nd.HoTen,
+                            TenMonHoc = mon != null ? mon.TenMonHoc : "Chưa phân công"
                         }).ToList();
             ViewBag.Keyword = keyword;
 
@@ -272,6 +272,127 @@ namespace demomvc.Controllers
             gv.MonHocID = monHocID;
             db.SaveChanges();
             return Json(new { success = true });
+        }
+
+
+
+        /// <summary>
+        /// //////
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult PhanCongGiangDayTKB()
+        {
+            var model = db.GiaoVien
+                .Join(db.NguoiDung,
+                    gv => gv.NguoiDungID,
+                    nd => nd.NguoiDungID,
+                    (gv, nd) => new GiaoVienVM
+                    {
+                        GiaoVienID = gv.GiaoVienID,
+                        HoTen = nd.HoTen,
+                        TenMonHoc = gv.MonHoc != null ? gv.MonHoc.TenMonHoc : "Chưa có môn"
+                    })
+                .ToList();
+
+            ViewBag.NamHoc = db.NamHoc.ToList();
+            ViewBag.HocKy = db.HocKy.ToList();
+
+            return View(model);
+        }
+
+        // ====== LOAD LỚP ======
+        [HttpGet]
+        public JsonResult GetLopByNamHoc(int namHocId, int hocKyId, int giaoVienId)
+        {
+            var gv = db.GiaoVien.FirstOrDefault(x => x.GiaoVienID == giaoVienId);
+            if (gv == null)
+                return Json(new { }, JsonRequestBehavior.AllowGet);
+
+            int? monHocId = gv.MonHocID;
+
+            var dsLop = db.LopHoc
+                .Where(x => x.NienKhoa == namHocId)
+                .Select(x => new
+                {
+                    x.LopHocID,
+                    x.TenLop
+                })
+                .ToList();
+
+            var daChon = db.PhanCongGiangDay
+                .Where(x => x.GiaoVienID == giaoVienId && x.HocKyID == hocKyId)
+                .Select(x => x.LopHocID)
+                .ToList();
+
+            var lopBiTrung = db.PhanCongGiangDay
+                .Where(x => x.HocKyID == hocKyId &&
+                            x.GiaoVien.MonHocID == monHocId &&
+                            x.GiaoVienID != giaoVienId)
+                .Select(x => x.LopHocID)
+                .ToList();
+
+            return Json(new
+            {
+                dsLop,
+                daChon,
+                lopBiTrung
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        // ====== PHÂN CÔNG ======
+        [HttpPost]
+        public JsonResult PhanCongTableAjax(int giaoVienId, int hocKyId, List<int> lopIDs)
+        {
+            if (lopIDs == null || !lopIDs.Any())
+            {
+                return Json(new { success = false, message = "Chưa chọn lớp" });
+            }
+
+            var gv = db.GiaoVien.FirstOrDefault(x => x.GiaoVienID == giaoVienId);
+            if (gv == null)
+                return Json(new { success = false, message = "Không có giáo viên" });
+
+            if (!gv.MonHocID.HasValue)
+                return Json(new { success = false, message = "GV chưa có môn" });
+
+            int monHocId = gv.MonHocID.Value;
+
+            foreach (var lopID in lopIDs)
+            {
+                // đã tồn tại → bỏ qua
+                bool daTonTai = db.PhanCongGiangDay.Any(x =>
+                    x.GiaoVienID == giaoVienId &&
+                    x.LopHocID == lopID &&
+                    x.HocKyID == hocKyId);
+
+                if (daTonTai) continue;
+
+                // trùng môn
+                bool trung = db.PhanCongGiangDay.Any(x =>
+                    x.LopHocID == lopID &&
+                    x.HocKyID == hocKyId &&
+                    x.GiaoVien.MonHocID == monHocId);
+
+                if (trung)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "❌ Lớp đã có GV dạy môn này!"
+                    });
+                }
+
+                db.PhanCongGiangDay.Add(new PhanCongGiangDay
+                {
+                    GiaoVienID = giaoVienId,
+                    LopHocID = lopID,
+                    HocKyID = hocKyId
+                });
+            }
+
+            db.SaveChanges();
+
+            return Json(new { success = true, message = "✅ Thành công!" });
         }
     }
 }

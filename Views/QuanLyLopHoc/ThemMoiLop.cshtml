@@ -64,6 +64,19 @@
                 new { @class = "form-control" })
             @Html.ValidationMessageFor(m => m.GiaoVienID, "", new { @class = "text-danger" })
         </div>
+       <!--ca hoc-->
+        <div class="col-md-6">
+            <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
+            @Html.DropDownListFor(m => m.CaHoc,
+             new SelectList(new[] {
+                 new { Value="CHIEU", Text="Chiều"},
+                 new { Value="SANG", Text="Sáng"}
+             }, "Value", "Text"),
+             "-- Chọn ca học --",
+             new { @class = "form-select", required = "required" })
+            @Html.ValidationMessageFor(m => m.CaHoc, "", new { @class = "text-danger" })
+        </div>
+
 
     </div>
 

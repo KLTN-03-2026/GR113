@@ -11,7 +11,7 @@ namespace demomvc.Controllers
 {
     public class QuenMatKhauController : Controller
     {
-        private QuanLyTruongHocEntities db = new QuanLyTruongHocEntities();
+        private QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
 
         //nhap email
         [HttpGet]

@@ -9,7 +9,7 @@ namespace demomvc.Controllers
     [RoleAuthorize(RolesRequired = "HieuTruong,GiaoVien,HocSinh,HieuPho,BiThu")]
     public class DoiMatKhauController : Controller
     {
-        QuanLyTruongHocEntities db = new QuanLyTruongHocEntities();
+        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
 
         public ActionResult Index()
         {

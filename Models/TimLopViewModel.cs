@@ -19,6 +19,7 @@ namespace demomvc.Models
 
        
         public List<LopHocViewModel> ListLop { get; set; }
+        public List<ThoiKhoaBieu> ThoiKhoaBieus { get; set; }
     }
      public class LopHocViewModel
     {
@@ -28,6 +29,7 @@ namespace demomvc.Models
         public int SiSo { get; set; }
         public string GiaoVienChuNhiem { get; set; }
         public string TenKhoi { get; set; }
+        public string CaHoc { get; set; }
         public string TrangThaiNamHoc { get; set; }
     }
 }

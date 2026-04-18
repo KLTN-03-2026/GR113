@@ -18,6 +18,7 @@ namespace demomvc.Models
         {
             this.Diem = new HashSet<Diem>();
             this.GiaoVien = new HashSet<GiaoVien>();
+            this.MonHocKhoi = new HashSet<MonHocKhoi>();
             this.ThoiKhoaBieu = new HashSet<ThoiKhoaBieu>();
         }
     
@@ -31,6 +32,7 @@ namespace demomvc.Models
         public virtual BoMon BoMon { get; set; }
         public virtual ICollection<Diem> Diem { get; set; }
         public virtual ICollection<GiaoVien> GiaoVien { get; set; }
+        public virtual ICollection<MonHocKhoi> MonHocKhoi { get; set; }
         public virtual ICollection<ThoiKhoaBieu> ThoiKhoaBieu { get; set; }
     }
 }

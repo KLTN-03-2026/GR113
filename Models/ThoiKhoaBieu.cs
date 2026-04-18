@@ -15,14 +15,15 @@ namespace demomvc.Models
     public partial class ThoiKhoaBieu
     {
         public int TKBID { get; set; }
-        public string Thu { get; set; }
-        public string TietHoc { get; set; }
         public int MonHocID { get; set; }
         public int GiaoVienID { get; set; }
         public int LopHocID { get; set; }
-        public int PhongHocID { get; set; }
+        public int? PhongHocID { get; set; }
         public int HocKyID { get; set; }
         public int NamHocID { get; set; }
+        public int Tuan { get; set; }
+        public int Thu { get; set; }
+        public int TietHoc { get; set; }
     
         public virtual GiaoVien GiaoVien { get; set; }
         public virtual HocKy HocKy { get; set; }

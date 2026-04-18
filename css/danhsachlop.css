@@ -110,7 +110,9 @@ table.table th:nth-child(2) {
 .table thead th:nth-child(4),
 .table thead th:nth-child(5),
 .table thead th:nth-child(6),
-.table thead th:nth-child(3) {
+.table thead th:nth-child(3),
+.table thead th:nth-child(7)
+{
     background-color: #1e4353 !important;
     color: white !important;
 }

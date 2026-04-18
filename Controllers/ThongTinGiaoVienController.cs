@@ -12,7 +12,7 @@ namespace demomvc.Controllers
     [RoleAuthorize(RolesRequired = "HieuTruong,GiaoVien,HieuPho,BiThu")]
     public class ThongTinGiaoVienController : Controller
     {
-        QuanLyTruongHocEntities db = new QuanLyTruongHocEntities();
+        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
 
         // ================================
         //       TRANG THÔNG TIN GIÁO VIÊN

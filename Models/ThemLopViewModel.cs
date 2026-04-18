@@ -21,6 +21,9 @@ namespace demomvc.Models
         [Required(ErrorMessage = "Vui lòng chọn khối lớp!")]
         public int KhoiLopID { get; set; }
 
+        [Required(ErrorMessage = "Vui lòng chọn ca học!")]
+        public string CaHoc { get; set; }
+
         public List<SelectListItem> ListGiaoVien { get; set; }
         public List<SelectListItem> ListNamHoc { get; set; }
         public List<SelectListItem> ListKhoiLop { get; set; }

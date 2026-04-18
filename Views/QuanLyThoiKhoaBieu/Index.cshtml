@@ -1,61 +1,88 @@
-﻿
-@model demomvc.Models.TimLopViewModel
+﻿@model demomvc.Models.TimLopViewModel
 @{
     ViewBag.Title = "Quản lý thời khóa biểu";
     Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+<!-- JS -->
+<script src="~/Scripts/jquery-3.7.0.js"></script>
+<script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/jquery-3.6.0.min.js"></script>
+<script src="/signalr/hubs"></script>
+
 <link href="~/css/quanlyTKB.css" rel="stylesheet" />
-<h2>Danh Sách Lớp Theo Năm Học</h2>
 
-@using (Html.BeginForm("XemLop", "QuanLyThoiKhoaBieu", FormMethod.Post))
+<h2>Quản lý thời khóa biểu</h2>
+
+@if (TempData["Error"] != null)
 {
-    @Html.AntiForgeryToken() <!-- THÊM DÒNG NÀY -->
-<div class="row">
-    <div class="col-md-4">
-        <label>Năm học</label>
-        @Html.DropDownListFor(m => m.NamHocID, Model.ListNamHoc, "-- Chọn năm học --", new { @class = "form-control", id="NamHocID" })
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@using (Html.BeginForm(
+    "TaoThoiKhoaBieu",
+    "QuanLyThoiKhoaBieu",
+    FormMethod.Post,
+    new { onsubmit = "return onSubmitTKB();" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-md-4">
+            <label>Năm học</label>
+            @Html.DropDownListFor(
+                m => m.NamHocID,
+                Model.ListNamHoc,
+                "-- Chọn năm học --",
+                new { @class = "form-control", required = "required" })
+        </div>
+
+        <div class="col-md-4">
+            <label>Học kỳ</label>
+            @Html.DropDownListFor(
+                m => m.HocKyID,
+                Model.ListHocKy,
+                "-- Chọn học kỳ --",
+                new { @class = "form-control", required = "required" })
+        </div>
+
+        <div class="col-md-4" style="margin-top:25px;">
+            <button type="submit" id="btnSubmit" class="btn btn-success">
+                🚀 Tạo thời khóa biểu
+            </button>
+        </div>
     </div>
-    <div class="col-md-4">
-        <label>Học kỳ</label>
-        @Html.DropDownListFor(m => m.HocKyID, Model.ListHocKy, "-- Chọn học kỳ --", new { @class = "form-control", id="HocKyID", disabled = "disabled" })
-    </div>
+}
 
-
-
-    <div class="col-md-4">
-        <br />
-        <button class="btn btn-primary" type="submit">Xem</button>
+<!-- AI OVERLAY -->
+<div id="aiOverlay" style="display:none">
+    <div class="ai-box">
+        <div class="ai-spinner"></div>
+        <h3>🤖 AI đang xếp thời khóa biểu</h3>
+        <p id="aiText">Đang khởi tạo...</p>
     </div>
 </div>
-}
 
-@if (Model.ListLop != null && Model.ListLop.Count > 0)
-{
-    <h3>Danh sách lớp:</h3>
-
-    <table class="table-class">
-        <tr>
-            <th>Tên lớp</th>
-        </tr>
-
-        @foreach (var item in Model.ListLop)
-        {
-            <tr>
-                <td>@item.TenLop</td>
-            </tr>
-        }
-    </table>
-}
 <script>
-    document.getElementById("NamHocID").addEventListener("change", function () {
-        var hocKyDrop = document.getElementById("HocKyID");
-        if (this.value === "" || this.value === "0") {
-            hocKyDrop.disabled = true;
-            hocKyDrop.selectedIndex = 0;
-        } else {
-            hocKyDrop.disabled = false;
-        }
-    });
+    // ===== SIGNALR =====
+    var hub = $.connection.gaProgressHub;
+
+    hub.client.updateProgress = function (message) {
+        document.getElementById("aiText").innerText = message;
+    };
+
+    $.connection.hub.start();
+
+    // ===== SUBMIT =====
+    function onSubmitTKB() {
+        document.getElementById("btnSubmit").disabled = true;
+        document.getElementById("aiOverlay").style.display = "flex";
+        document.getElementById("aiText").innerText = "AI đang khởi tạo...";
+        return true; // SUBMIT THẬT
+    }
 </script>
-
-

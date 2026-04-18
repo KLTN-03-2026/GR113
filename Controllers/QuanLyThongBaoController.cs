@@ -34,7 +34,7 @@ namespace demomvc.Controllers
     [RoleAuthorize(RolesRequired = "HieuTruong")]
     public class QuanLyThongBaoController : Controller
     {
-        QuanLyTruongHocEntities db = new QuanLyTruongHocEntities();
+        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
 
         // GET
         public ActionResult Index()
@@ -126,7 +126,7 @@ namespace demomvc.Controllers
         {
             try
             {
-                using (var db = new QuanLyTruongHocEntities()) // đổi theo DbContext của bạn
+                using (var db = new QuanLyTruongHocEntities1()) // đổi theo DbContext của bạn
                 {
                     var tb = db.ThongBao.FirstOrDefault(x => x.ThongBaoID == id);
                     if (tb == null)

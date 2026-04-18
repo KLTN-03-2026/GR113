@@ -11,24 +11,28 @@ namespace demomvc.Controllers
     [RoleAuthorize(RolesRequired = "HieuTruong")]
     public class QuanLyLopHocController : Controller
     {
-        QuanLyTruongHocEntities db = new QuanLyTruongHocEntities();
+        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
 
         // GET: QuanLyLopHoc
         public ActionResult Index()
         {
-            var model = new TimLopViewModel();
-
-            model.ListNamHoc = db.NamHoc
+            var namHocList = db.NamHoc
                 .OrderBy(x => x.TenNamHoc)
-                .ToList()
-                .Select(x => new SelectListItem
-                {
-                    Value = x.NamHocID + "",   // SAFE
-                    Text = x.TenNamHoc
-                })
-                .ToList();
+                .ToList(); //  CẮT LINQ TO ENTITIES
 
-            model.ListLop = new List<LopHocViewModel>();
+            var model = new TimLopViewModel
+            {
+                ListNamHoc = namHocList
+                   
+                    .Select(x => new SelectListItem
+                    {
+                        Value = x.NamHocID.ToString(), //  OK (LINQ to Objects)
+                        Text = x.TenNamHoc
+                    })
+                    .ToList(),
+
+                ListLop = new List<LopHocViewModel>()
+            };
 
             return View(model);
         }
@@ -80,6 +84,7 @@ namespace demomvc.Controllers
                             .Select(g => g.NguoiDung.HoTen)
                             .FirstOrDefault() ?? "Không có GVCN",
                         TenKhoi = x.Khoi.TenKhoi,
+                         CaHoc = x.Lop.CaHoc,
                         TrangThaiNamHoc = x.Khoi.TrangThai // trạng thái năm học
                     })
                     .ToList();
@@ -93,6 +98,31 @@ namespace demomvc.Controllers
 
             return View("Index", vm);
 
+        }
+      //xóa loppw
+        public ActionResult Delete(int id)
+        {
+            var lop = db.LopHoc.FirstOrDefault(p => p.LopHocID == id);
+            if (lop == null)
+            {
+                TempData["Error"] = "Lớp không tồn tại!";
+                return RedirectToAction("Index");
+            }
+
+            bool isUsed = db.ThoiKhoaBieu.Any(t => t.LopHocID == id);
+
+            if (isUsed)
+            {
+                TempData["Error"] = "Lớp được sử dụng trong thời khóa biểu. Vui lòng đổi sang lớp khác trước khi xóa!";
+                return RedirectToAction("Index");
+            }
+            
+
+            db.LopHoc.Remove(lop);
+            db.SaveChanges();
+
+            TempData["Success"] = "Xóa Lớp thành công!";
+            return RedirectToAction("Index");
         }
         public ActionResult ThemMoiLop()
         {
@@ -165,7 +195,8 @@ namespace demomvc.Controllers
                 TenLop = model.TenLop,
                 GiaoVienChuNhiem = model.GiaoVienID.HasValue ? model.GiaoVienID.Value : (int?)null, // nếu không chọn thì null
                 NienKhoa = model.NamHocID,
-                KhoiLopID = model.KhoiLopID
+                KhoiLopID = model.KhoiLopID,
+                CaHoc=model.CaHoc
 
             };
 
@@ -178,10 +209,10 @@ namespace demomvc.Controllers
 
         public ActionResult PhanCongChuNhiem()
         {
-            // 1. Lấy tất cả lớp ra list C# thuần
+            // 1. Lấy tất cả lớp ra list 
             var lopList = db.LopHoc.ToList();
             var khoiList = db.KhoiLop.ToList();
-            // 2. Lấy danh sách giáo viên ra list C# thuần
+            // 2. Lấy danh sách giáo viên ra list 
             var gvList = db.GiaoVien
                 .Join(db.NguoiDung,
                       gv => gv.NguoiDungID,
@@ -269,7 +300,7 @@ namespace demomvc.Controllers
                 TenLop = lop.TenLop,
                 GiaoVienChuNhiem = lop.GiaoVienChuNhiem + "",
                 TenKhoi = khoi?.TenKhoi,
-               
+
             };
 
             var listGV = db.GiaoVien.ToList();    // 1. Load hoàn toàn vào bộ nhớ
@@ -303,7 +334,7 @@ namespace demomvc.Controllers
             int lopHocID = lop.LopHocID;
             int khoiID = lop.KhoiLopID;   // dùng để kiểm tra trùng tên trong cùng khối
 
-           
+
             bool tenLopTrung = db.LopHoc.Any(l =>
                 l.TenLop.Trim().ToLower() == model.TenLop.Trim().ToLower() &&
                 l.KhoiLopID == khoiID &&
@@ -311,15 +342,15 @@ namespace demomvc.Controllers
                 l.LopHocID != lopHocID            // bỏ qua chính nó
             );
 
-            
+
             if (tenLopTrung)
             {
-                
+
                 TempData["Error"] = "Tên lớp đã tồn tại trong năm học này!";
                 return RedirectToAction("CapNhatLop", new { id = lopHocID });
             }
 
-           
+
             if (giaoVienID != 0)
             {
                 bool daCoLop = db.LopHoc.Any(l =>
@@ -335,7 +366,7 @@ namespace demomvc.Controllers
                 }
             }
 
-           
+
             lop.TenLop = model.TenLop;
             lop.GiaoVienChuNhiem = (giaoVienID == 0 ? (int?)null : giaoVienID);
 
