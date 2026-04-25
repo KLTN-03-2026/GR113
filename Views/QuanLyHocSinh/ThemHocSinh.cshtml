@@ -1,0 +1,266 @@
+﻿@model List<demomvc.Models.LopHoc>
+@{
+    ViewBag.Title = "ThemHocSinh";
+    Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Mới Học Sinh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fcfcfc;
+            color: #333;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .header-title {
+            color: #2c5d72;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .btn-custom {
+            background-color: #39677b;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+        }
+
+            .btn-custom:hover {
+                background-color: #2c5d72;
+                color: white;
+            }
+
+        .btn-outline-custom {
+            border: 1px solid #39677b;
+            color: #39677b;
+            background: white;
+            padding: 10px 25px;
+        }
+
+            .btn-outline-custom:hover {
+                background-color: #f0f5f7;
+                color: #2c5d72;
+            }
+
+        .form-label {
+            font-weight: 500;
+            color: #444;
+        }
+        /* Dấu sao đỏ cho các trường bắt buộc (not null) */
+        .required::after {
+            content: " *";
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    @if (TempData["reponse"] == "success")
+    {
+
+
+        <script>
+            alert("Đã thêm học sinh thành công");
+        </script>
+    }
+    else if(TempData["reponse"] == "error")
+    {
+        <script>
+            alert("có lỗi khi thêm ");
+        </script>
+    }
+
+    <div class="container">
+        <div class="form-container">
+            <h3 class="header-title">Thêm Mới Học Sinh</h3>
+
+            <form action="/QuanLyHocSinh/ThemHocSinh" method="post">
+                <div class="row g-3">
+                    <h5 class="mt-4 mb-2 text-secondary">Thông tin cơ bản</h5>
+                    <div class="col-md-12">
+                        <label for="FullName" class="form-label required">Họ và Tên</label>
+                        <input type="text" class="form-control" name="HoTen" id="FullName" placeholder="Nhập họ tên đầy đủ..." required
+                               oninvalid="this.setCustomValidity('Vui lòng nhập đầy đủ họ tên học sinh')"
+                               oninput="this.setCustomValidity('')">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="KhoiLop" class="form-label required">Lớp Học</label>
+                        <select class="form-select" name="KhoiLopID" id="KhoiLopID" required
+                                oninvalid="this.setCustomValidity('Vui lòng chọn khối lớp ')"
+                                oninput="this.setCustomValidity('')">
+                            <option value="" selected disabled>-- Chọn khối học --</option>
+                            <option value="1">6</option>
+                            <option value="2">7</option>
+                            <option value="3">8</option>
+                            <option value="4">9</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="LopHocID" class="form-label required">Lớp Học</label>
+                        <select class="form-select" name="LopHocID" id="LopHocID" required
+                                oninvalid="this.setCustomValidity('Vui lòng chọn lớp học ')"
+                                oninput="this.setCustomValidity('')">
+                            <option value="" selected disabled>-- Chọn lớp học --</option>
+                            @if (Model != null)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <option value="@item.LopHocID" data-makhoi="@item.KhoiLopID">@item.TenLop</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <h5 class="mt-4 mb-2 text-secondary">Thông tin chi tiết</h5>
+                    <div class="col-md-4">
+                        <label for="NgaySinh" class="form-label">Ngày sinh</label>
+                        <input type="date" class="form-control" name="NgaySinh" id="NgaySinh" required
+                               oninvalid="this.setCustomValidity('Bạn không được để trống thông tin này ')"
+                               oninput="this.setCustomValidity('')">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="GioiTinh" class="form-label">Giới tính</label>
+                        <select class="form-select" name="GioiTinh" id="GioiTinh" required
+                                oninvalid="this.setCustomValidity('Bạn không được để trống thông tin này ')"
+                                oninput="this.setCustomValidity('')">
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="DanToc" class="form-label">Dân tộc</label>
+                        <input type="text" class="form-control" name="DanToc" id="DanToc" placeholder="Ví dụ: Kinh, Tày..." required
+                               oninvalid="this.setCustomValidity('Bạn không được để trống thông tin này ')"
+                               oninput="this.setCustomValidity('')">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="CCCD" class="form-label">Căn cước công dân (Nếu có)</label>
+                        <input type="text" class="form-control" name="CCCD" id="CCCD" placeholder="Nhập số CCCD/ĐDCN" required
+                               oninvalid="this.setCustomValidity('Bạn không được để trống thông tin này ')"
+                               oninput="this.setCustomValidity('')">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="TrangThaiHocTap" class="form-label">Trạng thái học tập</label>
+                        <select class="form-select" name="TrangThai" id="TrangThaiHocTap" required
+                                oninvalid="this.setCustomValidity('Bạn không được để trống thông tin này ')"
+                                oninput="this.setCustomValidity('')">
+                            <option value="Đang học">Đang học</option>
+                            <option value="Bảo lưu">Bảo lưu</option>
+                            <option value="Đã chuyển trường">Đã chuyển trường</option>
+                        </select>
+                    </div>
+
+                    <h5 class="mt-4 mb-2 text-secondary">Hộ khẩu / Chỗ ở</h5>
+                    <div class="col-md-6">
+                        <label for="TinhThanhPho" class="form-label">Tỉnh / Thành Phố</label>
+                        <input type="text" class="form-control" name="TinhThanh" placeholder="--Nhập Tỉnh/Thành Phố--" id="TinhThanhPho" required
+                               oninvalid="this.setCustomValidity('Bạn không được để trống thông tin này ')"
+                               oninput="this.setCustomValidity('')">
+
+                    </div>
+                    <div class="col-md-6">
+                        <label for="QuanHuyen" class="form-label">Quận / Huyện</label>
+                        <input class="form-control" name="QuanHuyen" id="QuanHuyen" required
+                               oninvalid="this.setCustomValidity('Bạn không được để trống thông tin này ')"
+                               oninput="this.setCustomValidity('')">
+
+                    </div>
+                    <div class="col-md-12">
+                        <label for="DiaChiNha" class="form-label">Địa chỉ nhà (Số nhà, Đường/Thôn/Xóm)</label>
+                        <input type="text" class="form-control" name="DiaChi" id="DiaChiNha" placeholder="Ví dụ: 123 Đường Nguyễn Văn Linh..." required
+                               oninvalid="this.setCustomValidity('Bạn không được để trống thông tin này ')"
+                               oninput="this.setCustomValidity('')">
+                    </div>
+                    <h5 class="mt-4 mb-2 text-secondary">Tạo tài khoản mặc định cho học sinh</h5>
+                    <div class="col-md-6">
+                        <label for="TenDangNhap" class="form-label">Tên đăng nhập</label>
+                        <input type="text" class="form-control" name="TenDangNhap" placeholder="Username" id="TenDangNhap" required
+                               oninvalid="this.setCustomValidity('Bạn không được để trống thông tin này ')"
+                               oninput="this.setCustomValidity('')">
+
+                    </div>
+                    <div class="col-md-6">
+                        <label for="MatKhau" class="form-label">Mật khẩu </label>
+                        <input class="form-control" name="MatKhau" id="MatKhau" value="12345" required placeholder="Password" readonly>
+
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end mt-4 gap-2">
+                    <button type="button" class="btn btn-outline-custom">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-custom">Lưu Thông Tin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        const hoTenInput = document.getElementById('FullName');
+        const tenDangNhapInput = document.querySelector('input[name="TenDangNhap"]');
+
+        function createUsername(str) {
+            return str
+                .normalize("NFD")                     // Tách dấu ra khỏi chữ cái
+                .replace(/[\u0300-\u036f]/g, "")      // Xóa toàn bộ các dấu đã tách
+                .replace(/đ/g, "d").replace(/Đ/g, "D")// Xử lý riêng chữ đ/Đ của tiếng Việt
+                .replace(/\s+/g, "")                  // Xóa tất cả khoảng trắng
+                .toLowerCase();                       // Chuyển thành chữ thường
+        }
+
+        hoTenInput.addEventListener('input', function () {
+            tenDangNhapInput.value = createUsername(this.value);
+        });
+
+
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const khoiLopSelect = document.getElementById('KhoiLopID');
+            const lopHocSelect = document.getElementById('LopHocID');
+            const allLopOptions = lopHocSelect.querySelectorAll('option:not([value=""])');
+
+            khoiLopSelect.addEventListener('change', function () {
+                // Dùng .trim() để loại bỏ mọi dấu cách thừa
+                const selectedKhoiID = this.value.trim();
+
+                lopHocSelect.value = "";
+
+                allLopOptions.forEach(option => {
+                    // Lấy data-makhoi và cũng dùng .trim() luôn cho chắc
+                    const optionKhoiID = (option.getAttribute('data-makhoi') || "").trim();
+
+                    // So sánh bằng == thay vì === để linh hoạt kiểu dữ liệu
+                    if (optionKhoiID == selectedKhoiID) {
+                        option.hidden = false;
+                        option.disabled = false;
+                        option.style.display = "block"; // Hiện lại
+                    } else {
+                        option.hidden = true;
+                        option.disabled = true;
+                        option.style.display = "none"; // Ẩn đi
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
+
