@@ -1,64 +1,7 @@
-﻿//using demonvc.Services.GA;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Web;
-
-//namespace demomvc.Services.GA
-//{
-//	public class FitnessCalculator
-//	{
-//		public double Calculate(Chromosome c)
-//		{
-//			double fitness = 100000;
-
-//			//trung lop
-//			if (c.Genes.GroupBy(g => new { g.LopHocID, g.Tuan, g.Thu, g.Tiet }).Any(g => g.Count() > 1))
-//				fitness -= 20000;
-
-//			//trung GV
-//			if (c.Genes.GroupBy(g => new { g.GiaoVienID, g.Tuan, g.Thu, g.Tiet }).Any(g => g.Count() > 1))
-//				fitness -= 20000;
-
-//			//trung phong
-//			if (c.Genes.GroupBy(g => new { g.PhongHocID, g.Tuan, g.Thu, g.Tiet }).Any(g => g.Count() > 1))
-//				fitness -= 20000;
-
-//			//khong don 2 tiet 1 ngay
-//			var donMon = c.Genes
-//				.GroupBy(g => new { g.LopHocID, g.MonHocID, g.Tuan, g.Thu })
-//				.Where(g => g.Count() > 2);
-//			fitness -= donMon.Count() * 50;
-
-//			//uu tien toan id =5, van id=2 ,anh id =13, hoc 2 tiet lien tiep 
-//			foreach(var g in c.Genes.Where(x => x.MonHocID==5|| x.MonHocID==2 || x.MonHocID == 13))
-//			{
-//				bool lienTiet = c.Genes.Any(x =>
-//					x.LopHocID == g.LopHocID &&
-//					x.MonHocID == g.MonHocID &&
-//					x.Tuan == g.Tuan &&
-//					x.Thu == g.Thu &&
-//					x.Tiet == g.Tiet + 1
-//				);
-//				if (lienTiet) fitness += 20;
-//			}
-
-//            // ❌ Tin / Thể dục học sai ca
-//            foreach (var g in c.Genes)
-//            {
-//                if (CaHocHelper.IsSaiCa(g.MonHocID, g.Tiet, g.CaHoc))
-//                    fitness -= 200; // phạt nhẹ (soft constraint)
-//            }
-
-//            return fitness;
-
-//		}
-//	}
-//}
-
-
+﻿
 using demonvc.Services.GA;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace demomvc.Services.GA
 {
@@ -107,7 +50,7 @@ namespace demomvc.Services.GA
                     fitness -= 200;
             }
 
-            // ===== 6. ƯU TIÊN TOÁN – VĂN – ANH HỌC 2 TIẾT LIỀN =====
+            //// ===== 6. ƯU TIÊN TOÁN – VĂN – ANH HỌC 2 TIẾT LIỀN =====
             var uuTienMon = new HashSet<int> { 5, 2, 13 }; // Toán, Văn, Anh
             var checkLienTiet = new HashSet<string>();
 
@@ -117,10 +60,75 @@ namespace demomvc.Services.GA
 
                 string nextTiet = $"{g.LopHocID}-{g.MonHocID}-{g.Tuan}-{g.Thu}-{g.Tiet + 1}";
                 if (checkLienTiet.Contains(nextTiet))
-                    fitness += 20;
+                    fitness += 5000;
 
                 string curTiet = $"{g.LopHocID}-{g.MonHocID}-{g.Tuan}-{g.Thu}-{g.Tiet}";
                 checkLienTiet.Add(curTiet);
+            }
+
+
+
+
+            // ===== 7. PHẠT TIẾT LẺ (KHÔNG LIỀN MẠCH) =====
+            var nhomTheoLopNgayCa = c.Genes
+                .GroupBy(x => new { x.LopHocID, x.Tuan, x.Thu, x.CaHoc });
+
+            foreach (var group in nhomTheoLopNgayCa)
+            {
+                var tiets = group
+                    .Select(x => x.Tiet)
+                    .OrderBy(t => t)
+                    .ToList();
+
+                if (tiets.Count <= 1)
+                    continue;
+
+                for (int i = 1; i < tiets.Count; i++)
+                {
+                    if (tiets[i] != tiets[i - 1] + 1)
+                    {
+                        fitness -= 500; // ❌ PHẠT NẶNG TIẾT LẺ
+                    }
+                }
+            }
+
+            // ===== 9. ƯU TIÊN XẾP VÀO THỨ 2,7,3,6,4,5 =====
+            var thuUuTien = new List<int> { 2, 7, 3, 6, 4, 5 };
+
+            foreach (var g in c.Genes)
+            {
+                int idx = thuUuTien.IndexOf(g.Thu);
+
+                if (idx >= 0)
+                {
+                    // ✅ càng ưu tiên → thưởng càng nhiều
+                    // Thứ 2 idx=0 → +50
+                    // Thứ 7 idx=1 → +45 ...
+                    fitness += (6 - idx) * 100;
+                }
+                else
+                {
+                    // ❌ thứ không mong muốn (nếu có)
+                    fitness -= 10;
+                }
+            }
+
+            // ===== 10. BẮT BUỘC PHẢI CÓ THỨ 7 =====
+            var lopIds = c.Genes
+                .Select(x => x.LopHocID)
+                .Distinct()
+                .ToList();
+
+            foreach (var lopId in lopIds)
+            {
+                bool coThu7 = c.Genes.Any(x =>
+                    x.LopHocID == lopId &&
+                    x.Thu == 7);
+
+                if (!coThu7)
+                {
+                    fitness -= 500; // PHẠT CỰC NẶNG
+                }
             }
 
             return fitness;

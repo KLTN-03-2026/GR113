@@ -8,22 +8,25 @@ using System.Web.Mvc;
 
 namespace demomvc.Models
 {
-	public class TimLopViewModel
-	{
+    public class TimLopViewModel
+    {
         public int? HocKyID { get; set; }
 
-        public int? NamHocID { get; set; }  
-       
+        public int? NamHocID { get; set; }
+
         public List<SelectListItem> ListHocKy { get; set; }
         public List<SelectListItem> ListNamHoc { get; set; }
 
-       
+
         public List<LopHocViewModel> ListLop { get; set; }
         public List<ThoiKhoaBieu> ThoiKhoaBieus { get; set; }
+
+        public string CaHoc { get; set; }
+        public int Tuan { get; set; }
     }
-     public class LopHocViewModel
+    public class LopHocViewModel
     {
-       
+
         public int LopHocID { get; set; }
         public string TenLop { get; set; }
         public int SiSo { get; set; }

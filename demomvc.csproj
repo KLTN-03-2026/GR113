@@ -433,7 +433,7 @@
     <Compile Include="Models\ThongBaoVM.cs" />
     <Compile Include="Models\TimLopViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-<<<<<<< HEAD
+
     <Compile Include="Services\GA\CaHocHelper.cs" />
     <Compile Include="Services\GA\Chromosome.cs" />
     <Compile Include="Services\GA\FitnessCalculator.cs" />
@@ -442,9 +442,9 @@
     <Compile Include="Services\GA\Gene.cs" />
     <Compile Include="Services\GA\GeneticAlgorithmService.cs" />
     <Compile Include="Services\Hubs\Startup.cs" />
-=======
+
     <Compile Include="ViewModel\ThongTinHocSinhVM.cs" />
->>>>>>> 86f03b53904f11f70012b44d699d61e021439c44
+
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -510,15 +510,15 @@
     <Content Include="Views\QuenMatKhau\Index.cshtml" />
     <Content Include="Views\QuenMatKhau\DatLaiMatKhau.cshtml" />
     <Content Include="Views\QuenMatKhau\TokenKhongHopLe.cshtml" />
-<<<<<<< HEAD
+
     <Content Include="Views\QuanLyGiaoVien\PhanCongGiangDayTKB.cshtml" />
     <Content Include="Scripts\jquery-3.6.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.6.0.min.map" />
-=======
+
     <Content Include="Views\QuanLyHocSinh\DsHocSinh.cshtml" />
     <Content Include="Views\QuanLyHocSinh\ThemHocSinh.cshtml" />
     <Content Include="Views\QuanLyHocSinh\Edit.cshtml" />
->>>>>>> 86f03b53904f11f70012b44d699d61e021439c44
+
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

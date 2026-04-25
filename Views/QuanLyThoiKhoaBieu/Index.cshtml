@@ -10,18 +10,54 @@
 <script src="~/Scripts/jquery.validate.js"></script>
 <script src="~/Scripts/jquery-3.6.0.min.js"></script>
 <script src="/signalr/hubs"></script>
-
 <link href="~/css/quanlyTKB.css" rel="stylesheet" />
+<style>
+    /*hover chitiet tkb*/
+    .tkb-item {
+        border: 1px solid #ddd;
+        border-left: 4px solid #007bff;
+        padding: 6px;
+        margin-bottom: 6px;
+        background: #f9f9f9;
+        transition: all 0.25s ease;
+        cursor: pointer;
+    }
+
+
+        .tkb-item:hover {
+            background: linear-gradient(135deg, #e3f2fd, #ffffff);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+            border-left-color: #ff9800;
+            transform: translateY(-2px) scale(1.00);
+            border-left-color: #1e88e5;
+        }
+
+
+    /* Hàng phân cách ca sáng - chiều */
+    .row-ca-chuyen {
+        background: #9e0d20;
+        color: #e65100;
+        font-weight: bold;
+        text-align: center;
+        letter-spacing: 1px;
+    }
+
+        .row-ca-chuyen td {
+            padding: 8px;
+            border-top: 2px solid #ff9800;
+            border-bottom: 2px solid #ff9800;
+        }
+</style>
 
 <h2>Quản lý thời khóa biểu</h2>
 
 @if (TempData["Error"] != null)
 {
-    <div class="alert alert-danger">@TempData["Error"]</div>
+<div class="alert alert-danger">@TempData["Error"]</div>
 }
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success">@TempData["Success"]</div>
+<div class="alert alert-success">@TempData["Success"]</div>
 }
 
 @using (Html.BeginForm(
@@ -30,33 +66,33 @@
     FormMethod.Post,
     new { onsubmit = "return onSubmitTKB();" }))
 {
-    @Html.AntiForgeryToken()
+@Html.AntiForgeryToken()
 
-    <div class="row">
-        <div class="col-md-4">
-            <label>Năm học</label>
-            @Html.DropDownListFor(
-                m => m.NamHocID,
-                Model.ListNamHoc,
-                "-- Chọn năm học --",
-                new { @class = "form-control", required = "required" })
-        </div>
-
-        <div class="col-md-4">
-            <label>Học kỳ</label>
-            @Html.DropDownListFor(
-                m => m.HocKyID,
-                Model.ListHocKy,
-                "-- Chọn học kỳ --",
-                new { @class = "form-control", required = "required" })
-        </div>
-
-        <div class="col-md-4" style="margin-top:25px;">
-            <button type="submit" id="btnSubmit" class="btn btn-success">
-                🚀 Tạo thời khóa biểu
-            </button>
-        </div>
+<div class="row">
+    <div class="col-md-4">
+        <label>Năm học</label>
+        @Html.DropDownListFor(
+            m => m.NamHocID,
+            Model.ListNamHoc,
+            "-- Chọn năm học --",
+            new { @class = "form-control", required = "required" })
     </div>
+
+    <div class="col-md-4">
+        <label>Học kỳ</label>
+        @Html.DropDownListFor(
+            m => m.HocKyID,
+            Model.ListHocKy,
+            "-- Chọn học kỳ --",
+            new { @class = "form-control", required = "required" })
+    </div>
+
+    <div class="col-md-4" style="margin-top:25px;">
+        <button type="submit" id="btnSubmit" class="btn btn-success">
+            🚀 Tạo thời khóa biểu
+        </button>
+    </div>
+</div>
 }
 
 <!-- AI OVERLAY -->
@@ -67,7 +103,133 @@
         <p id="aiText">Đang khởi tạo...</p>
     </div>
 </div>
+@if (Model.ThoiKhoaBieus != null && Model.ThoiKhoaBieus.Any())
+{
+<hr />
 
+ <!-- HEADER TUẦN -->
+<div class="alert alert-danger fw-bold">
+    📅 Lịch học Tuần @Model.Tuan
+</div>
+
+ <!-- NÚT CA + NÚT NEXT -->
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <button class="btn btn-primary me-2"
+                onclick="doiCa('Sang')">
+            ☀️ Ca sáng
+        </button>
+
+        <button class="btn btn-warning"
+                onclick="doiCa('Chieu')">
+            🌙 Ca chiều
+        </button>
+    </div>
+
+    <div>
+        <button class="btn btn-secondary"
+                onclick="nextWeek()">
+            Tuần tiếp theo ➡
+        </button>
+    </div>
+</div>
+
+ <!-- BẢNG TKB -->
+<table class="table table-bordered text-center align-middle">
+    <thead>
+        <tr>
+            <th rowspan="2"></th>
+
+
+            @for (int thu = 2; thu <= 8; thu++)
+                {
+            <th>Thứ @(thu == 8 ? "CN" : thu.ToString())</th>
+                }
+        </tr>
+        <tr>
+            @for (int i = 0; i < 7; i++)
+                {
+            <th>dd/MM/yyyy</th>
+                }
+        </tr>
+    </thead>
+
+    <tbody>
+        @for (int tiet = 1; tiet <= 10; tiet++)
+            {
+
+                if (tiet == 6)
+                {
+        <tr class="row-ca-chuyen">
+            <td colspan="8">
+                🌙 Buổi chiều (Tiết 6 → 10)
+            </td>
+        </tr>
+                }
+
+        <tr>
+            <td><b>Tiết @tiet</b></td>
+
+            @for (int thu = 2; thu <= 8; thu++)
+                    {
+                        var list = Model.ThoiKhoaBieus
+                            .Where(x => x.Thu == thu && x.TietHoc == tiet)
+                            .ToList();
+
+            <td class="text-start">
+                @{
+                                bool laSang = Model.CaHoc == "Sang";
+
+                                bool isChaoCo =
+                                    thu == 2 &&
+                                    ((laSang && tiet == 1) || (!laSang && tiet == 10));
+
+                                bool isSinhHoat =
+                                    thu == 7 &&
+                                    ((laSang && tiet == 5) || (!laSang && tiet == 10));
+                }
+
+
+                @if (isChaoCo || isSinhHoat)
+                            {
+                <div class="tkb-item">
+
+                    @if (isChaoCo)
+                                    {
+                    <div>⭐ Chào cờ</div>
+                                    }
+                    @if (isSinhHoat)
+                                    {
+                    <div>⭐ Sinh hoạt lớp</div>
+                                    }
+                </div>
+                            }
+
+                            else
+                            {
+                                foreach (var item in list)
+                                {
+
+
+                <div class="tkb-item">
+
+                    <b>@item.PhongHoc.TenPhong</b><br />
+                    Lớp: <b>@item.LopHoc.TenLop</b><br />
+                    Môn học: @item.MonHoc.TenMonHoc<br />
+                    GV: @item.GiaoVien.NguoiDung.HoTen
+                </div>
+
+                                }
+                            }
+            </td>
+                    }
+        </tr>
+            }
+
+
+    </tbody>
+</table>
+}
 <script>
     // ===== SIGNALR =====
     var hub = $.connection.gaProgressHub;
@@ -85,4 +247,26 @@
         document.getElementById("aiText").innerText = "AI đang khởi tạo...";
         return true; // SUBMIT THẬT
     }
+
+
+    ////
+
+function doiCa(ca) {
+    window.location.href =
+        '@Url.Action("Index")'
+        + '?NamHocID=@Model.NamHocID'
+        + '&HocKyID=@Model.HocKyID'
+        + '&tuan=@Model.Tuan'
+        + '&caHoc=' + ca;
+}
+
+function nextWeek() {
+    window.location.href =
+        '@Url.Action("Index")'
+        + '?NamHocID=@Model.NamHocID'
+        + '&HocKyID=@Model.HocKyID'
+        + '&tuan=' + (@Model.Tuan + 1)
+        + '&caHoc=@Model.CaHoc';
+}
+
 </script>

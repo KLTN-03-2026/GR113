@@ -31,7 +31,7 @@ namespace demomvc.Services.GA
             else if (caHoc == "CHIEU") // ✅ Ca chiều
             {
                 // Thứ 2 tiết 5: Chào cờ
-                if (thu == 2 && tiet == 5) return true;
+                if (thu == 2 && tiet == 10) return true;
 
                 // Thứ 7 tiết 10: Sinh hoạt
                 if (thu == 7 && tiet == 10) return true;

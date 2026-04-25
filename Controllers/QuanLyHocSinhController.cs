@@ -10,7 +10,7 @@ namespace demomvc.Controllers
 {
     public class QuanLyHocSinhController : Controller
     {
-        QuanLyTruongHocEntities db = new QuanLyTruongHocEntities();
+        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
         // GET: QuanLyHocSinh
         [HttpGet]
         public ActionResult DsHocSinh(string TypeSearch,string Keyword)
