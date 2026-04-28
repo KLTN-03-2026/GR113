@@ -9,6 +9,8 @@ using System.Linq;
 using System.Web.Mvc;
 using demomvc.Services.Hubs;
 using System;
+using System.Data.Entity.Infrastructure;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace demomvc.Controllers
 {
@@ -26,7 +28,15 @@ namespace demomvc.Controllers
             int? namHocId = null;
             int? hocKyId = null;
             int? tuan = null;
+
+            int? lopHocId = null;
+            if (Request.QueryString["lopHocId"] != null)
+            {
+                lopHocId = int.Parse(Request.QueryString["lopHocId"]);
+            }
+
             string caHoc = "Sang";
+
 
             if (Request.QueryString["NamHocID"] != null)
                 namHocId = int.Parse(Request.QueryString["NamHocID"]);
@@ -39,6 +49,7 @@ namespace demomvc.Controllers
 
             if (Request.QueryString["caHoc"] != null)
                 caHoc = Request.QueryString["caHoc"];
+
 
             // nếu chưa truyền năm + học kỳ thì lấy bộ đã có TKB
             if (!namHocId.HasValue || !hocKyId.HasValue)
@@ -90,75 +101,93 @@ namespace demomvc.Controllers
 
                 model.Tuan = tuanHienThi;
 
-                //model.ThoiKhoaBieus = db.ThoiKhoaBieu
-                //    .Where(x =>
-                //        x.NamHocID == namHocId &&
-                //        x.HocKyID == hocKyId &&
-                //        x.Tuan == tuanHienThi)
-                //    .OrderBy(x => x.Thu)
-                //    .ThenBy(x => x.TietHoc)
-                //    .ThenBy(x => x.TietHoc)
-                //    .ToList();
-
                 var ds = db.ThoiKhoaBieu
                     .Where(x =>
                         x.NamHocID == namHocId &&
                         x.HocKyID == hocKyId &&
                         x.Tuan == tuanHienThi)
                     .ToList();
+                if (lopHocId.HasValue)
+                {
+                    ds = ds.Where(x => x.LopHocID == lopHocId.Value).ToList();
+                }
 
-                ////  LỌC THEO CA ĐANG XEM
+
+
+                model.ListLopHoc = ds
+                  .Select(x => x.LopHoc)
+                  .Distinct()
+                  .Select(l => new SelectListItem
+                  {
+                      Value = l.LopHocID.ToString(),
+                      Text = l.TenLop
+                  })
+                  .OrderBy(x => x.Text)
+                  .ToList();
+                // srow giao vien
+
+                model.ListGiaoVien = ds.
+                    Select(x => x.GiaoVien)
+                    .Distinct()
+                    .Select(g => new SelectListItem
+                    {
+                        Value = g.GiaoVienID.ToString(),
+                        Text = g.NguoiDung.HoTen
+                    })
+                    .OrderBy(x => x.Text)
+                    .ToList();
+
+
+                ////cai moi hon
                 //if (model.CaHoc == "Sang")
                 //{
                 //    ds = ds.Where(x =>
-                //        (x.LopHoc.CaHoc == "SANG" && x.TietHoc <= 5) ||
-                //        (x.LopHoc.CaHoc == "CHIEU" && x.TietHoc >= 6)
+                //        x.LopHoc.CaHoc == "SANG" && (
+                //            // tiết chính buổi sáng
+                //            (x.TietHoc >= 1 && x.TietHoc <= 5 &&
+                //             x.MonHoc.TenMonHoc != "Thể dục" &&
+                //             x.MonHoc.TenMonHoc != "Tin học")
+                //            ||
+                //            // thể dục + tin buổi chiều
+                //            (x.TietHoc >= 6 && x.TietHoc <= 10 &&
+                //             (x.MonHoc.TenMonHoc == "Thể dục" ||
+                //              x.MonHoc.TenMonHoc == "Tin học"))
+                //        )
                 //    ).ToList();
                 //}
                 //else // Chieu
                 //{
                 //    ds = ds.Where(x =>
-                //        (x.LopHoc.CaHoc == "CHIEU" && x.TietHoc <= 5) ||
-                //        (x.LopHoc.CaHoc == "SANG" && x.TietHoc >= 6)
+                //        x.LopHoc.CaHoc == "CHIEU" && (
+                //            // tiết chính buổi chiều
+                //            (x.TietHoc >= 6 && x.TietHoc <= 10 &&
+                //             x.MonHoc.TenMonHoc != "Thể dục" &&
+                //             x.MonHoc.TenMonHoc != "Tin học")
+                //            ||
+                //            // thể dục + tin buổi sáng
+                //            (x.TietHoc >= 1 && x.TietHoc <= 5 &&
+                //             (x.MonHoc.TenMonHoc == "Thể dục" ||
+                //              x.MonHoc.TenMonHoc == "Tin học"))
+                //        )
                 //    ).ToList();
                 //}
-
                 //model.ThoiKhoaBieus = ds;
 
-                //cai moi hon
+                //neu
+                // ✅ LỌC THEO CA LỚP – KHÔNG PHÂN BIỆT MÔN / TIẾT
                 if (model.CaHoc == "Sang")
                 {
-                    ds = ds.Where(x =>
-                        x.LopHoc.CaHoc == "SANG" && (
-                            // tiết chính buổi sáng
-                            (x.TietHoc >= 1 && x.TietHoc <= 5 &&
-                             x.MonHoc.TenMonHoc != "Thể dục" &&
-                             x.MonHoc.TenMonHoc != "Tin học")
-                            ||
-                            // thể dục + tin buổi chiều
-                            (x.TietHoc >= 6 && x.TietHoc <= 10 &&
-                             (x.MonHoc.TenMonHoc == "Thể dục" ||
-                              x.MonHoc.TenMonHoc == "Tin học"))
-                        )
-                    ).ToList();
+                    ds = ds.Where(x => x.LopHoc.CaHoc == "SANG").ToList();
                 }
                 else // Chieu
                 {
-                    ds = ds.Where(x =>
-                        x.LopHoc.CaHoc == "CHIEU" && (
-                            // tiết chính buổi chiều
-                            (x.TietHoc >= 6 && x.TietHoc <= 10 &&
-                             x.MonHoc.TenMonHoc != "Thể dục" &&
-                             x.MonHoc.TenMonHoc != "Tin học")
-                            ||
-                            // thể dục + tin buổi sáng
-                            (x.TietHoc >= 1 && x.TietHoc <= 5 &&
-                             (x.MonHoc.TenMonHoc == "Thể dục" ||
-                              x.MonHoc.TenMonHoc == "Tin học"))
-                        )
-                    ).ToList();
+                    ds = ds.Where(x => x.LopHoc.CaHoc == "CHIEU").ToList();
                 }
+
                 model.ThoiKhoaBieus = ds;
+
+
+
             }
 
             return View(model);
@@ -302,20 +331,303 @@ namespace demomvc.Controllers
                 }
             }
 
+
             return genes;
         }
 
 
-        private int LamTronSoTietTuan(double tietTuan)
+        [HttpPost]
+        public ActionResult UpdateTKB(XemTKB dto)
         {
-            if (tietTuan < 0.75) return 0;
-            if (tietTuan < 1.5) return 1;
-            if (tietTuan < 2.5) return 2;
-            if (tietTuan < 3.5) return 3;
-            if (tietTuan < 4.5) return 4;
-            return 5;
+            var tkb = db.ThoiKhoaBieu.Find(dto.TKBID);
+            if (tkb == null)
+            {
+                return Json(new { oke = false, msg = "Không có tiết này" });
+            }
 
+            //chẹc rỗngc
+            if (dto.LopHocId == 0 || dto.PhongHocID == 0 || dto.GiaoVienId == 0 || dto.MonHocId == 0)
+            {
+                return Json(new
+                {
+                    oke = false,
+                    msg = "Vui lòng chọn đầy đủ thông tin"
+                });
+            }
+
+
+            //check trung giao vien
+
+            bool trungGV = db.ThoiKhoaBieu.Any(x =>
+                   x.TKBID != tkb.TKBID &&
+                   x.GiaoVienID == dto.GiaoVienId &&
+                   x.Thu == tkb.Thu &&
+                   x.TietHoc == tkb.TietHoc &&
+                   x.Tuan == tkb.Tuan &&
+                   x.NamHocID == tkb.NamHocID &&
+                   x.HocKyID == tkb.HocKyID
+               );
+
+
+            if (trungGV)
+                return Json(new { oke = false, msg = "Giáo viên bị trùng tiết" });
+
+            //check trungf phong
+            bool trungPhong = db.ThoiKhoaBieu.Any(
+                x => x.TKBID != tkb.TKBID &&
+                x.PhongHocID == dto.PhongHocID &&
+                x.Thu == tkb.Thu &&
+                x.TietHoc == tkb.TietHoc &&
+                x.Tuan == tkb.Tuan &&
+                x.NamHocID == tkb.NamHocID &&
+                x.HocKyID == tkb.HocKyID
+                );
+
+            if (trungPhong)
+            {
+                return Json(new { oke = false, msg = "Phòng học đã bị trùng" });
+            }
+
+            //trung lop
+            bool trungLop = db.ThoiKhoaBieu.Any(
+                x => x.TKBID != tkb.TKBID &&
+                x.LopHocID == dto.LopHocId &&
+                x.Thu == tkb.Thu &&
+                x.TietHoc == tkb.TietHoc &&
+                x.Tuan == tkb.Tuan &&
+                x.NamHocID == tkb.NamHocID &&
+                x.HocKyID == tkb.HocKyID);
+
+            if (trungLop)
+            {
+                return Json(new { oke = false, msg = "Lớp đã bị trùng tiết" });
+
+            }
+
+            if (tkb.GiaoVienID != dto.GiaoVienId || tkb.MonHocID != dto.MonHocId)
+            {
+                bool gvHopLe = db.GiaoVien.Any(g =>
+                    g.GiaoVienID == dto.GiaoVienId &&
+                    g.MonHocID == dto.MonHocId
+                );
+
+                if (!gvHopLe)
+                {
+                    return Json(new { oke = false, msg = "Giáo viên không dạy môn này" });
+                }
+            }
+
+
+            //cap nhat
+            tkb.LopHocID = dto.LopHocId;
+            tkb.PhongHocID = dto.PhongHocID;
+            tkb.MonHocID = dto.MonHocId;
+            tkb.GiaoVienID = dto.GiaoVienId;
+
+            db.SaveChanges();
+            return Json(new { oke = true, msg = "Cập nhật thành công" });
         }
+
+        [HttpGet]
+        public ActionResult GetEditData(int namHocId, int hocKyId, int lopHocId, int? monHocId)
+        {
+            var lops = db.LopHoc
+                .Where(x => x.NienKhoa == namHocId)
+                .Select(x => new
+                {
+                    id = x.LopHocID,
+                    text = x.TenLop
+                }).ToList();
+
+            var mons = db.MonHoc
+                .Select(x => new
+                {
+                    id = x.MonHocID,
+                    text = x.TenMonHoc
+                }).ToList();
+
+
+            var gvs = db.GiaoVien
+                .Where(x => x.TrangThaiGiangDay != null && (!monHocId.HasValue || x.MonHocID == monHocId))
+                .Select(x => new
+                {
+                    id = x.GiaoVienID,
+                    text = x.NguoiDung.HoTen
+                }).ToList();
+
+
+
+            var phongs = db.PhongHoc
+                .Select(x => new
+                {
+                    id = x.PhongHocID,
+                    text = x.TenPhong
+                }).ToList();
+
+
+
+            return Json(new
+            {
+                lops,
+                mons,
+                gvs,
+                phongs
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteTKB(int id)
+        {
+            var tkb = db.ThoiKhoaBieu.Find(id);
+            if (tkb == null)
+            {
+                return Json(new { oke = false, msg = "Không có tiết này" });
+            }
+
+            db.ThoiKhoaBieu.Remove(tkb);
+            db.SaveChanges();
+            return Json(new { oke = true, msg = "Xóa Thành công" });
+        }
+
+
+
+        [HttpGet]
+        public ActionResult addGetData(int namHocId, int hocKyId, int tuan, int thu, int tiet)
+        {
+            var lopHoc = db.LopHoc
+                .Where(x => x.NienKhoa == namHocId)
+                .Select(x => new
+                {
+                    id = x.LopHocID,
+                    text = x.TenLop
+                }).ToList();
+
+            var monHoc = db.MonHoc
+                        .Select(x => new
+                        {
+                            id = x.MonHocID,
+                            text = x.TenMonHoc
+                        }).ToList();
+
+            var giaoVien = db.GiaoVien
+                .Where(x => x.TrangThaiGiangDay != null)
+                .Select(x => new
+                {
+                    id = x.GiaoVienID,
+                    text = x.NguoiDung.HoTen
+                }).ToList();
+
+            var phongHoc = db.PhongHoc
+               .Where(p => !db.ThoiKhoaBieu.Any(t =>
+                   t.PhongHocID == p.PhongHocID &&
+                   t.Thu == thu &&
+                   t.TietHoc == tiet &&
+                   t.Tuan == tuan &&
+                   t.NamHocID == namHocId &&
+                   t.HocKyID == hocKyId
+               ))
+               .Select(p => new
+               {
+                   id = p.PhongHocID,
+                   text = p.TenPhong
+               }).ToList();
+
+            return Json(new { lopHoc, monHoc, giaoVien, phongHoc }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult GetGVByMon(int monHocId)
+        {
+            var gvs = db.GiaoVien
+                .Where(x => x.MonHocID == monHocId && x.TrangThaiGiangDay != null)
+                .Select(x => new
+                {
+                    id = x.GiaoVienID,
+                    text = x.NguoiDung.HoTen
+                }).ToList();
+
+            return Json(gvs, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult AddTKB(XemTKB dtoAdd)
+        {
+            if (dtoAdd.LopHocId == 0
+                 || dtoAdd.MonHocId == 0 ||
+                 dtoAdd.GiaoVienId == 0 ||
+                 dtoAdd.PhongHocID == 0)
+            {
+                return Json(new { oke = false, msg = "Vui lòng chọn đầy đủ Lớp, Môn, Giáo viên và Phòng học" });
+            }
+
+
+
+            //check trung giv
+            bool trungGV = db.ThoiKhoaBieu.Any(x => x.GiaoVienID == dtoAdd.GiaoVienId &&
+                                                 x.Thu == dtoAdd.Thu &&
+                                                 x.TietHoc == dtoAdd.TietHoc &&
+                                                 x.Tuan == dtoAdd.Tuan &&
+                                                 x.NamHocID == dtoAdd.NamHocID &&
+                                                 x.HocKyID == dtoAdd.HocKyID);
+            if (trungGV)
+            {
+                return Json(new { oke = false, msg = "Giáo viên bị trùng tiết" });
+            }
+
+            //check trung phong
+            bool trungPhong = db.ThoiKhoaBieu.Any(x =>
+                                x.PhongHocID == dtoAdd.PhongHocID &&
+                                x.Thu == dtoAdd.Thu &&
+                                x.TietHoc == dtoAdd.TietHoc &&
+                                x.Tuan == dtoAdd.Tuan &&
+                                x.NamHocID == dtoAdd.NamHocID &&
+                                x.HocKyID == dtoAdd.HocKyID);
+            if (trungPhong)
+            {
+                return Json(new { oke = false, msg = "Phòng bị trùng tiết" });
+            }
+
+            //check trung lop
+            bool trungLop = db.ThoiKhoaBieu.Any(x =>
+                            x.LopHocID == dtoAdd.LopHocId &&
+                            x.Tuan == dtoAdd.Tuan &&
+                            x.Thu == dtoAdd.Thu &&
+                            x.TietHoc == dtoAdd.TietHoc &&
+                            x.NamHocID == dtoAdd.NamHocID &&
+                            x.HocKyID == dtoAdd.HocKyID);
+            if (trungLop)
+            {
+                return Json(new { oke = false, msg = "Lớp học bị trùng tiết" });
+            }
+
+            //check giao vien dạy dung môn
+            bool gvMon = db.GiaoVien.Any(x =>
+                        x.GiaoVienID == dtoAdd.GiaoVienId &&
+                        x.MonHocID == dtoAdd.MonHocId);
+            if (!gvMon)
+            {
+                return Json(new { oke = false, msg = "Giáo viên không dạy môn này" });
+            }
+
+            var tkb = new ThoiKhoaBieu
+            {
+                LopHocID = dtoAdd.LopHocId,
+                MonHocID = dtoAdd.MonHocId,
+                GiaoVienID = dtoAdd.GiaoVienId,
+                PhongHocID = dtoAdd.PhongHocID,
+                Thu = dtoAdd.Thu,
+                TietHoc = dtoAdd.TietHoc,
+                Tuan = dtoAdd.Tuan,
+                NamHocID = dtoAdd.NamHocID,
+                HocKyID = dtoAdd.HocKyID
+            };
+            db.ThoiKhoaBieu.Add(tkb);
+            db.SaveChanges();
+
+            return Json(new { oke = true, msg = "thêm tiết thành công" });
+        }
+
+
 
     }
 }

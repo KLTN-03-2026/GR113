@@ -3,13 +3,26 @@
     ViewBag.Title = "Quản lý thời khóa biểu";
     Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
 }
+<!-- CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" />
+
+<!-- Font -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-<!-- JS -->
-<script src="~/Scripts/jquery-3.7.0.js"></script>
+<!-- jQuery (PHẢI TRƯỚC Bootstrap) -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+<!-- Bootstrap 4 JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+
+<!-- Validate -->
 <script src="~/Scripts/jquery.validate.js"></script>
-<script src="~/Scripts/jquery-3.6.0.min.js"></script>
+
+<!-- SignalR -->
+<script src="~/Scripts/jquery.signalR-2.4.3.min.js"></script>
 <script src="/signalr/hubs"></script>
+
+<!-- CSS riêng -->
 <link href="~/css/quanlyTKB.css" rel="stylesheet" />
 <style>
     /*hover chitiet tkb*/
@@ -47,17 +60,148 @@
             border-top: 2px solid #ff9800;
             border-bottom: 2px solid #ff9800;
         }
+
+    /* Nút Xem toàn trường */
+    .btn-view-all {
+        height: 38px;
+        width: 30px; /* ✔ bằng dropdown */
+        background: #f5f7fa; /* ✔ xám rất nhạt */
+        color: #2e3a59;
+        font-weight: 600;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        transition: all 0.25s ease;
+        margin-top: 23px;
+    }
+
+        /* Hover */
+        .btn-view-all:hover {
+            background: #e3f2fd; /* xanh nhạt */
+            border-color: #1e88e5;
+            color: #1e88e5;
+        }
+
+        /* Khi đang xem toàn trường (tuỳ chọn) */
+        .btn-view-all.active {
+            background: #1e88e5;
+            color: #fff;
+            border-color: #1e88e5;
+        }
+
+    /*dau cong them TKB*/
+    .tkb-add {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 22px;
+        height: 22px;
+        background: #1e88e5;
+        color: white;
+        border-radius: 50%;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: 0.2s;
+        z-index: 10;
+    }
+
+    .tkb-add {
+        z-index: 9999;
+        pointer-events: auto;
+    }
+
+    .tkb-add {
+        opacity: 0;
+    }
+
+    td:hover .tkb-add {
+        opacity: 1;
+    }
+    /* ===== MODAL ADD TKB ===== */
+    #modalAddTKB .modal-content {
+        border-radius: 12px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    #modalAddTKB .modal-header {
+        background: linear-gradient(135deg, #1e88e5, #42a5f5);
+        color: white;
+        border-bottom: none;
+    }
+
+    #modalAddTKB .modal-title {
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    #modalAddTKB .modal-body {
+        padding: 20px;
+    }
+
+    #modalAddTKB label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    #modalAddTKB select {
+        border-radius: 8px;
+        height: 38px;
+    }
+
+    #modalAddTKB .modal-dialog {
+        margin-top: 110px; /* chỉnh 80–150px tùy mắt */
+    }
+
+    #modalAddTKB .modal-footer {
+        border-top: none;
+        padding: 15px 20px;
+    }
+
+    /* Nút */
+    #modalAddTKB .btn-success {
+        border-radius: 8px;
+        padding: 6px 18px;
+        font-weight: 600;
+    }
+
+    #modalAddTKB .btn-secondary {
+        border-radius: 8px;
+    }
+
+    /* Info */
+    #addInfo {
+        font-size: 16px;
+        color: #1e88e5;
+        margin-bottom: 15px;
+    }
+
+    .modal.fade .modal-dialog {
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+    }
+
+    .modal.show .modal-dialog {
+        transform: translateY(0);
+    }
+
+    /*huy*/
+
 </style>
 
 <h2>Quản lý thời khóa biểu</h2>
 
 @if (TempData["Error"] != null)
 {
-<div class="alert alert-danger">@TempData["Error"]</div>
+    <div class="alert alert-danger">@TempData["Error"]</div>
 }
 @if (TempData["Success"] != null)
 {
-<div class="alert alert-success">@TempData["Success"]</div>
+    <div class="alert alert-success">@TempData["Success"]</div>
 }
 
 @using (Html.BeginForm(
@@ -66,33 +210,33 @@
     FormMethod.Post,
     new { onsubmit = "return onSubmitTKB();" }))
 {
-@Html.AntiForgeryToken()
+    @Html.AntiForgeryToken()
 
-<div class="row">
-    <div class="col-md-4">
-        <label>Năm học</label>
-        @Html.DropDownListFor(
-            m => m.NamHocID,
-            Model.ListNamHoc,
-            "-- Chọn năm học --",
-            new { @class = "form-control", required = "required" })
-    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <label>Năm học</label>
+            @Html.DropDownListFor(
+                m => m.NamHocID,
+                Model.ListNamHoc,
+                "-- Chọn năm học --",
+                new { @class = "form-control", required = "required" })
+        </div>
 
-    <div class="col-md-4">
-        <label>Học kỳ</label>
-        @Html.DropDownListFor(
-            m => m.HocKyID,
-            Model.ListHocKy,
-            "-- Chọn học kỳ --",
-            new { @class = "form-control", required = "required" })
-    </div>
+        <div class="col-md-4">
+            <label>Học kỳ</label>
+            @Html.DropDownListFor(
+                m => m.HocKyID,
+                Model.ListHocKy,
+                "-- Chọn học kỳ --",
+                new { @class = "form-control", required = "required" })
+        </div>
 
-    <div class="col-md-4" style="margin-top:25px;">
-        <button type="submit" id="btnSubmit" class="btn btn-success">
-            🚀 Tạo thời khóa biểu
-        </button>
+        <div class="col-md-4" style="margin-top:25px;">
+            <button type="submit" id="btnSubmit" class="btn btn-success">
+                🚀 Tạo thời khóa biểu
+            </button>
+        </div>
     </div>
-</div>
 }
 
 <!-- AI OVERLAY -->
@@ -103,170 +247,650 @@
         <p id="aiText">Đang khởi tạo...</p>
     </div>
 </div>
+
+@*@if (Model.ThoiKhoaBieus != null && Model.ThoiKhoaBieus.Any())
+    {
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label>🎓 Xem theo lớp</label>
+                @Html.DropDownListFor(
+                    m => m.SelectedLopHocID,
+                    Model.ListLopHoc,
+                    "-- Tất cả lớp --",
+                    new { @class = "form-control", id = "ddlLop" }
+                )
+            </div>
+
+            <div class="col-md-4">
+                <label>👨‍🏫 Xem theo giáo viên</label>
+                @Html.DropDownListFor(
+                    m => m.SelectedGiaoVienID,
+                    Model.ListGiaoVien,
+                    "-- Tất cả giáo viên --",
+                    new { @class = "form-control", id = "ddlGV" }
+                )
+            </div>
+
+            <div class="col-md-4">
+
+                <button type="button"
+                        class="btn btn-view-all w-100"
+                        id="btnXemToanTruong">
+                    🏫 Xem toàn trường
+                </button>
+
+            </div>
+
+        </div>
+
+    }*@
 @if (Model.ThoiKhoaBieus != null && Model.ThoiKhoaBieus.Any())
 {
-<hr />
+    <hr />
 
- <!-- HEADER TUẦN -->
-<div class="alert alert-danger fw-bold">
-    📅 Lịch học Tuần @Model.Tuan
-</div>
-
- <!-- NÚT CA + NÚT NEXT -->
-<div class="d-flex justify-content-between mb-3">
-    <div>
-        <button class="btn btn-primary me-2"
-                onclick="doiCa('Sang')">
-            ☀️ Ca sáng
-        </button>
-
-        <button class="btn btn-warning"
-                onclick="doiCa('Chieu')">
-            🌙 Ca chiều
-        </button>
+    <!-- HEADER TUẦN -->
+    <div class="alert alert-danger fw-bold">
+        📅 Lịch học Tuần @Model.Tuan
     </div>
 
-    <div>
-        <button class="btn btn-secondary"
-                onclick="nextWeek()">
-            Tuần tiếp theo ➡
-        </button>
+    <!-- NÚT CA + NÚT NEXT -->
+    <div class="d-flex justify-content-between mb-3">
+        <div>
+            <button class="btn btn-primary me-2"
+                    onclick="doiCa('Sang')">
+                ☀️ Ca sáng
+            </button>
+
+            <button class="btn btn-warning"
+                    onclick="doiCa('Chieu')">
+                🌙 Ca chiều
+            </button>
+
+        </div>
+
+        <div>
+            <button class="btn btn-secondary"
+                    onclick="nextWeek()">
+                Tuần tiếp theo ➡
+            </button>
+        </div>
     </div>
-</div>
 
- <!-- BẢNG TKB -->
-<table class="table table-bordered text-center align-middle">
-    <thead>
-        <tr>
-            <th rowspan="2"></th>
+    <div class="tkb-container">
+        <!-- BẢNG TKB -->
+
+        <table class="table table-bordered text-center align-middle">
+            <thead>
+                <tr>
+                    <th rowspan="2"></th>
 
 
-            @for (int thu = 2; thu <= 8; thu++)
-                {
-            <th>Thứ @(thu == 8 ? "CN" : thu.ToString())</th>
-                }
-        </tr>
-        <tr>
-            @for (int i = 0; i < 7; i++)
-                {
-            <th>dd/MM/yyyy</th>
-                }
-        </tr>
-    </thead>
-
-    <tbody>
-        @for (int tiet = 1; tiet <= 10; tiet++)
-            {
-
-                if (tiet == 6)
-                {
-        <tr class="row-ca-chuyen">
-            <td colspan="8">
-                🌙 Buổi chiều (Tiết 6 → 10)
-            </td>
-        </tr>
-                }
-
-        <tr>
-            <td><b>Tiết @tiet</b></td>
-
-            @for (int thu = 2; thu <= 8; thu++)
+                    @for (int thu = 2; thu <= 8; thu++)
                     {
-                        var list = Model.ThoiKhoaBieus
-                            .Where(x => x.Thu == thu && x.TietHoc == tiet)
-                            .ToList();
+                        <th>Thứ @(thu == 8 ? "CN" : thu.ToString())</th>
+                    }
+                </tr>
+                <tr>
+                    @for (int i = 0; i < 7; i++)
+                    {
+                        <th>dd/MM/yyyy</th>
+                    }
+                </tr>
+            </thead>
 
-            <td class="text-start">
-                @{
-                                bool laSang = Model.CaHoc == "Sang";
+            <tbody>
+                @for (int tiet = 1; tiet <= 10; tiet++)
+                {
 
-                                bool isChaoCo =
-                                    thu == 2 &&
-                                    ((laSang && tiet == 1) || (!laSang && tiet == 10));
+                    if (tiet == 6)
+                    {
+                        <tr class="row-ca-chuyen">
+                            <td colspan="8">
+                                🌙 Buổi chiều (Tiết 6 → 10)
+                            </td>
+                        </tr>
+                    }
 
-                                bool isSinhHoat =
-                                    thu == 7 &&
-                                    ((laSang && tiet == 5) || (!laSang && tiet == 10));
+                    <tr>
+                        <td><b>Tiết @tiet</b></td>
+
+                        @for (int thu = 2; thu <= 8; thu++)
+                        {
+                            //var list = Model.ThoiKhoaBieus
+                            //    .Where(x => x.Thu == thu && x.TietHoc == tiet)
+                            //    .ToList();
+                            //var list = Model.ThoiKhoaBieus
+                            //    .Where(x => x.Thu == thu && x.TietHoc == tiet)
+                            //.Where(x =>
+                            //    (!Model.SelectedLopHocID.HasValue || x.LopHocID == Model.SelectedLopHocID) &&
+                            //    (!Model.SelectedGiaoVienID.HasValue || x.GiaoVienID == Model.SelectedGiaoVienID)
+                            //    ).ToList();
+                            var list = Model.ThoiKhoaBieus
+                                    .Where(x => x.Thu == thu && x.TietHoc == tiet)
+                                    .ToList();
+
+                            <td class="text-start position-relative">
+                                <!--Dau cong them tiet-->
+                                <div class="tkb-add btn-add-tkb"
+                                     data-thu="@thu"
+                                     data-tiet="@tiet"
+                                     data-tuan="@Model.Tuan">
+                                    <i class="fa fa-plus"></i>
+                                </div>
+
+                                @{
+                                    bool laSang = Model.CaHoc == "Sang";
+
+                                    bool isChaoCo =
+                                        thu == 2 &&
+                                        ((laSang && tiet == 1) || (!laSang && tiet == 10));
+
+                                    bool isSinhHoat =
+                                        thu == 7 &&
+                                        ((laSang && tiet == 5) || (!laSang && tiet == 10));
+                                }
+
+
+                                @if (isChaoCo || isSinhHoat)
+                                {
+                                    <div class="tkb-item">
+
+                                        @if (isChaoCo)
+                                        {
+                                            <div>⭐ Chào cờ</div>
+                                        }
+                                        @if (isSinhHoat)
+                                        {
+                                            <div>⭐ Sinh hoạt lớp</div>
+                                        }
+                                    </div>
+                                }
+
+                                else
+                                {
+                                    foreach (var item in list)
+                                    {
+                                        <div class="tkb-item tkb-click"
+                                             data-id="@item.TKBID"
+                                             data-lopid="@item.LopHocID"
+                                             data-lopten="@item.LopHoc.TenLop"
+                                             data-monid="@item.MonHocID"
+                                             data-monten="@item.MonHoc.TenMonHoc"
+                                             data-gvid="@item.GiaoVienID"
+                                             data-gvten="@item.GiaoVien.NguoiDung.HoTen"
+                                             data-phongid="@item.PhongHocID"
+                                             data-phongten="@item.PhongHoc.TenPhong"
+                                             data-thu="@item.Thu"
+                                             data-tiet="@item.TietHoc"
+                                             data-tuan="@item.Tuan">
+
+
+
+                                            <b>@item.PhongHoc.TenPhong</b><br />
+                                            Lớp: <b>@item.LopHoc.TenLop</b><br />
+                                            Môn học: @item.MonHoc.TenMonHoc<br />
+                                            GV: @item.GiaoVien.NguoiDung.HoTen
+                                        </div>
+
+                                    }
+                                }
+                            </td>
+                        }
+                    </tr>
                 }
 
 
-                @if (isChaoCo || isSinhHoat)
-                            {
-                <div class="tkb-item">
-
-                    @if (isChaoCo)
-                                    {
-                    <div>⭐ Chào cờ</div>
-                                    }
-                    @if (isSinhHoat)
-                                    {
-                    <div>⭐ Sinh hoạt lớp</div>
-                                    }
-                </div>
-                            }
-
-                            else
-                            {
-                                foreach (var item in list)
-                                {
-
-
-                <div class="tkb-item">
-
-                    <b>@item.PhongHoc.TenPhong</b><br />
-                    Lớp: <b>@item.LopHoc.TenLop</b><br />
-                    Môn học: @item.MonHoc.TenMonHoc<br />
-                    GV: @item.GiaoVien.NguoiDung.HoTen
-                </div>
-
-                                }
-                            }
-            </td>
-                    }
-        </tr>
-            }
-
-
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </div>
 }
+
+
+<div class="modal fade" id="modalEditTKB" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">✏Chỉnh sửa tiết học</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="editTKBId" />
+
+                <p class="text-muted" id="tkbInfo" style="font-weight:bold; font-size:20px; display:flex;justify-content:center;"></p>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label>Lớp</label>
+                        <select id="editLop" class="form-control"></select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Môn học</label>
+                        <select id="editMon" class="form-control"></select>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label>Giáo viên</label>
+                        <select id="editGV" class="form-control"></select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Phòng học</label>
+                        <select id="editPhong" class="form-control"></select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="btnDeleteTKB">🗑️ Xóa</button>
+                <button type="button" class="btn btn-primary" id="btnSaveTKB">💾 Cập nhật</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">❌ Hủy</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--them tiet hoc-->
+<div class="modal fade" id="modalAddTKB">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm tiết học</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="addThu" />
+                <input type="hidden" id="addTiet" />
+                <input type="hidden" id="addTuan" />
+
+                <p id="addInfo" class="font-weight-bold text-center" style="font-size: 25px; font-weight:bold;"></p>
+
+                <div class="form-group">
+                    <label>🏫 Lớp</label>
+                    <select id="addLop" class="form-control">
+                        <option value="">-- Vui lòng chọn lớp --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>📚 Môn học</label>
+                    <select id="addMon" class="form-control">
+                        <option value="">-- Vui lòng chọn môn học --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>👨‍🏫 Giáo viên</label>
+                    <select id="addGV" class="form-control">
+                        <option value="">-- Vui lòng chọn giáo viên --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>🚪 Phòng học</label>
+                    <select id="addPhong" class="form-control">
+                        <option value="">-- Vui lòng chọn phòng học--</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-success" id="btnAddTKB">Thêm</button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <script>
-    // ===== SIGNALR =====
-    var hub = $.connection.gaProgressHub;
 
-    hub.client.updateProgress = function (message) {
-        document.getElementById("aiText").innerText = message;
-    };
+    // ===== SIGNALR (SAFE) =====
+    if (typeof $.connection !== "undefined") {
+        try {
+            var hub = $.connection.gaProgressHub;
 
-    $.connection.hub.start();
+            hub.client.updateProgress = function (message) {
+                $("#aiText").text(message);
+            };
+
+            $.connection.hub.start();
+
+        } catch (e) {
+            console.warn("SignalR error:", e);
+        }
+    }
 
     // ===== SUBMIT =====
     function onSubmitTKB() {
-        document.getElementById("btnSubmit").disabled = true;
-        document.getElementById("aiOverlay").style.display = "flex";
-        document.getElementById("aiText").innerText = "AI đang khởi tạo...";
-        return true; // SUBMIT THẬT
+        $("#btnSubmit").prop("disabled", true);
+        $("#aiOverlay").css("display", "flex");
+        $("#aiText").text("AI đang khởi tạo...");
+        return true;
+    }
+
+    // ===== CHUYỂN CA =====
+    function doiCa(ca) {
+        window.location.href =
+            '@Url.Action("Index")'
+            + '?NamHocID=@Model.NamHocID'
+            + '&HocKyID=@Model.HocKyID'
+            + '&tuan=@Model.Tuan'
+            + '&caHoc=' + ca;
+    }
+
+    // ===== TUẦN TIẾP =====
+    function nextWeek() {
+        window.location.href =
+            '@Url.Action("Index")'
+            + '?NamHocID=@Model.NamHocID'
+            + '&HocKyID=@Model.HocKyID'
+            + '&tuan=' + (@Model.Tuan + 1)
+            + '&caHoc=@Model.CaHoc';
+    }
+
+    // ===== CLICK Ô TKB =====
+       $(document).ready(function () {
+
+            $(document).on('click', '.tkb-click', function () {
+
+                console.log("CLICK OK");
+
+                let t = $(this);
+
+                $('#editTKBId').val(t.data('id'));
+
+                $('#tkbInfo').text(
+                    'Tuần ' + t.data('tuan') +
+                    ' - Thứ ' + t.data('thu') +
+                    ' - Tiết ' + t.data('tiet')
+                );
+
+                $.get('@Url.Action("GetEditData")', {
+                    namHocId: @Model.NamHocID,
+                    hocKyId: @Model.HocKyID,
+                    lopHocId: t.data('lopid'),
+                     monHocId: t.data('monid')
+                }, function (res) {
+
+                    fillSelect($('#editLop'), res.lops, t.data('lopid'));
+                    fillSelect($('#editMon'), res.mons, t.data('monid'));
+                    fillSelect($('#editGV'), res.gvs, t.data('gvid'));
+                    fillSelect($('#editPhong'), res.phongs, t.data('phongid'));
+
+                    // ✅ Bootstrap 4
+                    $('#modalEditTKB').modal('show');
+                });
+            });
+
+       });
+
+    $('#editMon').change(function () {
+
+        let monId = $(this).val();
+
+        $.get('@Url.Action("GetEditData")', {
+            namHocId: @Model.NamHocID,
+            hocKyId: @Model.HocKyID,
+            lopHocId: $('#editLop').val(),
+            monHocId: monId
+        }, function (res) {
+
+            // chỉ update giáo viên thôi
+            fillSelect($('#editGV'), res.gvs, null);
+        });
+    });
+
+    // ===== SAVE =====
+       $(document).on('click', '#btnSaveTKB', function () {
+
+        console.log("CLICK SAVE");
+
+        let data = {
+            TKBID: $('#editTKBId').val(),
+            LopHocId: $('#editLop').val(),
+            GiaoVienId: $('#editGV').val(),
+            MonHocId: $('#editMon').val(),
+            PhongHocID: $('#editPhong').val()
+        };
+
+        $.post('@Url.Action("UpdateTKB")', data, function (res) {
+
+            console.log(res);
+
+            if (!res.oke) {
+                alert(res.msg);
+                return;
+            }
+
+            alert("Cập nhật thành công");
+
+            $('#modalEditTKB').modal('hide'); // ✅ đúng bootstrap 4
+
+            reloadTKB();
+        });
+    });
+
+    // ===== DELETE =====
+    $(document).on('click', '#btnDeleteTKB', function () {
+        let id = $('#editTKBId').val();
+
+        if (!id) {
+            alert("Không có tiết để xóa");
+            return
+        }
+
+        if (!confirm("Bạn Chắc chắn muốn xóa tiết này không.")) return;
+
+        $.post('@Url.Action("DeleteTKB")', { id: id }, function (res) {
+            console.log(res);
+
+            if (!res.oke) {
+                alert(res.msg);
+                return;
+            }
+
+            alert("Xóa thành công");
+
+            $('#modalEditTKB').modal('hide');
+
+            reloadTKB();
+        });
+    })
+
+    // ===== RELOAD TKB =====
+    function reloadTKB() {
+        $.get('@Url.Action("Index")', {
+            NamHocID: @Model.NamHocID,
+            HocKyID: @Model.HocKyID,
+            tuan: @Model.Tuan,
+            caHoc: '@Model.CaHoc'
+        }, function (html) {
+
+            $('.tkb-container').html(
+                $(html).find('.tkb-container').html()
+            );
+        });
+    }
+
+    // ===== FILL SELECT =====
+    function fillSelect($select, list, selectedId) {
+
+        $select.empty();
+
+        list.forEach(item => {
+            $select.append(
+                $('<option>', {
+                    value: item.id,
+                    text: item.text,
+                    selected: item.id == selectedId
+                })
+            );
+        });
+    }
+
+    function fillSelectAdd($select, list, placeholder) {
+
+        $select.empty();
+
+        // ✅ option mặc định
+        $select.append(
+            $('<option>', {
+                value: '',
+                text: placeholder
+            })
+        );
+
+        list.forEach(item => {
+            $select.append(
+                $('<option>', {
+                    value: item.id,
+                    text: item.text
+                })
+            );
+        });
     }
 
 
-    ////
+    // ===== CLICK NÚT + (MỞ MODAL THÊM) =====
+    @*$(document).on('click', '.btn-add-tkb', function (e) {
 
-function doiCa(ca) {
-    window.location.href =
-        '@Url.Action("Index")'
-        + '?NamHocID=@Model.NamHocID'
-        + '&HocKyID=@Model.HocKyID'
-        + '&tuan=@Model.Tuan'
-        + '&caHoc=' + ca;
-}
+        e.stopPropagation();
 
-function nextWeek() {
-    window.location.href =
-        '@Url.Action("Index")'
-        + '?NamHocID=@Model.NamHocID'
-        + '&HocKyID=@Model.HocKyID'
-        + '&tuan=' + (@Model.Tuan + 1)
-        + '&caHoc=@Model.CaHoc';
-}
+        let thu = $(this).data('thu');
+        let tiet = $(this).data('tiet');
+        let tuan = $(this).data('tuan');
 
+        $('#addThu').val(thu);
+        $('#addTiet').val(tiet);
+        $('#addTuan').val(tuan);
+
+        $('#addInfo').text(
+            'Tuần ' + tuan + ' - Thứ ' + thu + ' - Tiết ' + tiet
+        );
+
+        $.get('@Url.Action("GetEditData")', {
+            namHocId: @Model.NamHocID,
+            hocKyId: @Model.HocKyID
+        }, function (res) {
+
+            fillSelect($('#addLop'), res.lops, null);
+            fillSelect($('#addMon'), res.mons, null);
+            fillSelect($('#addGV'), res.gvs, null);
+            fillSelect($('#addPhong'), res.phongs, null);
+
+            $('#modalAddTKB').modal('show');
+        });
+    });*@
+        $(document).on('click', '.btn-add-tkb', function (e) {
+
+        e.stopPropagation();
+
+        console.log("CLICK ADD OK");
+
+        let thu = $(this).data('thu');
+        let tiet = $(this).data('tiet');
+        let tuan = $(this).data('tuan');
+
+        $('#addThu').val(thu);
+        $('#addTiet').val(tiet);
+        $('#addTuan').val(tuan);
+
+        $('#addInfo').text(
+            'Tuần ' + tuan + ' - Thứ ' + thu + ' - Tiết ' + tiet
+        );
+
+        // 👉 mở modal NGAY
+        $('#modalAddTKB').modal('show');
+
+        // 👉 load dữ liệu sau
+        $.get('@Url.Action("addGetData")', {
+            namHocId: @Model.NamHocID,
+            hocKyId: @Model.HocKyID,
+            thu: thu,
+            tuan: tuan,
+            tiet: tiet
+        }, function (res) {
+            fillSelectAdd($('#addLop'), res.lopHoc, '-- Vui lòng chọn lớp --');
+            fillSelectAdd($('#addMon'), res.monHoc, '-- Vui lòng chọn môn học --');
+            fillSelectAdd($('#addGV'), res.giaoVien, '-- Vui lòng chọn giáo viên --');
+            fillSelectAdd($('#addPhong'), res.phongHoc, '-- Vui lòng chọn phòng học --');
+
+
+        });
+
+        });
+
+    function resetAddModal() {
+        $('#addLop').empty();
+        $('#addMon').empty();
+        $('#addGV').empty();
+        $('#addPhong').empty();
+    }
+
+    $(document).on('change', '#addMon', function () {
+
+        let monId = $(this).val();
+
+        $.get('@Url.Action("GetGVByMon")', {
+            monHocId: monId
+        }, function (res) {
+
+            fillSelect($('#addGV'), res, null);
+
+        });
+
+    });
+
+
+
+// ===== CLICK THÊM =====
+    $(document).on('click', '#btnAddTKB', function () {
+
+        let data = {
+
+Thu: $('#addThu').val(),
+            TietHoc: $('#addTiet').val(),
+            Tuan: $('#addTuan').val(),
+
+            LopHocId: $('#addLop').val(),
+            MonHocId: $('#addMon').val(),
+            GiaoVienId: $('#addGV').val(),
+            PhongHocID: $('#addPhong').val(),
+
+            NamHocID: @Model.NamHocID,
+            HocKyID: @Model.HocKyID
+
+        };
+        console.log(data);
+        $.post('@Url.Action("addTKB")', data, function (res) {
+
+            if (!res.oke) {
+                alert(res.msg);
+                return;
+            }
+
+            alert("Thêm thành công");
+
+            $('#modalAddTKB').modal('hide');
+
+            reloadTKB();
+        });
+
+    });
+
+    $('#modalAddTKB').on('hidden.bs.modal', function () {
+        $('#addLop, #addMon, #addGV, #addPhong').val('');
+    });
+    $('#modalAddTKB').on('hidden.bs.modal', function () {
+        resetAddModal();
+    });
 </script>

@@ -17,10 +17,16 @@ namespace demomvc.Models
         public List<SelectListItem> ListHocKy { get; set; }
         public List<SelectListItem> ListNamHoc { get; set; }
 
+        public int? SelectedLopHocID { get; set; }
+        public int? SelectedGiaoVienID { get; set; }
+
+        public List<SelectListItem> ListLopHoc { get; set; }
+        public List<SelectListItem> ListGiaoVien { get; set; }
+
 
         public List<LopHocViewModel> ListLop { get; set; }
         public List<ThoiKhoaBieu> ThoiKhoaBieus { get; set; }
-
+        public int ThoiKhoaBieuID { get; set; }
         public string CaHoc { get; set; }
         public int Tuan { get; set; }
     }
@@ -34,5 +40,6 @@ namespace demomvc.Models
         public string TenKhoi { get; set; }
         public string CaHoc { get; set; }
         public string TrangThaiNamHoc { get; set; }
+
     }
 }
