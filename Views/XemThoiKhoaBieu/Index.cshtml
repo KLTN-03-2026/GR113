@@ -10,7 +10,7 @@
 <script src="/signalr/hubs"></script>
 <link href="~/css/quanlyTKB.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-<h2>Thời khóa biểu</h2>
+
 <style>
     /*hover chitiet tkb*/
     .tkb-item {
@@ -81,6 +81,12 @@
     <div class="d-flex justify-content-between mb-3">
 
         <div>
+
+            <button class="btn btn-secondary me-2"
+                    onclick="prevWeek()">
+                ⬅ 
+            </button>
+
             <button class="btn btn-secondary"
                     onclick="nextWeek()">
                 Tuần tiếp theo ➡
@@ -100,10 +106,38 @@
                     <th>Thứ @(thu == 8 ? "CN" : thu.ToString())</th>
                 }
             </tr>
+            @*<tr>
+            @for (int i = 0; i < 7; i++)
+            {
+                <th>dd/MM/yyyy</th>
+            }
+        </tr>*@
+
             <tr>
-                @for (int i = 0; i < 7; i++)
-                {
-                    <th>dd/MM/yyyy</th>
+                @{
+                    if (Model.NgayBatDauHoc.HasValue)
+                    {
+                        DateTime start = Model.NgayBatDauHoc.Value;
+
+                        // ✅ TÍNH THỨ 2 THEO ISO (QUỐC TẾ)
+                        int diff = (7 + (start.DayOfWeek - DayOfWeek.Monday)) % 7;
+                        DateTime mondayOfWeek = start.AddDays(-diff);
+
+                        // ✅ CỘNG TUẦN (nếu xem tuần > 1)
+                        mondayOfWeek = mondayOfWeek.AddDays((Model.Tuan - 1) * 7);
+
+                        for (int i = 0; i < 7; i++)
+                        {
+                            <th>@mondayOfWeek.AddDays(i).ToString("dd/MM/yyyy")</th>
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 7; i++)
+                        {
+                            <th>--/--/----</th>
+                        }
+                    }
                 }
             </tr>
         </thead>
@@ -201,4 +235,22 @@ function nextWeek() {
         '@Url.Action("Index")'
         + '&tuan=' + (@Model.Tuan + 1)
     }
+
+     // ===== TUẦN TIẾP =====
+ function nextWeek() {
+     window.location.href =
+         '@Url.Action("Index")'
+         + '?NamHocID=@Model.NamHocID'
+         + '&HocKyID=@Model.HocKyID'
+         + '&tuan=' + (@Model.Tuan + 1)
+         + '&caHoc=@Model.CaHoc';
+    }
+    function prevWeek() {
+     window.location.href =
+         '@Url.Action("Index")'
+         + '?NamHocID=@Model.NamHocID'
+         + '&HocKyID=@Model.HocKyID'
+         + '&tuan=' + (@Model.Tuan - 1)
+         + '&caHoc=@Model.CaHoc';
+ }
 </script>

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="QuanLyTruongHocModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="QuanLyTruongHocModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="BoMon">
           <Key>
             <PropertyRef Name="BoMonID" />
@@ -55,6 +55,7 @@
           <Property Name="TenHocKy" Type="nvarchar" MaxLength="20" />
           <Property Name="NamHocID" Type="int" Nullable="false" />
           <Property Name="SoTuanThucHoc" Type="int" Nullable="false" />
+          <Property Name="NgayBatDauHoc" Type="date" />
         </EntityType>
         <EntityType Name="HocSinh">
           <Key>
@@ -840,8 +841,7 @@
             <End Role="ThongBao" EntitySet="ThongBao" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="QuanLyTruongHocModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -912,6 +912,7 @@
           <NavigationProperty Name="KetQuaHocTap" Relationship="Self.FK_KQHT_HocKy" FromRole="HocKy" ToRole="KetQuaHocTap" />
           <NavigationProperty Name="PhanCongGiangDay" Relationship="Self.FK_PCGD_HocKy" FromRole="HocKy" ToRole="PhanCongGiangDay" />
           <NavigationProperty Name="ThoiKhoaBieu" Relationship="Self.FK_TKB_HocKy" FromRole="HocKy" ToRole="ThoiKhoaBieu" />
+          <Property Name="NgayBatDauHoc" Type="DateTime" Precision="0" />
         </EntityType>
         <EntityType Name="HocSinh">
           <Key>
@@ -1805,6 +1806,7 @@
           <EntitySetMapping Name="HocKy">
             <EntityTypeMapping TypeName="QuanLyTruongHocModel.HocKy">
               <MappingFragment StoreEntitySet="HocKy">
+                <ScalarProperty Name="NgayBatDauHoc" ColumnName="NgayBatDauHoc" />
                 <ScalarProperty Name="HocKyID" ColumnName="HocKyID" />
                 <ScalarProperty Name="TenHocKy" ColumnName="TenHocKy" />
                 <ScalarProperty Name="NamHocID" ColumnName="NamHocID" />

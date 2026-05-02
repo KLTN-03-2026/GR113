@@ -65,13 +65,24 @@ namespace demomvc.Controllers
                     hocKyId = last.HocKyID;
                 }
             }
+            // new
+            DateTime? ngayBatDauHoc = null;
 
+            if (namHocId.HasValue && hocKyId.HasValue)
+            {
+                ngayBatDauHoc = db.HocKy
+                    .Where(h => h.HocKyID == hocKyId && h.NamHocID == namHocId)
+                    .Select(h => h.NgayBatDauHoc)
+                    .FirstOrDefault();
+            }
             // ✅ CHỈ TẠO 1 MODEL
             var model = new TimLopViewModel
             {
                 NamHocID = namHocId ?? 0,
                 HocKyID = hocKyId ?? 0,
                 CaHoc = caHoc,
+                //new
+                NgayBatDauHoc=ngayBatDauHoc,
 
                 ListNamHoc = db.NamHoc
                     .AsEnumerable()
@@ -267,6 +278,33 @@ namespace demomvc.Controllers
             }
 
             db.SaveChanges();
+
+            //chuyenr tuần 1 chuaane => các tuần còn lại của kh đó
+            var tkbTuan1 = db.ThoiKhoaBieu.Where(x =>
+            x.NamHocID == NamHocID &&
+            x.HocKyID == HocKyID &&
+            x.Tuan == 1).ToList();
+
+            for (int tuan=2; tuan<=soTuanHoc; tuan++)
+            {
+                foreach (var t in tkbTuan1)
+                {
+                    db.ThoiKhoaBieu.Add(new ThoiKhoaBieu
+                    {
+                        NamHocID=t.NamHocID,
+                        HocKyID=t.HocKyID,
+                        LopHocID=t.LopHocID,
+                        MonHocID=t.MonHocID,
+                        GiaoVienID=t.GiaoVienID,
+                        PhongHocID=t.PhongHocID,
+                        Thu=t.Thu,
+                        TietHoc=t.TietHoc,
+                        Tuan=tuan
+
+                    });
+                }
+            }
+
             db.SaveChanges();
 
             TempData["Success"] = "✅ Tạo thời khóa biểu thành công!";
@@ -627,7 +665,29 @@ namespace demomvc.Controllers
             return Json(new { oke = true, msg = "thêm tiết thành công" });
         }
 
+        [HttpPost]
+        public JsonResult SetNgayBatDauHoc(int hocKyId, int namHocId, DateTime ngayBatDauHoc)
+        {
 
+            var hocKy = db.HocKy
+                    .FirstOrDefault(h =>
+                        h.HocKyID == hocKyId &&
+                        h.NamHocID == namHocId
+                    );
+            if (hocKy == null)
+            {
+                return Json(new
+                {
+                    oke = false,
+                    msg = "Không thấy học kì , năm học"
+                });
+            }
+            hocKy.NgayBatDauHoc = ngayBatDauHoc;
+            db.SaveChanges();
+
+            // update HocKy.NgayBatDauHoc
+            return Json(new { oke = true, msg = "Đã thiết lập" });
+        }
 
     }
 }

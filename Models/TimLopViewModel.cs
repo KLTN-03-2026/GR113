@@ -10,6 +10,7 @@ namespace demomvc.Models
 {
     public class TimLopViewModel
     {
+        public DateTime? NgayBatDauHoc { get; set; }
         public int? HocKyID { get; set; }
 
         public int? NamHocID { get; set; }

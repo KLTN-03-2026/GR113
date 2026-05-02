@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Office2010.PowerPoint;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -7,6 +8,7 @@ namespace demomvc.Models
 {
 	public class XemTKB
 	{
+		
 		public int NamHocID{ get; set; }
 		public int HocKyID { get; set; }
 		public int HocSinhID { get; set; }
@@ -19,12 +21,14 @@ namespace demomvc.Models
         public int Thu { get; set; }
         public int TietHoc { get; set; }
 		public string CaHoc { get; set; }
-
+		
 		public bool LaHocSinh { get; set; }
 
 
 		public int TKBID { get; set; }
 		public int PhongHocID { get; set; }
+
+		public DateTime? NgayBatDauHoc { get; set; }
 
     }
 }

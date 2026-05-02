@@ -26,6 +26,7 @@ namespace demomvc.Models
         public string TenHocKy { get; set; }
         public int NamHocID { get; set; }
         public int SoTuanThucHoc { get; set; }
+        public Nullable<System.DateTime> NgayBatDauHoc { get; set; }
     
         public virtual ICollection<Diem> Diem { get; set; }
         public virtual NamHoc NamHoc { get; set; }
