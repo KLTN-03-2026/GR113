@@ -57,6 +57,12 @@
     <Reference Include="EntityFramework, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="EPPlus, Version=8.0.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>packages\EPPlus.8.0.1\lib\net462\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.Interfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
+      <HintPath>packages\EPPlus.Interfaces.8.0.0\lib\net462\EPPlus.Interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="itext.barcodes, Version=9.4.0.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>packages\itext.9.4.0\lib\net461\itext.barcodes.dll</HintPath>
     </Reference>
@@ -121,14 +127,21 @@
     <Reference Include="Microsoft.Extensions.Primitives, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Extensions.Primitives.5.0.0\lib\net461\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.IO.RecyclableMemoryStream.3.0.1\lib\netstandard2.0\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OpenXmlPowerTools, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\OpenXmlPowerTools.4.5.3.2\lib\net45\OpenXmlPowerTools.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -137,8 +150,8 @@
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\System.Management.Automation.dll.10.0.10586.0\lib\net40\System.Management.Automation.dll</HintPath>
     </Reference>
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -152,8 +165,8 @@
     <Reference Include="System.Security.AccessControl, Version=6.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Security.AccessControl.6.0.1\lib\net461\System.Security.AccessControl.dll</HintPath>
     </Reference>
-    <Reference Include="System.Security.Cryptography.Xml, Version=6.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.Security.Cryptography.Xml.6.0.2\lib\net461\System.Security.Cryptography.Xml.dll</HintPath>
+    <Reference Include="System.Security.Cryptography.Xml, Version=8.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Security.Cryptography.Xml.8.0.2\lib\net462\System.Security.Cryptography.Xml.dll</HintPath>
     </Reference>
     <Reference Include="System.Security.Principal.Windows, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Security.Principal.Windows.5.0.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
@@ -268,15 +281,15 @@
     <Content Include="img\sumenh.png" />
     <Content Include="img\trangchugiua.jpg" />
     <Content Include="img\youtobeicon.png" />
-    <Content Include="Models\QuanLyTruongHoc.Context.tt">
+    <Content Include="Models\QuanLyTruongHocModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>QuanLyTruongHoc.edmx</DependentUpon>
-      <LastGenOutput>QuanLyTruongHoc.Context.cs</LastGenOutput>
+      <DependentUpon>QuanLyTruongHocModel.edmx</DependentUpon>
+      <LastGenOutput>QuanLyTruongHocModel.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\QuanLyTruongHoc.tt">
+    <Content Include="Models\QuanLyTruongHocModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>QuanLyTruongHoc.edmx</DependentUpon>
-      <LastGenOutput>QuanLyTruongHoc.cs</LastGenOutput>
+      <DependentUpon>QuanLyTruongHocModel.edmx</DependentUpon>
+      <LastGenOutput>QuanLyTruongHocModel.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -312,83 +325,101 @@
     </Compile>
     <Compile Include="Models\BangDiemVM.cs" />
     <Compile Include="Models\BoMon.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\CapNhatLopViewModel.cs" />
     <Compile Include="Models\Diem.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GiaoVien.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GiaoVienModel.cs" />
     <Compile Include="Models\GiaoVienVM.cs" />
     <Compile Include="Models\GuiBangDiemViewModel.cs" />
+    <Compile Include="Models\HocBu.cs">
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\HocKy.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\HocSinh.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\HocSinh_PhuHuynh.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\KetQuaHocTap.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\KhoiLop.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\LopHoc.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\PhanCongChuNhiemVM.cs" />
-    <Compile Include="Models\PhongHocViewModel.cs" />
-    <Compile Include="Models\ResetModel.cs" />
-    <Compile Include="Models\ThemLopViewModel.cs" />
     <Compile Include="Models\MonHoc.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MonHocKhoi.cs">
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\NamHoc.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\NgayHoc.cs">
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\NguoiDung.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\PhanCongChuNhiemVM.cs" />
+    <Compile Include="Models\PhanCongGiangDay.cs">
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PhongHoc.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\PhongHocViewModel.cs" />
     <Compile Include="Models\PhuHuynh.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\QuanLyTruongHoc.Context.cs">
+    <Compile Include="Models\QuanLyTruongHocModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>QuanLyTruongHoc.Context.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\QuanLyTruongHoc.cs">
+    <Compile Include="Models\QuanLyTruongHocModel.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\QuanLyTruongHoc.Designer.cs">
+    <Compile Include="Models\QuanLyTruongHocModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>QuanLyTruongHoc.edmx</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\ResetModel.cs" />
+    <Compile Include="Models\sysdiagram.cs">
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ThemLopViewModel.cs" />
     <Compile Include="Models\ThoiKhoaBieu.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ThongBao.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ThongBaoDaDoc.cs">
-      <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
+      <DependentUpon>QuanLyTruongHocModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ThongBaoVM.cs" />
     <Compile Include="Models\TimLopViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModel\DSBangDiemVM.cs" />
+    <Compile Include="ViewModel\DanhSachPhanCongVM.cs" />
     <Compile Include="ViewModel\ThongTinHocSinhVM.cs" />
+    <Compile Include="ViewModel\ThongTinLopHocVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -408,12 +439,12 @@
     <Content Include="Content\bootstrap-grid.rtl.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
-    <EntityDeploy Include="Models\QuanLyTruongHoc.edmx">
+    <EntityDeploy Include="Models\QuanLyTruongHocModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>QuanLyTruongHoc.Designer.cs</LastGenOutput>
+      <LastGenOutput>QuanLyTruongHocModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\QuanLyTruongHoc.edmx.diagram">
-      <DependentUpon>QuanLyTruongHoc.edmx</DependentUpon>
+    <Content Include="Models\QuanLyTruongHocModel.edmx.diagram">
+      <DependentUpon>QuanLyTruongHocModel.edmx</DependentUpon>
     </Content>
     <None Include="packages.config" />
     <Content Include="Views\Shared\Tranhchu_LayoutPage1.cshtml" />
@@ -457,6 +488,9 @@
     <Content Include="Views\QuanLyHocSinh\DsHocSinh.cshtml" />
     <Content Include="Views\QuanLyHocSinh\ThemHocSinh.cshtml" />
     <Content Include="Views\QuanLyHocSinh\Edit.cshtml" />
+    <Content Include="Views\QuanLyDiem\DsLop.cshtml" />
+    <Content Include="Views\QuanLyDiem\BangDiem.cshtml" />
+    <Content Include="Views\QuanLyDiem\NhapDiem.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -466,7 +500,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\QuanLyDiem\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

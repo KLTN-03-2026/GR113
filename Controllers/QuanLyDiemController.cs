@@ -1,5 +1,8 @@
 ﻿using demomvc.App_Start;
 using demomvc.Models;
+using demomvc.ViewModel;
+using iText.StyledXmlParser.Node;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +16,372 @@ namespace demomvc.Controllers
     {
         QuanLyTruongHocEntities db = new QuanLyTruongHocEntities();
         // GET: QuanLyDiem
-        public ActionResult Index()
+
+
+        public ActionResult DsLop(int? NamHocID, int? HocKyID)
         {
-           
-            return View();
+            int UserId = (int)Session["UserID"];
+            var nguoiDung = db.NguoiDung.FirstOrDefault(nd => nd.NguoiDungID == UserId);
+            var giaoVien = db.GiaoVien.FirstOrDefault(gv => gv.NguoiDungID == UserId);
+            var monHoc = db.MonHoc.FirstOrDefault(mh => mh.MonHocID == giaoVien.MonHocID);
+            if (!NamHocID.HasValue || !HocKyID.HasValue)
+            {
+                return View(new DanhSachPhanCongVM()
+                {
+                    TenMonHoc = monHoc.TenMonHoc,
+                    TenGiaoVien = nguoiDung.HoTen,
+                    DsNamHoc = db.NamHoc.ToList(),
+                    DsHocKi = db.HocKy.ToList()
+                });
+            }
+
+
+
+            var result = (from pc in db.PhanCongGiangDay
+                          join l in db.LopHoc on pc.LopHocID equals l.LopHocID
+                          join hk in db.HocKy on pc.HocKyID equals hk.HocKyID
+                          where pc.GiaoVienID == giaoVien.GiaoVienID
+                                && pc.HocKyID == HocKyID
+                                && hk.NamHocID == NamHocID
+                          select new ThongTinLopHocVM
+                          {
+                              MaLop = l.LopHocID,
+                              TenKhoi = l.KhoiLop.TenKhoi,
+                              TenLop = l.TenLop,
+                              NamHoc = l.NamHoc.TenNamHoc,
+                              GVCN = l.GiaoVien.NguoiDung.HoTen,
+                          }).ToList();
+
+            var DsLopVM = new DanhSachPhanCongVM()
+            {
+
+                UserId = UserId,
+                TenGiaoVien = nguoiDung.HoTen,
+                DanhSachLop = result,
+                TenMonHoc = monHoc.TenMonHoc,
+                MonHocID = monHoc.MonHocID,
+                GiaoVienID = giaoVien.GiaoVienID,
+
+                DsNamHoc = db.NamHoc.ToList(),
+                DsHocKi = db.HocKy.ToList(),
+                NamHocID = NamHocID,
+                HocKyID = HocKyID
+
+            };
+
+            return View(DsLopVM);
         }
-        
+
+
+        public ActionResult BangDiem(int id, int idGV, int idMH, int idHocKi)
+        {
+            var giaoVien = db.GiaoVien.FirstOrDefault(g => g.GiaoVienID == idGV);
+            var monhoc = db.MonHoc.FirstOrDefault(mh => mh.MonHocID == idMH);
+            ViewBag.GiaoVien = giaoVien.NguoiDung.HoTen;
+            ViewBag.MonHoc = monhoc.TenMonHoc;
+            ViewBag.LopHocID = id;
+            ViewBag.MonHocID = idMH;
+            ViewBag.HocKiID = idHocKi;
+            var bangdiem = (from hs in db.HocSinh
+                            join l in db.LopHoc on hs.LopHocID equals l.LopHocID
+
+                            // dung  lèt join lay du lieu tat ca hoc sinh ke ca chưa co diem 
+                            join d in db.Diem
+                            on new
+                            {
+                                hs.HocSinhID,
+                                MonHocID = idMH,
+                                HocKyID = idHocKi
+                            }
+                            equals new
+                            {
+                                d.HocSinhID,
+                                d.MonHocID,
+                                d.HocKyID
+                            }
+                            into diemGroup
+                            from d in diemGroup.DefaultIfEmpty()   //khong co diem thi de trong 
+
+                            where hs.LopHocID == id
+
+
+                            select new DSBangDiemVM()
+                            {
+                                HocSinhID = hs.HocSinhID,
+                                MonHocID = idMH,
+                                HocKyID = idHocKi,
+                                NamHocID = hs.LopHoc.NamHoc.NamHocID,
+                                TenHocSinh = hs.NguoiDung.HoTen,
+                                GiaoVienID = giaoVien.GiaoVienID,
+                                DiemID = d != null ? d.DiemID : 0,
+                                Diem15p = d != null ? d.Diem15p : null,
+                                DiemMieng = d != null ? d.DiemMieng : null,
+                                DiemGK = d != null ? d.DiemGK : null,
+                                DiemCK = d != null ? d.DiemCK : null,
+
+                            }).ToList();
+
+            return View(bangdiem);
+        }
+
+        [HttpGet]
+
+        public ActionResult NhapDiem(int? id, int? hs, int? mh, int? hk, int? nh, int? gv)
+        {
+            var hocSinh = db.HocSinh.FirstOrDefault(h => h.HocSinhID == hs);
+            var dbDiem = db.Diem.FirstOrDefault(c => c.DiemID == id);
+            var NamHoc = db.HocKy.FirstOrDefault(h => h.NamHocID == nh);
+            if (id.HasValue && id.Value > 0)
+            {
+
+                if (dbDiem == null)
+                {
+                    return HttpNotFound();
+                }
+                var diem = new DSBangDiemVM()
+                {
+                    LopHocID = hocSinh.LopHocID,
+                    MonHocID = mh ?? 0,
+                    DiemID = dbDiem.DiemID,
+                    HocKyID = hk ?? 0,
+                    GiaoVienID = gv ?? 0,
+                    NamHocID = NamHoc.NamHocID,
+                    HocSinhID = dbDiem.HocSinhID,
+                    TenHocSinh = dbDiem.HocSinh.NguoiDung.HoTen,
+                    DiemMieng = dbDiem.DiemMieng,
+                    Diem15p = dbDiem.Diem15p,
+                    DiemGK = dbDiem.DiemGK,
+                    DiemCK = dbDiem.DiemCK,
+
+                };
+                return View(diem);
+            }
+            else
+            {
+                var hsinh = db.HocSinh.FirstOrDefault(h => h.HocSinhID == hs);
+                var vm = new DSBangDiemVM()
+                {
+                    LopHocID = hsinh.LopHocID,
+                    HocSinhID = hsinh.HocSinhID,
+                    TenHocSinh = hsinh.NguoiDung.HoTen,
+                    MonHocID = mh ?? 0,
+                    HocKyID = hk ?? 0,
+                    NamHocID = NamHoc.NamHocID,
+                    GiaoVienID = gv ?? 0,
+
+
+                };
+                return View(vm);
+            }
+
+        }
+
+        [HttpPost]
+        public ActionResult NhapDiem(DSBangDiemVM diem)
+        {
+            string[] fields = { "DiemMieng", "Diem15p", "DiemGK", "DiemCK" };
+            foreach (var field in fields)
+            {
+                if (ModelState[field]?.Errors.Count > 0)
+                {
+                    var value = Request[field];
+                    ModelState[field].Errors.Clear();
+                    if (!string.IsNullOrEmpty(value) && !double.TryParse(value, out _))
+                    {
+                        ModelState.AddModelError(field, "Định dạng bạn đang nhập không đúng");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(field, "Điểm chỉ được nhập từ 0 -> 10");
+                    }
+
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(diem); 
+            }
+
+            var diems = db.Diem.FirstOrDefault(d => d.DiemID == diem.DiemID);
+            if (diems != null)
+            {
+
+                diems.DiemMieng = diem.DiemMieng;
+                diems.Diem15p = diem.Diem15p;
+                diems.DiemGK = diem.DiemGK;
+                diems.DiemCK = diem.DiemCK;
+                diems.DiemTB = diem.DiemTB;
+
+                db.SaveChanges();
+                return RedirectToAction("BangDiem", new { id = diem.LopHocID, idGV = diem.GiaoVienID, idMH = diem.MonHocID, idHocKi = diem.HocKyID });
+            }
+            else
+            {
+
+                var newDiem = new Diem()
+                {
+                    HocSinhID = diem.HocSinhID,
+                    HocKyID = diem.HocKyID,
+                    MonHocID = diem.MonHocID,
+                    NamHocID = diem.NamHocID,
+                    DiemMieng = diem.DiemMieng,
+                    Diem15p = diem.Diem15p,
+                    DiemGK = diem.DiemGK,
+                    DiemCK = diem.DiemCK,
+                    DiemTB = diem.DiemTB,
+
+
+                };
+                db.Diem.Add(newDiem);
+                db.SaveChanges();
+                return RedirectToAction("BangDiem", new { id = diem.LopHocID, idGV = diem.GiaoVienID, idMH = diem.MonHocID, idHocKi = diem.HocKyID });
+            }
+        }
+
+        public ActionResult DownLoadBangDiem(int LopHocID, int MonHocID, int HocKiID)
+        {
+            ExcelPackage.License.SetNonCommercialPersonal("KhanhTai");
+
+            using (var package = new ExcelPackage())
+            {
+                var ws = package.Workbook.Worksheets.Add("NhapDiem");
+
+                ws.Cells[1, 1].Value = " ID học sinh";
+                ws.Cells[1, 2].Value = " Tên Học Sinh";
+                ws.Cells[1, 3].Value = " Điểm Miệng";
+                ws.Cells[1, 4].Value = " Điểm 15 phút";
+                ws.Cells[1, 5].Value = " Điểm giữa kì";
+                ws.Cells[1, 6].Value = " Điểm cuối kì";
+
+                var listHs = db.HocSinh.Where(h => h.LopHocID == LopHocID).ToList();
+
+                int row = 2;
+
+                foreach (var hs in listHs)
+                {
+                    ws.Cells[row, 1].Value = hs.HocSinhID;
+                    ws.Cells[row, 2].Value = hs.NguoiDung.HoTen;
+                    row++;
+                }
+                ws.Cells.AutoFitColumns();
+
+                return File(package.GetAsByteArray(),
+       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+       "NhapDiemTemplate.xlsx");
+            }
+
+
+        }
+
+        public ActionResult ImportDiem(HttpPostedFileBase file, int LopHocID, int MonHocID, int HocKiID)
+        {
+            if (file == null || file.ContentLength == 0)
+            {
+                TempData["Error"] = "Vui lòng chọn một file excel";
+                return RedirectToAction("BangDiem");
+            }
+            ExcelPackage.License.SetNonCommercialPersonal("KhanhTai");
+
+            int insertCount = 0;
+            int updateCount = 0;
+
+            var errors = new List<string>();
+
+            using(var package = new ExcelPackage(file.InputStream))
+            {
+                var ws = package.Workbook.Worksheets[0];
+                int rowCount = ws.Dimension.Rows;
+
+                for(int row=2; row<=rowCount; row++)
+                {
+                    try
+                    {
+                        if (!int.TryParse(ws.Cells[row,1].Text, out int hocSinhID))
+                        {
+                            errors.Add($"Dòng {row}: Học Sinh ID sai định dạng");
+                            continue;
+                        }
+                        var hs = db.HocSinh.Find(hocSinhID);
+                        if (hs == null)
+                        {
+                            errors.Add($"Dòng {row}: Học sinh không tồn tại");
+                            continue;
+                        }
+                        double? diem15p = ParseDiem(ws.Cells[row, 3].Text, row, "15p", errors);
+                        double? diemMieng = ParseDiem(ws.Cells[row, 4].Text, row, "Miệng", errors);
+                        double? diemGK = ParseDiem(ws.Cells[row, 5].Text, row, "GK", errors);
+                        double? diemCK = ParseDiem(ws.Cells[row, 6].Text, row, "CK", errors);
+                        if (diem15p == null || diemMieng == null || diemGK == null || diemCK == null)
+                            continue;
+
+                     
+                        var existing = db.Diem.FirstOrDefault(x =>
+                            x.HocSinhID == hocSinhID &&
+                            x.MonHocID == MonHocID &&
+                            x.HocKyID == HocKiID);
+
+                        if (existing != null)
+                        {
+                           
+                            existing.Diem15p = diem15p.Value;
+                            existing.DiemMieng = diemMieng.Value;
+                            existing.DiemGK = diemGK.Value;
+                            existing.DiemCK = diemCK.Value;
+
+                            updateCount++;
+                        }
+                        else
+                        {
+                           
+                            db.Diem.Add(new Diem
+                            {
+                                HocSinhID = hocSinhID,
+                                MonHocID = MonHocID,
+                                HocKyID = HocKiID,
+                                Diem15p = diem15p.Value,
+                                DiemMieng = diemMieng.Value,
+                                DiemGK = diemGK.Value,
+                                DiemCK = diemCK.Value
+                            });
+
+                            insertCount++;
+                        }
+                    }
+                    catch
+                    {
+                        errors.Add($"Dòng {row}: Lỗi không xác định");
+                    }
+                }
+
+                db.SaveChanges();
+
+                TempData["Success"] = $"✔ Thêm mới: {insertCount}, ✔ Ghi đè: {updateCount}";
+                TempData["Errors"] = errors;
+
+                return RedirectToAction("BangDiem");
+            }
+
+        }
+
+        private double? ParseDiem(string input, int row, string tenCot, List<string> errors)
+        {
+            if (!double.TryParse(input, out double diem))
+            {
+                errors.Add($"Dòng {row}: Điểm {tenCot} sai định dạng");
+                return null;
+            }
+
+            if (diem < 0 || diem > 10)
+            {
+                errors.Add($"Dòng {row}: Điểm {tenCot} phải từ 0 đến 10");
+                return null;
+            }
+
+            return diem;
+        }
     }
-}
+   
+
+
+    }

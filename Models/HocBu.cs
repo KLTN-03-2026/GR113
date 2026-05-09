@@ -12,16 +12,14 @@ namespace demomvc.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class BoMon
+    public partial class HocBu
     {
-        public BoMon()
-        {
-            this.MonHocs = new HashSet<MonHoc>();
-        }
+        public int HocBuID { get; set; }
+        public int NgayNghiID { get; set; }
+        public int NgayHocBuID { get; set; }
+        public string GhiChu { get; set; }
     
-        public int BoMonID { get; set; }
-        public string TenBoMon { get; set; }
-    
-        public virtual ICollection<MonHoc> MonHocs { get; set; }
+        public virtual NgayHoc NgayHoc { get; set; }
+        public virtual NgayHoc NgayHoc1 { get; set; }
     }
 }

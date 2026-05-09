@@ -1,0 +1,260 @@
+﻿@model demomvc.ViewModel.DanhSachPhanCongVM
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
+}
+<style>
+    body {
+        background: #eef2f6;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        color: #333;
+    }
+
+    /* Container */
+    .container {
+        max-width: 1100px;
+    }
+
+    /* FILTER CARD */
+    .filter-box {
+        background: #ffffff;
+        padding: 20px 25px;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        margin-bottom: 25px;
+        border: 1px solid #e6e9ee;
+    }
+
+    label {
+        font-weight: 500;
+        color: #555;
+        margin-bottom: 6px;
+    }
+
+    /* Input */
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #dcdfe6;
+        padding: 10px;
+        transition: 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 2px rgba(74,144,226,0.15);
+        }
+
+    /* Button */
+    .btn-primary {
+        background: linear-gradient(135deg, #4a90e2, #357abd);
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 10px;
+        transition: 0.25s;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(74,144,226,0.3);
+        }
+
+    /* HEADER */
+    .info-header {
+        text-align: center;
+        margin-bottom: 20px;
+        margin-top:50px;
+    }
+
+       
+
+        .info-header h3 {
+            color: #666;
+            font-size: 25px;
+            margin: 2px 0;
+        }
+
+    /* TABLE CARD */
+    .table-box {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        overflow: hidden;
+        border: 1px solid #e6e9ee;
+    }
+
+    table {
+        margin: 0;
+    }
+    h5 {
+        display: flex;
+        justify-content: center;
+        font-weight: 600;
+        color: #2c5d6f;
+        margin-top: 70px;
+        margin-bottom: 5px;
+    }
+    /* TABLE HEADER */
+    thead {
+        background: linear-gradient(135deg, #2c5d6f, #3d7c91);
+        color: white;
+    }
+
+    th {
+        font-weight: 500;
+        padding: 14px !important;
+        font-size: 14px;
+    }
+
+    td {
+        padding: 12px !important;
+        font-size: 14px;
+    }
+
+    /* Zebra */
+    tbody tr:nth-child(even) {
+        background: #f9fbfc;
+    }
+
+    /* Hover */
+    tbody tr {
+        transition: 0.2s;
+        cursor: pointer;
+        position: relative;
+    }
+
+        tbody tr:hover {
+            background: #eaf4ff;
+            transform: scale(1.01);
+        }
+
+        /* Click effect */
+        tbody tr:active {
+            transform: scale(0.98);
+        }
+
+        /* Arrow hint */
+        tbody tr::after {
+            content: "→";
+            position: absolute;
+            right: 15px;
+            opacity: 0;
+            transition: 0.2s;
+            color: #4a90e2;
+            font-weight: bold;
+        }
+
+        tbody tr:hover::after {
+            opacity: 1;
+        }
+
+    /* Badge */
+    .badge-khoi {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 13px;
+    }
+
+    /* Empty */
+    .empty-row {
+        color: #999;
+        font-style: italic;
+        padding: 20px !important;
+    }
+</style>
+<body>
+
+    <div class="container mt-4">
+        <div class="filter-box">
+            <div class="row">
+                @using (Html.BeginForm("DsLop", "QuanLyDiem", FormMethod.Get))
+                {
+                    <div class="row mb-3">
+
+                        <div class="col-md-4">
+                            <label>Năm học</label>
+                            @Html.DropDownListFor(model => model.NamHocID,
+                                new SelectList(Model.DsNamHoc, "NamHocID", "TenNamHoc"),
+                                "-- Chọn năm học --",
+                                new { @class = "form-control" })
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Học kỳ</label>
+                            @Html.DropDownListFor(model => model.HocKyID,
+                                new SelectList(Model.DsHocKi, "HocKyID", "TenHocKy"),
+                                "-- Chọn học kỳ --",
+                                new { @class = "form-control" })
+                        </div>
+
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                🔍 Chọn
+                            </button>
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        </div>
+
+        <div class="info-header">
+
+            <h3>Giáo viên: @Model.TenGiaoVien</h3>
+            <h3>Môn học: @Model.TenMonHoc</h3>
+        </div>
+
+    </div>
+    <h5>Các lớp được phân công</h5>
+    <!-- Table -->
+    <table class="table table-bordered table-hover text-center">
+        <thead>
+            <tr>
+                <th>Mã Lớp</th>
+                <th>Tên Lớp</th>
+                <th>Tên Khối</th>
+                <th>Giáo Viên chủ nhiệm</th>
+                <th>Niên khóa</th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (Model.DanhSachLop != null && Model.DanhSachLop.Any())
+            {
+                foreach (var item in Model.DanhSachLop)
+                {
+
+                    <tr onclick="window.location='@Url.Action("BangDiem",new {id=item.MaLop ,IdGV=Model.GiaoVienID,idMH=Model.MonHocID,idHocKi=Model.HocKyID})'">
+
+                        <td>@item.MaLop</td>
+                        <td>@item.TenLop</td>
+                        <td>@item.TenKhoi</td>
+                        <td>@item.GVCN</td>
+                        <td>@item.NamHoc</td>
+
+                    </tr>
+                }
+
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="empty-row">
+                        Vui lòng chọn năm học và học kỳ
+                    </td>
+                </tr>
+            }
+
+
+
+        </tbody>
+    </table>
+
+
+
+</body>

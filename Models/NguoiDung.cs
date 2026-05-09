@@ -16,10 +16,10 @@ namespace demomvc.Models
     {
         public NguoiDung()
         {
-            this.GiaoVien = new HashSet<GiaoVien>();
-            this.HocSinh = new HashSet<HocSinh>();
-            this.ThongBao = new HashSet<ThongBao>();
-            this.ThongBaoDaDoc = new HashSet<ThongBaoDaDoc>();
+            this.GiaoViens = new HashSet<GiaoVien>();
+            this.HocSinhs = new HashSet<HocSinh>();
+            this.ThongBaoDaDocs = new HashSet<ThongBaoDaDoc>();
+            this.ThongBaos = new HashSet<ThongBao>();
         }
     
         public int NguoiDungID { get; set; }
@@ -34,9 +34,9 @@ namespace demomvc.Models
         public string ResetToken { get; set; }
         public Nullable<System.DateTime> ResetTokenExpiry { get; set; }
     
-        public virtual ICollection<GiaoVien> GiaoVien { get; set; }
-        public virtual ICollection<HocSinh> HocSinh { get; set; }
-        public virtual ICollection<ThongBao> ThongBao { get; set; }
-        public virtual ICollection<ThongBaoDaDoc> ThongBaoDaDoc { get; set; }
+        public virtual ICollection<GiaoVien> GiaoViens { get; set; }
+        public virtual ICollection<HocSinh> HocSinhs { get; set; }
+        public virtual ICollection<ThongBaoDaDoc> ThongBaoDaDocs { get; set; }
+        public virtual ICollection<ThongBao> ThongBaos { get; set; }
     }
 }

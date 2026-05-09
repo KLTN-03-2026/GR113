@@ -84,10 +84,13 @@
                 @if (vaiTro == "GiaoVien" || vaiTro == "HieuPho" || vaiTro == "BiThu")
                 {
                     <li class="nav-item">
-                        <a href="#" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "" ? "active" : "")">Quản lý điểm</a>
+                        <a href="@Url.Action("DsLop","QuanLyDiem")" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "" ? "active" : "")">Quản lý điểm</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "" ? "active" : "")">Xem thời khóa biểu</a>
+                        <a href="" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "" ? "active" : "")">Xem thời khóa biểu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("DsHocSinh","QuanLyHocSinh")" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "QuanLyHocSinh" ? "active" : "")">Quản lý học sinh</a>
                     </li>
                 }
 
@@ -109,7 +112,7 @@
                         <a href="@Url.Action("Index", "QuanLyThoiKhoaBieu")" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "QuanLyThoiKhoaBieu" ? "active" : "")">Quản lý thời khóa biểu</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "" ? "active" : "")">Quản lý điểm</a>
+                        <a href="@Url.Action("DsLop","QuanLyDiem")" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "" ? "active" : "")">Quản lý điểm</a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "" ? "active" : "")">Xem thời khóa biểu</a>

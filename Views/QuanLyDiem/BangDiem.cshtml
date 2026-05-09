@@ -1,0 +1,136 @@
+﻿@model List<demomvc.ViewModel.DSBangDiemVM>
+@{
+    ViewBag.Title = "LopTuongUng";
+    Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
+}
+
+<style>
+    body {
+        background-color: #f5f6f7;
+    }
+
+    h2 {
+        color: #2c5d6f;
+        font-weight: bold;
+    }
+
+    .search-box {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    table {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    thead {
+        background-color: #2c5d6f;
+        color: white;
+    }
+
+    th, td {
+        vertical-align: middle !important;
+    }
+
+    .btn-update {
+        background: linear-gradient(to right, #4a6cf7, #2c5dff);
+        color: white;
+        border: none;
+        border-radius: 8px;
+    }
+
+    .btn-delete {
+        border-radius: 8px;
+    }
+    .action-btn {
+        display: inline-block;
+        padding: 5px 10px;
+        background: linear-gradient(135deg, #4a6cf7, #2c5dff);
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, #2c5dff, #1a3ec1);
+            color: white;
+            text-decoration: none;
+            transform: scale(1.05);
+        }
+</style>
+<body>
+
+    <div class="container mt-4">
+        <a href="@Url.Action("DownLoadBangDiem", new { LopHocID = ViewBag.LopHocID, MonHocID =ViewBag.MonHocID, HocKiID =ViewBag.HocKiID })"
+           class="btn btn-success">
+            ⬇️ Tải file nhập điểm
+        </a>
+        <form action="@Url.Action("UploadFile","QuanLyDiem ", new {LopHocID = ViewBag.LopHocID,MonHocID =ViewBag.MonHocID, HocKiID =ViewBag.HocKiID})"
+              method="post"
+              enctype="multipart/form-data"
+              class="d-flex">
+
+            <input type="file" name="file" class="me-2" />
+
+            <button type="submit" class="btn btn-success">
+                Upload
+            </button>
+
+        </form>
+
+        <h2 class="text-center mb-4">Giáo Viên:@ViewBag.GiaoVien</h2>
+        <h2 class="text-center mb-4">Môn Học:@ViewBag.MonHoc</h2>
+
+        <!-- Table -->
+        <table class="table table-bordered table-hover text-center">
+            <thead>
+                <tr>
+                    <th>Tên Học Sinh</th>
+                    <th>Điểm 15 phút</th>
+                    <th>Điểm Miệng</th>
+                    <th>Điểm giữa kì</th>
+                    <th>Điểm cuối kì</th>
+                    <th>Điểm trung bình</th>
+                    <th>Thao tác</th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+
+                    <tr>
+
+                        <td>@item.TenHocSinh</td>
+                        <td>@item.Diem15p</td>
+                        <td>@item.DiemMieng</td>
+                        <td>@item.DiemGK</td>
+                        <td>@item.DiemCK</td>
+                        <td>@item.DiemTB</td>
+                        <td>
+                            @Html.ActionLink("Nhập điểm", "NhapDiem", new
+                       {
+                           id = item.DiemID,
+                           hs = item.HocSinhID,
+                           mh = item.MonHocID,
+                           hk = item.HocKyID,
+                           nh = item.HocKyID,
+                           gv = item.GiaoVienID
+                       }, new { @class = "action-btn" })
+
+                        </td>
+                    </tr>
+                }
+
+
+
+            </tbody>
+        </table>
+
+    </div>
+
+</body>

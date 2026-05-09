@@ -16,13 +16,15 @@ namespace demomvc.Models
     {
         public KhoiLop()
         {
-            this.LopHoc = new HashSet<LopHoc>();
+            this.LopHocs = new HashSet<LopHoc>();
+            this.MonHocKhois = new HashSet<MonHocKhoi>();
         }
     
         public int KhoiLopID { get; set; }
         public string TenKhoi { get; set; }
         public string TrangThai { get; set; }
     
-        public virtual ICollection<LopHoc> LopHoc { get; set; }
+        public virtual ICollection<LopHoc> LopHocs { get; set; }
+        public virtual ICollection<MonHocKhoi> MonHocKhois { get; set; }
     }
 }

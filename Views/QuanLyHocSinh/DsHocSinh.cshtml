@@ -1,7 +1,7 @@
 ﻿@model List<demomvc.ViewModel.ThongTinHocSinhVM>
 @{
     ViewBag.Title = "DsHocSinh";
-    Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml"; 
+    Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
 }
 
 <!DOCTYPE html>
@@ -24,6 +24,7 @@
             margin-top: 20px;
             margin-bottom: 20px;
         }
+
         .btn-custom {
             background-color: #39677b;
             color: white;
@@ -58,18 +59,48 @@
     </style>
 </head>
 <body>
-
+    @if (TempData["Errors"] != null)
+    {
+        var errors = TempData["Errors"] as List<string>;
+        <div id="errorAlert" class="alert alert-danger">
+            <strong>Lỗi khi import:</strong>
+            <ul>
+                @foreach (var err in errors)
+                {
+                    <li>@err</li>
+                }
+            </ul>
+        </div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div id="successAlert" class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
     <div class="container-fluid mt-4">
         <div class="d-flex justify-content-start mb-3">
-            <a href="@Url.Action("ThemHocSinh","QuanLyHocSinh")"  class="btn btn-custom me-2">+ Thêm Mới Học Sinh</a>
-            
+            <a href="@Url.Action("ThemHocSinh","QuanLyHocSinh")" class="btn btn-custom me-2">+ Thêm Mới Học Sinh</a>
+            <form action="@Url.Action("UploadFile","QuanLyHocSinh")"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="d-flex">
+
+                <input type="file" name="file" class="me-2" />
+
+                <button type="submit" class="btn btn-success">
+                    Upload
+                </button>
+
+            </form>
+
         </div>
 
         <div class="text-center">
             <h2 class="header-title">Danh sách học sinh</h2>
         </div>
 
-        <form action=@Url.Action("DsHocSinh","QuanLyHocSinh")  method="get" class="search-container d-flex gap-2 justify-content-center">
+        <form action=@Url.Action("DsHocSinh","QuanLyHocSinh") method="get" class="search-container d-flex gap-2 justify-content-center">
             <select class="form-select" name="TypeSearch" style="width: auto;">
                 <option value="Name">Tìm theo họ tên</option>
                 <option value="Id">Tìm theo mã HS</option>
@@ -95,7 +126,7 @@
                         <th>Dân Tộc</th>
                         <th>GVCN</th>
                         <th>Thao Tác</th>
-                       
+
                     </tr>
                 </thead>
                 <tbody>
@@ -115,7 +146,7 @@
                             <td>@item.DanToc</td>
                             <td>@item.GiaoVienChuNhiem</td>
                             <td>
-                                <a href="@Url.Action("Edit", "QuanLyHocSinh", new {id=item.MaHocSinh})">Edit</a> 
+                                <a href="@Url.Action("Edit", "QuanLyHocSinh", new {id=item.MaHocSinh})">Edit</a>
                                 <a href="@Url.Action("Delete", "QuanLyHocSinh",new { id=item.MaHocSinh})">Delete</a>
                             </td>
                         </tr>
@@ -124,7 +155,14 @@
             </table>
         </div>
     </div>
+    <script>
+    setTimeout(function () {
+            let error = document.getElementById("errorAlert");
+            if (error) error.style.display = "none";
 
+            let success = document.getElementById("successAlert");
+            if (success) success.style.display = "none";
+        }, 3000); // 3000ms = 3 giây</script>
 </body>
 </html>
 

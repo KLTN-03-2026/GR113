@@ -28,6 +28,7 @@ namespace demomvc.Models
         public DbSet<BoMon> BoMon { get; set; }
         public DbSet<Diem> Diem { get; set; }
         public DbSet<GiaoVien> GiaoVien { get; set; }
+        public DbSet<HocBu> HocBu { get; set; }
         public DbSet<HocKy> HocKy { get; set; }
         public DbSet<HocSinh> HocSinh { get; set; }
         public DbSet<HocSinh_PhuHuynh> HocSinh_PhuHuynh { get; set; }
@@ -35,10 +36,14 @@ namespace demomvc.Models
         public DbSet<KhoiLop> KhoiLop { get; set; }
         public DbSet<LopHoc> LopHoc { get; set; }
         public DbSet<MonHoc> MonHoc { get; set; }
+        public DbSet<MonHocKhoi> MonHocKhoi { get; set; }
         public DbSet<NamHoc> NamHoc { get; set; }
+        public DbSet<NgayHoc> NgayHoc { get; set; }
         public DbSet<NguoiDung> NguoiDung { get; set; }
+        public DbSet<PhanCongGiangDay> PhanCongGiangDay { get; set; }
         public DbSet<PhongHoc> PhongHoc { get; set; }
         public DbSet<PhuHuynh> PhuHuynh { get; set; }
+        public DbSet<sysdiagram> sysdiagram { get; set; }
         public DbSet<ThoiKhoaBieu> ThoiKhoaBieu { get; set; }
         public DbSet<ThongBao> ThongBao { get; set; }
         public DbSet<ThongBaoDaDoc> ThongBaoDaDoc { get; set; }

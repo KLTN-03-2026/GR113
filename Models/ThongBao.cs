@@ -16,7 +16,7 @@ namespace demomvc.Models
     {
         public ThongBao()
         {
-            this.ThongBaoDaDoc = new HashSet<ThongBaoDaDoc>();
+            this.ThongBaoDaDocs = new HashSet<ThongBaoDaDoc>();
         }
     
         public int ThongBaoID { get; set; }
@@ -30,6 +30,6 @@ namespace demomvc.Models
         public Nullable<System.DateTime> NgayKetThucTB { get; set; }
     
         public virtual NguoiDung NguoiDung { get; set; }
-        public virtual ICollection<ThongBaoDaDoc> ThongBaoDaDoc { get; set; }
+        public virtual ICollection<ThongBaoDaDoc> ThongBaoDaDocs { get; set; }
     }
 }

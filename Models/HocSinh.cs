@@ -16,9 +16,9 @@ namespace demomvc.Models
     {
         public HocSinh()
         {
-            this.Diem = new HashSet<Diem>();
+            this.Diems = new HashSet<Diem>();
             this.HocSinh_PhuHuynh = new HashSet<HocSinh_PhuHuynh>();
-            this.KetQuaHocTap = new HashSet<KetQuaHocTap>();
+            this.KetQuaHocTaps = new HashSet<KetQuaHocTap>();
         }
     
         public int HocSinhID { get; set; }
@@ -33,10 +33,10 @@ namespace demomvc.Models
         public string DanToc { get; set; }
         public string TrangThaiHocTap { get; set; }
     
-        public virtual ICollection<Diem> Diem { get; set; }
+        public virtual ICollection<Diem> Diems { get; set; }
         public virtual LopHoc LopHoc { get; set; }
         public virtual NguoiDung NguoiDung { get; set; }
         public virtual ICollection<HocSinh_PhuHuynh> HocSinh_PhuHuynh { get; set; }
-        public virtual ICollection<KetQuaHocTap> KetQuaHocTap { get; set; }
+        public virtual ICollection<KetQuaHocTap> KetQuaHocTaps { get; set; }
     }
 }

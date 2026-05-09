@@ -12,21 +12,19 @@ namespace demomvc.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class PhongHoc
+    public partial class NgayHoc
     {
-        public PhongHoc()
+        public NgayHoc()
         {
-            this.LopHocs = new HashSet<LopHoc>();
-            this.ThoiKhoaBieux = new HashSet<ThoiKhoaBieu>();
+            this.HocBus = new HashSet<HocBu>();
+            this.HocBus1 = new HashSet<HocBu>();
         }
     
-        public int PhongHocID { get; set; }
-        public string TenPhong { get; set; }
-        public string LoaiPhong { get; set; }
-        public Nullable<int> SoLuongChoNgoi { get; set; }
+        public int NgayHocID { get; set; }
+        public System.DateTime Ngay { get; set; }
         public string TrangThai { get; set; }
     
-        public virtual ICollection<LopHoc> LopHocs { get; set; }
-        public virtual ICollection<ThoiKhoaBieu> ThoiKhoaBieux { get; set; }
+        public virtual ICollection<HocBu> HocBus { get; set; }
+        public virtual ICollection<HocBu> HocBus1 { get; set; }
     }
 }

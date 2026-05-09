@@ -16,8 +16,9 @@ namespace demomvc.Models
     {
         public LopHoc()
         {
-            this.HocSinh = new HashSet<HocSinh>();
-            this.ThoiKhoaBieu = new HashSet<ThoiKhoaBieu>();
+            this.HocSinhs = new HashSet<HocSinh>();
+            this.PhanCongGiangDays = new HashSet<PhanCongGiangDay>();
+            this.ThoiKhoaBieux = new HashSet<ThoiKhoaBieu>();
         }
     
         public int LopHocID { get; set; }
@@ -26,11 +27,15 @@ namespace demomvc.Models
         public Nullable<int> GiaoVienChuNhiem { get; set; }
         public Nullable<int> NienKhoa { get; set; }
         public int KhoiLopID { get; set; }
+        public string CaHoc { get; set; }
+        public Nullable<int> PhongHocID { get; set; }
     
         public virtual GiaoVien GiaoVien { get; set; }
-        public virtual ICollection<HocSinh> HocSinh { get; set; }
+        public virtual ICollection<HocSinh> HocSinhs { get; set; }
         public virtual KhoiLop KhoiLop { get; set; }
         public virtual NamHoc NamHoc { get; set; }
-        public virtual ICollection<ThoiKhoaBieu> ThoiKhoaBieu { get; set; }
+        public virtual PhongHoc PhongHoc { get; set; }
+        public virtual ICollection<PhanCongGiangDay> PhanCongGiangDays { get; set; }
+        public virtual ICollection<ThoiKhoaBieu> ThoiKhoaBieux { get; set; }
     }
 }
