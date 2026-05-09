@@ -150,6 +150,10 @@
           <Property Name="NgayHocID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Ngay" Type="date" Nullable="false" />
           <Property Name="TrangThai" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Tuan" Type="int" />
+          <Property Name="Thu" Type="int" />
+          <Property Name="NamHocID" Type="int" />
+          <Property Name="HocKyID" Type="int" />
         </EntityType>
         <EntityType Name="NguoiDung">
           <Key>
@@ -1040,6 +1044,10 @@
           <Property Name="TrangThai" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="HocBu" Relationship="Self.FK_HocBu_NgayHocBu" FromRole="NgayHoc" ToRole="HocBu" />
           <NavigationProperty Name="HocBu1" Relationship="Self.FK_HocBu_NgayNghi" FromRole="NgayHoc" ToRole="HocBu" />
+          <Property Name="Tuan" Type="Int32" />
+          <Property Name="Thu" Type="Int32" />
+          <Property Name="NamHocID" Type="Int32" />
+          <Property Name="HocKyID" Type="Int32" />
         </EntityType>
         <EntityType Name="NguoiDung">
           <Key>
@@ -1910,6 +1918,10 @@
           <EntitySetMapping Name="NgayHoc">
             <EntityTypeMapping TypeName="QuanLyTruongHocModel.NgayHoc">
               <MappingFragment StoreEntitySet="NgayHoc">
+                <ScalarProperty Name="HocKyID" ColumnName="HocKyID" />
+                <ScalarProperty Name="NamHocID" ColumnName="NamHocID" />
+                <ScalarProperty Name="Thu" ColumnName="Thu" />
+                <ScalarProperty Name="Tuan" ColumnName="Tuan" />
                 <ScalarProperty Name="NgayHocID" ColumnName="NgayHocID" />
                 <ScalarProperty Name="Ngay" ColumnName="Ngay" />
                 <ScalarProperty Name="TrangThai" ColumnName="TrangThai" />

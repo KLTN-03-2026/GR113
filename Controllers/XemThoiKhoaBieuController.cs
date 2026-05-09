@@ -1,5 +1,6 @@
 ﻿using demomvc.App_Start;
 using demomvc.Models;
+using DocumentFormat.OpenXml.EMMA;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,48 +14,23 @@ namespace demomvc.Controllers
     {
         QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
         // GET: XemThoiKhoaBieu
-        public ActionResult Index(int tuan = 1)
+        public ActionResult Index(int? tuan)
         {
             int userID = Convert.ToInt32(Session["UserID"]);
             var hocSinh = db.HocSinh.Find(userID);
             string vaitro = Session["VaiTro"].ToString();
             DateTime? ngayBatDauHoc = null;
 
-           
+
             XemTKB vn = new XemTKB()
             {
-                Tuan = tuan,
-                NgayBatDauHoc=ngayBatDauHoc,
+                Tuan = tuan ?? 1,
+                NgayBatDauHoc = ngayBatDauHoc,
                 LaHocSinh = (vaitro == "HocSinh"),
                 ThoiKhoaBieus = new List<ThoiKhoaBieu>()
             };
 
-            //hien thi cho hoc sinh
-            //if (vaitro == "HocSinh")
-            //{
-            //    var HocSinh = db.HocSinh.Include("LopHoc").FirstOrDefault(x => x.HocSinhID == userID);
-            //    if (hocSinh == null)
-            //    {
-            //        return HttpNotFound();
 
-            //    }
-
-            //    vn.HocSinhID = hocSinh.HocSinhID;
-            //    vn.LopHocId = hocSinh.LopHocID;
-
-            //    vn.CaHoc = hocSinh.LopHoc.CaHoc;
-
-
-
-
-
-            //    vn.ThoiKhoaBieus = db.ThoiKhoaBieu
-            //        .Where(x => x.LopHocID == HocSinh.LopHocID && x.Tuan == tuan)
-
-            //        .OrderBy(x => x.Thu)
-            //        .ThenBy(x => x.TietHoc)
-            //        .ToList();
-            //}
 
             if (vaitro == "HocSinh")
             {
@@ -69,15 +45,15 @@ namespace demomvc.Controllers
                 vn.LopHocId = HocSinh.LopHocID;
                 vn.CaHoc = HocSinh.LopHoc.CaHoc;
 
-                // ✅ LOAD TKB + FULL INCLUDE
+                // LOAD TKB + FULL INCLUDE
                 vn.ThoiKhoaBieus = db.ThoiKhoaBieu
                     .Include("LopHoc.NamHoc.HocKy")
-                    .Where(x => x.LopHocID == HocSinh.LopHocID && x.Tuan == tuan)
+                    .Where(x => x.LopHocID == HocSinh.LopHocID && x.Tuan == vn.Tuan)
                     .OrderBy(x => x.Thu)
                     .ThenBy(x => x.TietHoc)
                     .ToList();
 
-                // ✅ LẤY HỌC KỲ CỦA TKB ĐANG HIỂN THỊ
+                // LẤY HỌC KỲ CỦA TKB ĐANG HIỂN THỊ
                 var kk = vn.ThoiKhoaBieus.FirstOrDefault();
 
                 vn.NgayBatDauHoc = kk?
@@ -86,23 +62,32 @@ namespace demomvc.Controllers
                     .HocKy?
                     .FirstOrDefault()?
                     .NgayBatDauHoc;
+
+
+                if (!tuan.HasValue && vn.NgayBatDauHoc.HasValue)
+                {
+                    DateTime start = vn.NgayBatDauHoc.Value.Date;
+                    DateTime today = DateTime.Now.Date;
+
+                    int soNgay = (today - start).Days;
+
+                    if (soNgay >= 0)
+                    {
+                        vn.Tuan = soNgay / 7 + 1;
+                    }
+                    else
+                    {
+                        vn.Tuan = 1;
+                    }
+                }
+                else
+                {
+                    vn.Tuan = tuan ?? 1;
+                }
+
             }
 
-            //if (vaitro == "GiaoVien")
-            //{
-            //    var GiaoVien = db.GiaoVien.Find(userID);
-            //    if (GiaoVien == null)
-            //    {
-            //        return HttpNotFound();
-            //    }
 
-            //    vn.GiaoVienId = GiaoVien.GiaoVienID;
-            //    vn.ThoiKhoaBieus = db.ThoiKhoaBieu
-            //         .Where(x => x.GiaoVienID == GiaoVien.GiaoVienID && x.Tuan == tuan)
-            //         .OrderBy(x => x.Thu)
-            //         .ThenBy(x => x.TietHoc)
-            //         .ToList();
-            //}
 
             if (vaitro == "GiaoVien")
             {
@@ -115,7 +100,7 @@ namespace demomvc.Controllers
                 // ✅ LOAD TKB + INCLUDE ĐỦ ĐƯỜNG
                 vn.ThoiKhoaBieus = db.ThoiKhoaBieu
                     .Include("LopHoc.NamHoc.HocKy")
-                    .Where(x => x.GiaoVienID == GiaoVien.GiaoVienID && x.Tuan == tuan)
+                    .Where(x => x.GiaoVienID == GiaoVien.GiaoVienID && x.Tuan == vn.Tuan)
                     .OrderBy(x => x.Thu)
                     .ThenBy(x => x.TietHoc)
                     .ToList();
@@ -129,8 +114,47 @@ namespace demomvc.Controllers
                     .HocKy?
                     .FirstOrDefault()?   // ✅ HocKies là ICollection
                     .NgayBatDauHoc;
-            }
 
+                if (!tuan.HasValue && vn.NgayBatDauHoc.HasValue)
+                {
+                    DateTime start = vn.NgayBatDauHoc.Value.Date;
+                    DateTime today = DateTime.Now.Date;
+
+                    int soNgay = (today - start).Days;
+
+                    if (soNgay >= 0)
+                    {
+                        vn.Tuan = soNgay / 7 + 1;
+                    }
+                    else
+                    {
+                        vn.Tuan = 1;
+                    }
+                }
+                else
+                {
+                    vn.Tuan = tuan ?? 1;
+                }
+
+            }
+            vn.DsNgayNghi = db.NgayHoc
+                .Where(n =>
+                    n.TrangThai == "NGHI"
+                    && n.Tuan == vn.Tuan
+                )
+                .ToList();
+
+            //hien thi cho hoj bu
+            vn.DsHocBu = db.HocBu
+             .Where(h =>
+                 db.NgayHoc.Any(n =>
+                     n.NgayHocID == h.NgayHocBuID &&
+                     n.Tuan == vn.Tuan
+                 )
+             )
+             .ToList();
+
+            vn.DsNgayHoc = db.NgayHoc.ToList();
 
             return View(vn);
         }

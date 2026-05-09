@@ -82,7 +82,7 @@ namespace demomvc.Controllers
                 HocKyID = hocKyId ?? 0,
                 CaHoc = caHoc,
                 //new
-                NgayBatDauHoc=ngayBatDauHoc,
+                NgayBatDauHoc = ngayBatDauHoc,
 
                 ListNamHoc = db.NamHoc
                     .AsEnumerable()
@@ -105,18 +105,69 @@ namespace demomvc.Controllers
 
             if (namHocId.HasValue && hocKyId.HasValue)
             {
-                int tuanHienThi = tuan ??
-                    db.ThoiKhoaBieu
-                        .Where(x => x.NamHocID == namHocId && x.HocKyID == hocKyId)
-                        .Min(x => (int?)x.Tuan) ?? 1;
+               
+                int tuanHienTai = 1;
 
-                model.Tuan = tuanHienThi;
+                if (ngayBatDauHoc.HasValue)
+                {
+                    DateTime start = ngayBatDauHoc.Value.Date;
+                    DateTime today = DateTime.Now.Date;
+
+                    int soNgay = (today - start).Days;
+
+                    if (soNgay >= 0)
+                    {
+                        tuanHienTai = soNgay / 7 + 1;
+                    }
+                }
+
+                int maxTuan = db.HocKy
+                    .Where(h => h.HocKyID == hocKyId && h.NamHocID == namHocId)
+                    .Select(h => h.SoTuanThucHoc)
+                    .FirstOrDefault();
+
+                if (tuanHienTai > maxTuan)
+                {
+                    tuanHienTai = maxTuan;
+                }
+
+                model.Tuan = tuan ?? tuanHienTai;
+
+                //them moi ơ day --------------------------
+                model.DsNgayNghi = db.NgayHoc
+                       .Where(n =>
+                           n.NamHocID == model.NamHocID &&
+                           n.HocKyID == model.HocKyID &&
+                           n.Tuan == model.Tuan &&
+                           n.TrangThai == "NGHI"
+                       )
+                       .ToList();
+                // -------------------------------------------
+
+                //hien thi cho hoj bu
+                model.DsHocBu = db.HocBu
+                     .Where(h =>
+                         db.NgayHoc.Any(n =>
+                             n.NgayHocID == h.NgayHocBuID &&
+                             n.NamHocID == model.NamHocID &&
+                             n.HocKyID == model.HocKyID
+                         )
+                     )
+                     .ToList();
+                model.DsNgayHoc = db.NgayHoc
+                    .Where(x =>
+                        x.NamHocID == model.NamHocID &&
+                        x.HocKyID == model.HocKyID
+                    ).ToList();
+                //-----------------------------------------
 
                 var ds = db.ThoiKhoaBieu
                     .Where(x =>
                         x.NamHocID == namHocId &&
                         x.HocKyID == hocKyId &&
-                        x.Tuan == tuanHienThi)
+                        x.Tuan == //tuanHienThi
+                                  model.Tuan
+                                  )
                     .ToList();
                 if (lopHocId.HasValue)
                 {
@@ -149,40 +200,7 @@ namespace demomvc.Controllers
                     .ToList();
 
 
-                ////cai moi hon
-                //if (model.CaHoc == "Sang")
-                //{
-                //    ds = ds.Where(x =>
-                //        x.LopHoc.CaHoc == "SANG" && (
-                //            // tiết chính buổi sáng
-                //            (x.TietHoc >= 1 && x.TietHoc <= 5 &&
-                //             x.MonHoc.TenMonHoc != "Thể dục" &&
-                //             x.MonHoc.TenMonHoc != "Tin học")
-                //            ||
-                //            // thể dục + tin buổi chiều
-                //            (x.TietHoc >= 6 && x.TietHoc <= 10 &&
-                //             (x.MonHoc.TenMonHoc == "Thể dục" ||
-                //              x.MonHoc.TenMonHoc == "Tin học"))
-                //        )
-                //    ).ToList();
-                //}
-                //else // Chieu
-                //{
-                //    ds = ds.Where(x =>
-                //        x.LopHoc.CaHoc == "CHIEU" && (
-                //            // tiết chính buổi chiều
-                //            (x.TietHoc >= 6 && x.TietHoc <= 10 &&
-                //             x.MonHoc.TenMonHoc != "Thể dục" &&
-                //             x.MonHoc.TenMonHoc != "Tin học")
-                //            ||
-                //            // thể dục + tin buổi sáng
-                //            (x.TietHoc >= 1 && x.TietHoc <= 5 &&
-                //             (x.MonHoc.TenMonHoc == "Thể dục" ||
-                //              x.MonHoc.TenMonHoc == "Tin học"))
-                //        )
-                //    ).ToList();
-                //}
-                //model.ThoiKhoaBieus = ds;
+
 
                 //neu
                 // ✅ LỌC THEO CA LỚP – KHÔNG PHÂN BIỆT MÔN / TIẾT
@@ -285,21 +303,21 @@ namespace demomvc.Controllers
             x.HocKyID == HocKyID &&
             x.Tuan == 1).ToList();
 
-            for (int tuan=2; tuan<=soTuanHoc; tuan++)
+            for (int tuan = 2; tuan <= soTuanHoc; tuan++)
             {
                 foreach (var t in tkbTuan1)
                 {
                     db.ThoiKhoaBieu.Add(new ThoiKhoaBieu
                     {
-                        NamHocID=t.NamHocID,
-                        HocKyID=t.HocKyID,
-                        LopHocID=t.LopHocID,
-                        MonHocID=t.MonHocID,
-                        GiaoVienID=t.GiaoVienID,
-                        PhongHocID=t.PhongHocID,
-                        Thu=t.Thu,
-                        TietHoc=t.TietHoc,
-                        Tuan=tuan
+                        NamHocID = t.NamHocID,
+                        HocKyID = t.HocKyID,
+                        LopHocID = t.LopHocID,
+                        MonHocID = t.MonHocID,
+                        GiaoVienID = t.GiaoVienID,
+                        PhongHocID = t.PhongHocID,
+                        Thu = t.Thu,
+                        TietHoc = t.TietHoc,
+                        Tuan = tuan
 
                     });
                 }
@@ -597,9 +615,6 @@ namespace demomvc.Controllers
             {
                 return Json(new { oke = false, msg = "Vui lòng chọn đầy đủ Lớp, Môn, Giáo viên và Phòng học" });
             }
-
-
-
             //check trung giv
             bool trungGV = db.ThoiKhoaBieu.Any(x => x.GiaoVienID == dtoAdd.GiaoVienId &&
                                                  x.Thu == dtoAdd.Thu &&
@@ -636,6 +651,37 @@ namespace demomvc.Controllers
             if (trungLop)
             {
                 return Json(new { oke = false, msg = "Lớp học bị trùng tiết" });
+            }
+
+            //check trung với học bù------------------------------------
+            var hocBuList = db.HocBu.Where(h =>
+                            db.NgayHoc.Any(n => n.NgayHocID == h.NgayHocBuID &&
+                            n.NamHocID == dtoAdd.NamHocID &&
+                            n.HocKyID == dtoAdd.HocKyID &&
+                            n.Tuan == dtoAdd.Tuan &&
+                            n.Thu == dtoAdd.Thu)
+                            ).ToList();
+            foreach(var hb in hocBuList)
+            {
+                var ngayNghi = db.NgayHoc.FirstOrDefault(n => n.NgayHocID == hb.NgayNghiID);
+                if (ngayNghi == null) continue;
+
+                bool trungHocBu = db.ThoiKhoaBieu.Any(x =>
+                        x.NamHocID == dtoAdd.NamHocID &&
+                        x.HocKyID == dtoAdd.HocKyID &&
+                        x.Tuan == ngayNghi.Tuan &&   // tuần gốc
+                        x.Thu == ngayNghi.Thu &&
+                        x.TietHoc == dtoAdd.TietHoc &&
+                        (
+                            x.GiaoVienID == dtoAdd.GiaoVienId ||
+                            x.PhongHocID == dtoAdd.PhongHocID ||
+                            x.LopHocID == dtoAdd.LopHocId
+                        )
+                    );
+                if (trungHocBu)
+                {
+                    return Json(new { oke = false, msg = "Trùng với lịch học bù" });
+                }
             }
 
             //check giao vien dạy dung môn
@@ -687,6 +733,216 @@ namespace demomvc.Controllers
 
             // update HocKy.NgayBatDauHoc
             return Json(new { oke = true, msg = "Đã thiết lập" });
+        }
+
+
+        
+
+        //new
+        [HttpPost]
+        public JsonResult DatNgayNghi(int namHocId, int hocKyId, DateTime ngayNghi)
+        {
+            var hocKy = db.HocKy
+                .FirstOrDefault(h => h.HocKyID == hocKyId && h.NamHocID == namHocId);
+
+            if (hocKy == null || !hocKy.NgayBatDauHoc.HasValue)
+            {
+                return Json(new { oke = false, msg = "Chưa thiết lập ngày học" });
+            }
+
+            DateTime start = hocKy.NgayBatDauHoc.Value.Date;
+            int soNgay = (ngayNghi.Date - start).Days;
+
+            if (soNgay < 0)
+            {
+                return Json(new { oke = false, msg = "Ngày nghỉ không hợp lệ" });
+            }
+
+            int tuan = soNgay / 7 + 1;
+            int thu = ngayNghi.DayOfWeek == DayOfWeek.Sunday ? 8 : (int)ngayNghi.DayOfWeek + 1;
+
+            bool coLichHoc = db.ThoiKhoaBieu.Any(x =>
+                x.NamHocID == namHocId &&
+                x.HocKyID == hocKyId &&
+                x.Tuan == tuan &&
+                x.Thu == thu &&
+                x.TietHoc >= 1 && x.TietHoc <= 10
+            );
+
+            if (!coLichHoc)
+            {
+                return Json(new { oke = false, msg = "Ngày này không có lịch học" });
+            }
+
+            bool daCo = db.NgayHoc.Any(x =>
+                x.Tuan == tuan &&
+                x.Thu == thu &&
+                x.HocKyID == hocKyId &&
+                x.NamHocID == namHocId &&
+                x.TrangThai == "NGHI"
+            );
+
+            if (daCo)
+            {
+                return Json(new { oke = false, msg = "Ngày này đã được đánh dấu nghỉ" });
+            }
+
+            // ✅ INSERT NGÀY NGHỈ
+            var ngayNghiEntity = new NgayHoc
+            {
+                Ngay = ngayNghi,
+                Tuan = tuan,
+                Thu = thu,
+                TrangThai = "NGHI",
+                HocKyID = hocKyId,
+                NamHocID = namHocId
+            };
+
+            db.NgayHoc.Add(ngayNghiEntity);
+            db.SaveChanges();
+
+
+
+            // ✅ KHÔNG query lại — dùng luôn object vừa insert
+            var NgayNghiObj = ngayNghiEntity;
+
+            // =======================
+            // ✅ TÌM NGÀY HỌC BÙ
+            // =======================
+
+            NgayHoc ngayHocBu = null;
+
+            int maxTuan = db.HocKy
+                .Where(h => h.HocKyID == hocKyId && h.NamHocID == namHocId)
+                .Select(h => h.SoTuanThucHoc)
+                .FirstOrDefault();
+
+            int maxtuanbonus = maxTuan + 5;
+
+            for (int t = tuan + 1; t <= maxtuanbonus; t++)
+            {
+                var dsThu = new List<int> { thu }
+                    .Concat(Enumerable.Range(2, 6).Where(x => x != thu));
+
+                foreach (int th in dsThu)
+                {
+                    bool daCoTKB = db.ThoiKhoaBieu.Any(x =>
+                        x.NamHocID == namHocId &&
+                        x.HocKyID == hocKyId &&
+                        x.Tuan == t &&
+                        x.Thu == th
+                    );
+
+                    bool laNgayNghiKhac = db.NgayHoc.Any(x =>
+                        x.NamHocID == namHocId &&
+                        x.HocKyID == hocKyId &&
+                        x.Tuan == t &&
+                        x.Thu == th &&
+                        x.TrangThai == "NGHI"
+                    );
+
+                    // ✅ FIX CHÍNH: tách exist ra trước
+                    var existNgayHoc = db.NgayHoc.FirstOrDefault(x =>
+                        x.Tuan == t &&
+                        x.Thu == th &&
+                        x.NamHocID == namHocId &&
+                        x.HocKyID == hocKyId
+                    );
+
+                    bool daDuocDungLamHocBu = existNgayHoc != null &&
+                        db.HocBu.Any(h => h.NgayHocBuID == existNgayHoc.NgayHocID);
+
+                    bool laNgayNghi = existNgayHoc != null &&
+                                      existNgayHoc.TrangThai == "NGHI";
+
+                    // ✅ điều kiện đầy đủ
+                    if (!daCoTKB &&
+                        !laNgayNghiKhac &&
+                        !daDuocDungLamHocBu &&
+                        !laNgayNghi)
+                    {
+                        ngayHocBu = existNgayHoc;
+
+                        if (ngayHocBu == null)
+                        {
+                            ngayHocBu = new NgayHoc
+                            {
+                                Tuan = t,
+                                Thu = th,
+                                NamHocID = namHocId,
+                                HocKyID = hocKyId,
+                                TrangThai = "HOC",
+
+                                // ✅ tính ngày thật
+                                Ngay = start.AddDays((t - 1) * 7 + (th - 2))
+                            };
+
+                            db.NgayHoc.Add(ngayHocBu);
+
+                            db.SaveChanges();
+                        }
+
+                        break;
+                    }
+                }
+
+                if (ngayHocBu != null)
+                    break;
+            }
+
+            // ✅ nếu không tìm được slot
+            if (ngayHocBu == null)
+            {
+                return Json(new
+                {
+                    oke = false,
+                    msg = "Không tìm được ngày học bù phù hợp"
+                });
+            }
+
+            // =========================
+            // INSERT HỌC BÙ
+            // =========================
+
+            db.HocBu.Add(new HocBu
+            {
+                NgayHocBuID = ngayHocBu.NgayHocID,
+                NgayNghiID = NgayNghiObj.NgayHocID,
+                GhiChu = $"Học bù từ tuần {tuan}"
+            });
+
+            db.SaveChanges();
+
+
+            return Json(new { oke = true, msg = "Đã đánh dấu nghỉ học" });
+        }
+        [HttpPost]
+        public JsonResult BoNgayNghi(int namHocId, int hocKyId, int tuan, int thu)
+        {
+            var ngayNghi = db.NgayHoc.FirstOrDefault(x =>
+                            x.NamHocID == namHocId &&
+                            x.HocKyID == hocKyId &&
+                            x.Tuan == tuan &&
+                            x.Thu == thu &&
+                            x.TrangThai == "NGHI");
+            if (ngayNghi == null)
+            {
+                return Json(new { oke = false, msg = "Không có ngày nghỉ" });
+            }
+            var hocBuList = db.HocBu.Where(h => h.NgayNghiID == ngayNghi.NgayHocID).ToList();
+            foreach(var hb in hocBuList)
+            {
+                var ngayBu = db.NgayHoc.FirstOrDefault(n => n.NgayHocID == hb.NgayHocBuID);
+                if (ngayBu != null)
+                {
+                    db.NgayHoc.Remove(ngayBu);
+                }
+                db.HocBu.Remove(hb);
+            }
+
+            db.NgayHoc.Remove(ngayNghi);
+            db.SaveChanges();
+            return Json(new { oke = true, msg = "Đã hủy ngày nghỉ" });
         }
 
     }

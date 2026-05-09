@@ -8,8 +8,13 @@ namespace demomvc.Models
 {
 	public class XemTKB
 	{
-		
-		public int NamHocID{ get; set; }
+       //new cho họ bu hine thị  tkb
+        public List<HocBu> DsHocBu { get; set; }
+        public List<NgayHoc> DsNgayHoc { get; set; }
+		//-----------------
+        public List<NgayHoc> DsNgayNghi { get; set; }
+
+        public int NamHocID{ get; set; }
 		public int HocKyID { get; set; }
 		public int HocSinhID { get; set; }
 		public int MonHocId { get; set; }

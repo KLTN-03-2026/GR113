@@ -14,7 +14,9 @@ namespace demomvc.Models
         public int? HocKyID { get; set; }
 
         public int? NamHocID { get; set; }
-
+        public List<NgayHoc> DsNgayNghi { get; set; }
+        public List<HocBu> DsHocBu { get; set; }
+        public List<NgayHoc> DsNgayHoc { get; set; }
         public List<SelectListItem> ListHocKy { get; set; }
         public List<SelectListItem> ListNamHoc { get; set; }
 

@@ -47,6 +47,42 @@
             border-top: 2px solid #ff9800;
             border-bottom: 2px solid #ff9800;
         }
+
+
+    .bg-danger {
+        background: #ef5350 !important;
+        color: white;
+    }
+
+    /* ngay nghi*/
+    .tkb-nghi {
+        background: linear-gradient(135deg, #ff5252, #d32f2f);
+        color: white;
+        font-weight: 700;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1.5px solid rgba(255,255,255,0.25);
+        box-shadow: inset 0 0 6px rgba(255,255,255,0.2), 0 6px 16px rgba(211,47,47,0.5);
+        transition: all 0.25s ease;
+    }
+
+        .tkb-nghi:hover {
+            transform: scale(1.06);
+            box-shadow: 0 10px 22px rgba(211,47,47,0.7), inset 0 0 8px rgba(255,255,255,0.3);
+        }
+
+    /*full cot hom nay*/
+    .today-col {
+        background-color: #bbdefb !important;
+        border-left: 3px solid #1e88e5 !important;
+        border-right: 3px solid #1e88e5 !important;
+        box-shadow: inset 0 0 10px rgba(30,136,229,0.25);
+    }
 </style>
 
 <h2>Thời Khóa Biểu</h2>
@@ -84,7 +120,7 @@
 
             <button class="btn btn-secondary me-2"
                     onclick="prevWeek()">
-                ⬅ 
+                ⬅
             </button>
 
             <button class="btn btn-secondary"
@@ -106,12 +142,7 @@
                     <th>Thứ @(thu == 8 ? "CN" : thu.ToString())</th>
                 }
             </tr>
-            @*<tr>
-            @for (int i = 0; i < 7; i++)
-            {
-                <th>dd/MM/yyyy</th>
-            }
-        </tr>*@
+
 
             <tr>
                 @{
@@ -128,14 +159,22 @@
 
                         for (int i = 0; i < 7; i++)
                         {
-                            <th>@mondayOfWeek.AddDays(i).ToString("dd/MM/yyyy")</th>
+
+                            DateTime today = DateTime.Now.Date;
+                            DateTime day = mondayOfWeek.AddDays(i).Date;
+
+                            <th class="@(day == today ? "today-col" : "")">
+                                @day.ToString("dd/MM/yyyy")
+                            </th>
+
                         }
                     }
                     else
                     {
                         for (int i = 0; i < 7; i++)
                         {
-                            <th>--/--/----</th>
+
+
                         }
                     }
                 }
@@ -164,58 +203,169 @@
                             .Where(x => x.Thu == thu && x.TietHoc == tiet)
                             .ToList();
 
-                        <td class="text-start">
+                        bool laNgayNghi = Model.DsNgayNghi != null
+                                && Model.DsNgayNghi.Any(n =>
+                                    n.Tuan == Model.Tuan &&
+                                    n.Thu == thu
+                                );
+
+                        bool lachieu = Model.CaHoc == "Chieu";
+                        bool laSang = Model.CaHoc == "Sang";
+
+
+                        bool isChaoCo =
+                             thu == 2 &&
+                             ((laSang && tiet == 10) || (!laSang && tiet == 1));
+
+                        bool isSinhHoat =
+                            thu == 7 &&
+                            ((laSang && tiet == 10) || (!laSang && tiet == 5));
+
+
+                        //in dam ngay hien tai
+                        DateTime today = DateTime.Now.Date;
+                        DateTime start = Model.NgayBatDauHoc.Value;
+
+                        int diff = (7 + (start.DayOfWeek - DayOfWeek.Monday)) % 7;
+                        DateTime mondayOfWeek = start.AddDays(-diff);
+                        mondayOfWeek = mondayOfWeek.AddDays((Model.Tuan - 1) * 7);
+
+                        int index = thu - 2;
+                        DateTime day = mondayOfWeek.AddDays(index).Date;
+
+                        <td class="text-start
+                                @(laNgayNghi ? "bg-danger text-white" : "")
+                                @(day == today ? "today-col" : "")">
                             @{
-                                bool lachieu = Model.CaHoc == "Chieu";
-                                bool laSang = Model.CaHoc == "Sang";
 
+                                var hocBu = Model.DsHocBu?
+                                    .FirstOrDefault(x =>
+                                    {
+                                        var ngayHocBu = Model.DsNgayHoc
+                                    .FirstOrDefault(n => n.NgayHocID == x.NgayHocBuID);
 
-                                   bool isChaoCo =
-                                        thu == 2 &&
-                                        ((laSang && tiet == 10) || (!laSang && tiet == 1));
+                                        if (ngayHocBu == null)
+                                            return false;
 
-                                    bool isSinhHoat =
-                                        thu == 7 &&
-                                        ((laSang && tiet == 10) || (!laSang && tiet == 5));
-
-                                
-
-
+                                        return ngayHocBu.Tuan == Model.Tuan
+                                    && ngayHocBu.Thu == thu;
+                                    });
                             }
 
-
-                            @if (isChaoCo || isSinhHoat)
+                            @if (hocBu != null)
                             {
-                                <div class="tkb-item">
+                                var ngayHocBu = Model.DsNgayHoc
+                                    .FirstOrDefault(n => n.NgayHocID == hocBu.NgayHocBuID);
 
-                                    @if (isChaoCo)
+                                var ngayNghi = Model.DsNgayHoc
+                                    .FirstOrDefault(n => n.NgayHocID == hocBu.NgayNghiID);
+
+                                if (ngayHocBu != null && ngayNghi != null)
+                                {
+                                    // ✅ TKB HIỆN TẠI
+                                    var listCurrent = Model.ThoiKhoaBieus
+                                        .Where(x => x.Thu == thu && x.TietHoc == tiet)
+                                        .ToList();
+
+                                    // ✅ TKB HỌC BÙ (GIỐNG QLTKB)
+                                    var listHocBu = new List<demomvc.Models.ThoiKhoaBieu>();
+
+                                    using (var db2 = new demomvc.Models.QuanLyTruongHocEntities1())
                                     {
-                                        <div>⭐ Chào cờ</div>
+                                        listHocBu = db2.ThoiKhoaBieu
+                                            .Include("PhongHoc")
+                                            .Include("LopHoc")
+                                            .Include("MonHoc")
+                                            .Include("GiaoVien.NguoiDung")
+                                            .Where(x =>
+
+                                                x.Tuan == ngayNghi.Tuan &&   // ✅ tuần gốc
+                                                x.Thu == ngayNghi.Thu &&
+                                                x.TietHoc == tiet && (
+
+                                                    x.LopHocID == Model.LopHocId
+                                                    || x.GiaoVienID == Model.GiaoVienId
+
+                                                )
+
+                                            )
+                                            .ToList();
                                     }
-                                    @if (isSinhHoat)
+
+                                    // ✅ 1. HIỆN TKB THẬT
+                                    foreach (var item in listCurrent)
                                     {
-                                        <div>⭐ Sinh hoạt lớp</div>
+                                        <div class="tkb-item">
+                                            <b>@item.PhongHoc.TenPhong</b><br />
+                                            Lớp: <b>@item.LopHoc.TenLop</b><br />
+                                            Môn học: @item.MonHoc.TenMonHoc<br />
+                                            @if (Model.LaHocSinh)
+                                            {
+                                                <span>GV: @item.GiaoVien.NguoiDung.HoTen</span>
+                                            }
+                                        </div>
                                     }
+
+                                    // ✅ 2. HIỆN HỌC BÙ
+                                    foreach (var item in listHocBu)
+                                    {
+                                        <div class="tkb-item">
+
+
+
+                                            <b>@item.PhongHoc.TenPhong</b><br />
+                                            Lớp: <b>@item.LopHoc.TenLop</b><br />
+                                            Môn học: @item.MonHoc.TenMonHoc<br />
+
+                                            @if (Model.LaHocSinh)
+                                            {
+                                                <span>GV: @item.GiaoVien.NguoiDung.HoTen</span>
+                                            }
+                                        </div>
+                                    }
+                                }
+                            }
+                            else if (laNgayNghi)
+                            {
+                                <div class="tkb-nghi tkb-bo-nghi">
+                                    <i class="fa-solid fa-ban"></i> NGHỈ
                                 </div>
                             }
-
                             else
                             {
-
-                                foreach (var item in list)
+                                if (isChaoCo || isSinhHoat)
                                 {
                                     <div class="tkb-item">
 
-                                        <b>@item.PhongHoc.TenPhong</b><br />
-                                        Lớp: <b>@item.LopHoc.TenLop</b><br />
-                                        Môn học: @item.MonHoc.TenMonHoc<br />
-                                        @if (Model.LaHocSinh)
+                                        @if (isChaoCo)
                                         {
-                                            <span> GV: @item.GiaoVien.NguoiDung.HoTen</span>
+                                            <div>⭐ Chào cờ</div>
                                         }
-
+                                        @if (isSinhHoat)
+                                        {
+                                            <div>⭐ Sinh hoạt lớp</div>
+                                        }
                                     </div>
+                                }
 
+                                else
+                                {
+
+                                    foreach (var item in list)
+                                    {
+                                        <div class="tkb-item">
+
+                                            <b>@item.PhongHoc.TenPhong</b><br />
+                                            Lớp: <b>@item.LopHoc.TenLop</b><br />
+                                            Môn học: @item.MonHoc.TenMonHoc<br />
+                                            @if (Model.LaHocSinh)
+                                            {
+                                                <span> GV: @item.GiaoVien.NguoiDung.HoTen</span>
+                                            }
+
+                                        </div>
+
+                                    }
                                 }
                             }
                         </td>
