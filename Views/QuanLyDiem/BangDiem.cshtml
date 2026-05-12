@@ -1,0 +1,220 @@
+﻿@model List<demomvc.ViewModel.DSBangDiemVM>
+@{
+    ViewBag.Title = "Quản Lý Điểm Số";
+    Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
+}
+
+<style>
+    /* Tuỳ chỉnh nền tổng thể nếu Layout chưa có */
+    .page-wrapper {
+        background-color: #f4f7f6;
+        padding: 2rem 0;
+        min-height: 100vh;
+    }
+
+    /* Phong cách cho Card chứa nội dung */
+    .glass-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        border: none;
+        overflow: hidden;
+    }
+
+    /* Header của Card */
+    .card-header-custom {
+        background: #ffffff;
+        border-bottom: 1px solid #edf2f9;
+        padding: 1.5rem 2rem;
+    }
+
+    .subject-title {
+        color: #12263f;
+        font-weight: 800;
+        font-size: 1.5rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .teacher-subtitle {
+        color: #6e84a3;
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    /* Tuỳ chỉnh bảng */
+    .table-custom {
+        margin-bottom: 0;
+    }
+
+        .table-custom thead th {
+            background-color: #f9fbfd;
+            color: #95aac9;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #edf2f9;
+            padding: 1rem;
+        }
+
+        .table-custom tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            color: #12263f;
+            font-weight: 500;
+            border-bottom: 1px solid #edf2f9;
+        }
+
+        .table-custom tbody tr {
+            transition: all 0.2s ease-in-out;
+        }
+
+            .table-custom tbody tr:hover {
+                background-color: #f9fbfd;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            }
+
+    /* Cột tên học sinh căn trái, điểm căn giữa */
+    .col-name {
+        text-align: left !important;
+        font-weight: 600 !important;
+    }
+
+    /* Nút thao tác (Action Button) */
+    .btn-action {
+        background: rgba(44, 123, 229, 0.1);
+        color: #2c7be5;
+        border-radius: 8px;
+        padding: 0.4rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        display: inline-block;
+    }
+
+        .btn-action:hover {
+            background: #2c7be5;
+            color: #ffffff;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(44, 123, 229, 0.3);
+        }
+
+    /* Cụm chức năng Tải/Upload */
+    .toolbar-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-custom {
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 0.5rem 1.2rem;
+        transition: all 0.3s;
+    }
+</style>
+
+<div class="page-wrapper">
+    <div class="container">
+        <div class="glass-card">
+
+            <!-- Phần Header: Tiêu đề & Công cụ -->
+            <div class="card-header-custom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+
+                <!-- Thông tin lớp/môn -->
+                <div>
+                    <h2 class="subject-title">Môn Học: @ViewBag.MonHoc</h2>
+                    <div class="teacher-subtitle">
+                        👨‍🏫 Giáo Viên: <strong>@ViewBag.GiaoVien</strong>
+                    </div>
+                    <div class="teacher-subtitle">
+                        Lớp Học: <strong>@ViewBag.TenLop</strong>
+                    </div>
+                </div>
+
+                <!-- Nút Tải file & Form Upload -->
+                <div class="toolbar-actions">
+                    <!-- Nút tải file -->
+                    <a href="@Url.Action("DownLoadBangDiem", new { LopHocID = ViewBag.LopHocID,GiaoVienID = ViewBag.GiaoVienID, HocKiID = ViewBag.HocKiID })"
+                       class="btn btn-outline-success btn-custom d-flex align-items-center">
+                        <span class="me-2">⬇️</span> Tải file mẫu
+                    </a>
+
+                    <!-- Form Upload -->
+                    <form action="@Url.Action("ImportDiem", "QuanLyDiem", new { LopHocID = ViewBag.LopHocID, GiaoVienID = ViewBag.GiaoVienID, HocKiID = ViewBag.HocKiID })"
+                          method="post"
+                          enctype="multipart/form-data"
+                          class="m-0">
+                        <div class="input-group">
+                            <input type="file" name="file" class="form-control" required style="border-radius: 8px 0 0 8px;" />
+                            <button type="submit" class="btn btn-success" style="border-radius: 0 8px 8px 0; font-weight: 600;">
+                                ⬆️ Upload
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Phần Table -->
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-custom text-center">
+                        <thead>
+                            <tr>
+                                <th class="col-name ps-4">Tên Học Sinh</th>
+                                <th>Điểm 15 phút</th>
+                                <th>Điểm Miệng</th>
+                                <th>Điểm Giữa Kì</th>
+                                <th>Điểm Cuối Kì</th>
+                                <th>Điểm Trung Bình</th>
+                                <th class="pe-4">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="col-name ps-4">@item.TenHocSinh</td>
+                                        <td>@item.Diem15p</td>
+                                        <td>@item.DiemMieng</td>
+                                        <td>@item.DiemGK</td>
+                                        <td>@item.DiemCK</td>
+                                        <td>
+                                            <!-- Highlight điểm trung bình nếu muốn -->
+                                            <span class="badge bg-light text-dark px-3 py-2 border">@item.DiemTB</span>
+                                        </td>
+                                        <td class="pe-4">
+                                            @Html.ActionLink("Nhập điểm", "NhapDiem", new
+                                            {
+                                                id = item.DiemID,
+                                                hs = item.HocSinhID,
+                                                mh = item.MonHocID,
+                                                hk = item.HocKyID,
+                                                nh = item.HocKyID,
+                                                gv = item.GiaoVienID
+                                            }, new { @class = "btn-action" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center py-5 text-muted">
+                                        <em>Chưa có dữ liệu học sinh cho lớp học này.</em>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

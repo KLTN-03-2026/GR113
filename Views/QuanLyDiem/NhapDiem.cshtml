@@ -1,0 +1,170 @@
+﻿@model demomvc.ViewModel.DSBangDiemVM
+@{
+    ViewBag.Title = "NhapDiem";
+    Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
+}
+
+
+<style>
+    body {
+        background: #f5f7fb;
+    }
+
+    .form-container {
+        background: #ffffff;
+        max-width: 700px;
+        margin: 50px auto;
+        padding: 35px 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        display: flex;
+        justify-content: center
+    }
+
+    .section {
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1e40af;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 5px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #374151;
+    }
+
+    input {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px
+    }
+</style>
+
+
+<div class="form-container">
+    <h2>Nhập Điểm Học Sinh</h2>
+    <form action="@Url.Action("NhapDiem","QuanLyDiem")" method="POST">
+
+        <!-- Thông tin học sinh -->
+        <div class="section">
+            <input name="LopHocID" value="@Model.LopHocID" type="hidden" />
+            <input name="DiemID" value="@Model.DiemID" type="hidden" />
+            <input name="GiaoVienID" value="@Model.GiaoVienID" type="hidden" />
+            <input name="MonHocID" value="@Model.MonHocID" type="hidden" />
+            <input name="NamHocID" value="@Model.NamHocID" type="hidden" />
+            <input name="HocKyID" value="@Model.HocKyID" type="hidden" />
+            <input name="HocSinhID" value="@Model.HocSinhID" type="hidden" />
+
+            <div class="form-group">
+                <label for="studentName">Tên Học Sinh</label>
+                <input type="text" id="studentName" value="@Model.TenHocSinh" readonly
+                       name="TenHocSinh" placeholder="Nhập tên học sinh hoặc chọn..." required>
+            </div>
+        </div>
+
+        <!-- Nhóm điểm kiểm tra -->
+        <div class="section">
+            <div class="section-title">Điểm quá trình</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="diem15p">Điểm 15 phút</label>
+                    @Html.TextBoxFor(m => m.Diem15p, new
+                    {
+                        @class = "form-control " + (ViewData.ModelState["Diem15p"]?.Errors.Count > 0 ? "is-invalid" : "")
+                    })
+
+                    @Html.ValidationMessageFor(m => m.Diem15p, "", new { @class = "text-danger" })
+                    @*<input type="number" id="diem15p" value="@Model.Diem15p" name="Diem15p"
+                           min="0" max="10" step="0.1" placeholder="Ví dụ: 8.5">*@
+                </div>
+                <div class="form-group">
+                    <label for="diemMieng">Điểm Miệng</label>
+                    @Html.TextBoxFor(m => m.DiemMieng, new
+                    {
+                     @class = "form-control " + (ViewData.ModelState["DiemMieng"]?.Errors.Count > 0 ? "is-invalid" : "")
+                    })
+
+                    @Html.ValidationMessageFor(m => m.DiemMieng, "", new { @class = "text-danger" })
+                    @*<input type="number" id="diemMieng" value="@Model.DiemMieng" name="DiemMieng"
+                           min="0" max="10" step="0.1" placeholder="Ví dụ: 9">*@
+                </div>
+            </div>
+        </div>
+
+        <!-- Nhóm điểm thi -->
+        <div class="section">
+            <div class="section-title">Điểm thi</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="diemGiuaKi">Điểm giữa kì</label>
+                    @Html.TextBoxFor(m => m.DiemGK, new
+                    {
+                        @class = "form-control " + (ViewData.ModelState["DiemGK"]?.Errors.Count > 0 ? "is-invalid" : "")
+                    })
+
+
+                    @Html.ValidationMessageFor(m => m.DiemGK, "", new { @class = "text-danger" })
+                    @*<input type="number" id="diemGiuaKi" value="@Model.DiemGK" name="DiemGK"
+                           min="0" max="10" step="0.1" placeholder="Ví dụ: 7.5">*@
+                </div>
+                <div class="form-group">
+                    <label for="diemCuoiKi">Điểm cuối kì</label>
+                    @Html.TextBoxFor(m => m.DiemCK, new
+                    {
+                       @class = "form-control " + (ViewData.ModelState["DiemCK"]?.Errors.Count > 0 ? "is-invalid" : "")
+                     })
+
+                    @Html.ValidationMessageFor(m => m.DiemCK, "", new { @class = "text-danger" })
+                    @*<input type="number" id="diemCuoiKi" value="@Model.DiemCK" name="DiemCK"
+                           min="0" max="10" step="0.1" placeholder="Ví dụ: 8.0">*@
+                </div>
+            </div>
+        </div>
+
+        <!-- Nút hành động -->
+        <div class="form-actions">
+            <button type="button" class="btn btn-secondary"
+                    onclick="location.href='@Url.Action("BangDiem","QuanLyDiem", new
+                                       {
+                                           id=Model.LopHocID,
+                                           idGV = Model.GiaoVienID,
+                                           idMH = Model.MonHocID,
+                                           idHocKi = Model.HocKyID
+                                       })'">
+                Hủy
+            </button>
+            <button type="submit" class="btn btn-primary">Lưu Điểm</button>
+        </div>
+
+    </form>
+</div>

@@ -18,7 +18,7 @@ namespace demomvc.Models
         public int MonHocID { get; set; }
         public int GiaoVienID { get; set; }
         public int LopHocID { get; set; }
-        public int? PhongHocID { get; set; }
+        public int PhongHocID { get; set; }
         public int HocKyID { get; set; }
         public int NamHocID { get; set; }
         public int Tuan { get; set; }
