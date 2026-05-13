@@ -241,6 +241,7 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="css\Aitaotkb.css" />
     <Content Include="css\BangDiem.css" />
     <Content Include="css\citietthongbao.css" />
     <Content Include="css\dangnhap.css" />
@@ -252,8 +253,10 @@
     <Content Include="css\addLop.css" />
     <Content Include="css\StyleSheet1.css" />
     <Content Include="css\thongbao.css" />
+    <Content Include="css\thongbaochungtb.css" />
     <Content Include="css\thongBaoNguoiDung.css" />
     <Content Include="css\thongtinhocsinh.css" />
+    <Content Include="css\tkb.css" />
     <Content Include="css\trangchu.css" />
     <Content Include="css\updateelete.css" />
     <Content Include="css\updatePhong.css" />

@@ -105,7 +105,7 @@ namespace demomvc.Controllers
 
             if (namHocId.HasValue && hocKyId.HasValue)
             {
-               
+
                 int tuanHienTai = 1;
 
                 if (ngayBatDauHoc.HasValue)
@@ -248,6 +248,75 @@ namespace demomvc.Controllers
                     pc.GiaoVien.TrangThaiGiangDay != null)
                 .ToList();
 
+
+            //  // 3. Xóa TKB cũ (nếu có)
+
+
+            ////xoa hoc bu
+
+            //var hocBu = db.HocBu
+            //    .Where(x =>
+            //        db.NgayHoc.Any(n =>
+            //            n.NgayHocID == x.NgayHocBuID ||
+            //            n.NgayHocID == x.NgayNghiID
+            //        )
+            //    ).ToList();
+
+            //foreach (var hb in hocBu)
+            //{
+            //    db.HocBu.Remove(hb);
+            //}
+
+
+            ////xoa ngay hoc
+
+            //var ngayHoc = db.NgayHoc
+            //    .Where(x => x.NamHocID == NamHocID && x.HocKyID == HocKyID)
+            //    .ToList();
+
+            //foreach (var n in ngayHoc)
+            //{
+            //    db.NgayHoc.Remove(n);
+            //}
+
+
+            ////var old = db.ThoiKhoaBieu
+            ////    .Where(x => x.HocKyID == HocKyID && x.LopHoc.NienKhoa == NamHocID);
+
+            ////------------------------------------
+            //var old = db.ThoiKhoaBieu
+            //    .Where(x => x.HocKyID == HocKyID
+            //             && x.NamHocID == NamHocID);
+            ////------------------------------------
+
+            //foreach (var item in old.ToList())
+            //{
+            //    db.ThoiKhoaBieu.Remove(item);
+            //}
+
+            //db.SaveChanges();
+
+            // =========================
+            // ✅ XÓA TOÀN BỘ DỮ LIỆU CŨ (CỰC CHUẨN)
+            // =========================
+            try
+            {
+                db.Database.ExecuteSqlCommand($@"
+                DELETE FROM HocBu;
+
+                DELETE FROM NgayHoc 
+                WHERE NamHocID = {NamHocID} AND HocKyID = {HocKyID};
+
+                DELETE FROM ThoiKhoaBieu 
+                WHERE NamHocID = {NamHocID} AND HocKyID = {HocKyID};
+                 ");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "❌ Lỗi khi xóa dữ liệu cũ: " + ex.Message;
+                return RedirectToAction("Index");
+            }
+
             // 3. Sinh danh sách gene
             var baseGenes = TaoBaseGenes(phanCong, HocKyID);
 
@@ -265,16 +334,6 @@ namespace demomvc.Controllers
                 msg => GaProgressHub.Send(msg)
             );
 
-
-
-            // 5. Xóa TKB cũ (nếu có)
-            var old = db.ThoiKhoaBieu
-                .Where(x => x.HocKyID == HocKyID && x.LopHoc.NienKhoa == NamHocID);
-
-            foreach (var item in old.ToList())
-            {
-                db.ThoiKhoaBieu.Remove(item);
-            }
 
 
             //tao cho 1 tuan dda
@@ -298,34 +357,77 @@ namespace demomvc.Controllers
             db.SaveChanges();
 
             //chuyenr tuần 1 chuaane => các tuần còn lại của kh đó
-            var tkbTuan1 = db.ThoiKhoaBieu.Where(x =>
-            x.NamHocID == NamHocID &&
-            x.HocKyID == HocKyID &&
-            x.Tuan == 1).ToList();
+            //var tkbTuan1 = db.ThoiKhoaBieu.Where(x =>
+            //x.NamHocID == NamHocID &&
+            //x.HocKyID == HocKyID &&
+            //x.Tuan == 1).ToList();
+
+            //for (int tuan = 2; tuan <= soTuanHoc; tuan++)
+            //{
+            //    foreach (var t in tkbTuan1)
+            //    {
+            //        db.ThoiKhoaBieu.Add(new ThoiKhoaBieu
+            //        {
+            //            NamHocID = t.NamHocID,
+            //            HocKyID = t.HocKyID,
+            //            LopHocID = t.LopHocID,
+            //            MonHocID = t.MonHocID,
+            //            GiaoVienID = t.GiaoVienID,
+            //            PhongHocID = t.PhongHocID,
+            //            Thu = t.Thu,
+            //            TietHoc = t.TietHoc,
+            //            Tuan = tuan
+            //        });
+            //    }
+            //}
+
+            //db.SaveChanges();
+            // =========================
+            // CLONE TUẦN 1 → CÁC TUẦN KHÁC (NHANH)
+            // =========================
+
+
+            var tkbTuan1 = db.ThoiKhoaBieu
+             .Where(x =>
+                 x.NamHocID == NamHocID &&
+                 x.HocKyID == HocKyID &&
+                 x.Tuan == 1)
+             .ToList();
+
+            db.Configuration.AutoDetectChangesEnabled = false;
+
+            var listClone = new List<ThoiKhoaBieu>();
 
             for (int tuan = 2; tuan <= soTuanHoc; tuan++)
             {
                 foreach (var t in tkbTuan1)
                 {
-                    db.ThoiKhoaBieu.Add(new ThoiKhoaBieu
+                    listClone.Add(new ThoiKhoaBieu
                     {
-                        NamHocID = t.NamHocID,
-                        HocKyID = t.HocKyID,
                         LopHocID = t.LopHocID,
                         MonHocID = t.MonHocID,
                         GiaoVienID = t.GiaoVienID,
                         PhongHocID = t.PhongHocID,
+                        HocKyID = t.HocKyID,
+                        NamHocID = t.NamHocID,
                         Thu = t.Thu,
                         TietHoc = t.TietHoc,
                         Tuan = tuan
-
                     });
                 }
             }
 
+            foreach (var item in listClone)
+            {
+                db.ThoiKhoaBieu.Add(item);
+            }
+
             db.SaveChanges();
 
-            TempData["Success"] = "✅ Tạo thời khóa biểu thành công!";
+            db.Configuration.AutoDetectChangesEnabled = true;
+
+
+            TempData["Success"] = " Tạo thời khóa biểu thành công!";
             return RedirectToAction("Index");
         }
 
@@ -661,7 +763,7 @@ namespace demomvc.Controllers
                             n.Tuan == dtoAdd.Tuan &&
                             n.Thu == dtoAdd.Thu)
                             ).ToList();
-            foreach(var hb in hocBuList)
+            foreach (var hb in hocBuList)
             {
                 var ngayNghi = db.NgayHoc.FirstOrDefault(n => n.NgayHocID == hb.NgayNghiID);
                 if (ngayNghi == null) continue;
@@ -736,7 +838,7 @@ namespace demomvc.Controllers
         }
 
 
-        
+
 
         //new
         [HttpPost]
@@ -873,7 +975,7 @@ namespace demomvc.Controllers
                                 HocKyID = hocKyId,
                                 TrangThai = "HOC",
 
-                                // ✅ tính ngày thật
+                                //tính ngày thật
                                 Ngay = start.AddDays((t - 1) * 7 + (th - 2))
                             };
 
@@ -930,7 +1032,7 @@ namespace demomvc.Controllers
                 return Json(new { oke = false, msg = "Không có ngày nghỉ" });
             }
             var hocBuList = db.HocBu.Where(h => h.NgayNghiID == ngayNghi.NgayHocID).ToList();
-            foreach(var hb in hocBuList)
+            foreach (var hb in hocBuList)
             {
                 var ngayBu = db.NgayHoc.FirstOrDefault(n => n.NgayHocID == hb.NgayHocBuID);
                 if (ngayBu != null)

@@ -72,7 +72,9 @@ namespace demomvc.Services.GA
                     //  new//
                 }
                 //bao cao tien trinh
-                report?.Invoke($"đang tối ưu thế hệ{gen}/{generations}...");
+                // report?.Invoke($"đang tối ưu thế hệ{gen}/{generations}...");
+                int percent = (gen + 1) * 100 / generations;
+                report?.Invoke($"Đang xếp TKB... {percent}%");
             }
             report?.Invoke("Hoàn tất xếp thời khóa biểu");
             return population.OrderByDescending(x => x.Fitness).First();

@@ -1,0 +1,412 @@
+﻿
+/*hover chitiet tkb*/
+.tkb-item {
+    border: 1px solid #ddd;
+    border-left: 4px solid #007bff;
+    padding: 6px;
+    margin-bottom: 6px;
+    background: #f9f9f9;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+
+.tkb-item:hover {
+    background: linear-gradient(135deg, #e3f2fd, #ffffff);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+    border-left-color: #ff9800;
+    transform: translateY(-2px) scale(1.00);
+    border-left-color: #1e88e5;
+}
+
+
+/* Hàng phân cách ca sáng - chiều */
+.row-ca-chuyen {
+    background: #9e0d20;
+    color: #e65100;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+    .row-ca-chuyen td {
+        padding: 8px;
+        border-top: 2px solid #ff9800;
+        border-bottom: 2px solid #ff9800;
+    }
+
+/* Nút Xem toàn trường */
+.btn-view-all {
+    height: 38px;
+    width: 30px; /* ✔ bằng dropdown */
+    background: #f5f7fa; /* ✔ xám rất nhạt */
+    color: #2e3a59;
+    font-weight: 600;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    transition: all 0.25s ease;
+    margin-top: 23px;
+}
+
+    /* Hover */
+    .btn-view-all:hover {
+        background: #e3f2fd; /* xanh nhạt */
+        border-color: #1e88e5;
+        color: #1e88e5;
+    }
+
+    /* Khi đang xem toàn trường (tuỳ chọn) */
+    .btn-view-all.active {
+        background: #1e88e5;
+        color: #fff;
+        border-color: #1e88e5;
+    }
+
+/*dau cong them TKB*/
+.tkb-add {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    background: #1e88e5;
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: 0.2s;
+    z-index: 10;
+}
+
+.tkb-add {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    background: #1e88e5;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 9999;
+    pointer-events: auto;
+    opacity: 0;
+    transition: all 0.2s ease;
+}
+
+/* hover vào Ô TIẾT -> hiện dấu + */
+td:hover .tkb-add {
+    opacity: 1;
+}
+
+
+.tkb-tooltip {
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    color: #fff;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+/* hover dấu + -> hiện tooltip */
+.tkb-add:hover .tkb-tooltip {
+    opacity: 1;
+}
+
+
+.tkb-add {
+    z-index: 9999;
+    pointer-events: auto;
+}
+
+.tkb-add {
+    opacity: 0;
+}
+
+td:hover .tkb-add {
+    opacity: 1;
+}
+/* ===== MODAL ADD TKB ===== */
+#modalAddTKB .modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+#modalAddTKB .modal-header {
+    background: linear-gradient(135deg, #1e88e5, #42a5f5);
+    color: white;
+    border-bottom: none;
+}
+
+#modalAddTKB .modal-title {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+#modalAddTKB .modal-body {
+    padding: 20px;
+}
+
+#modalAddTKB label {
+    font-weight: 600;
+    color: #333;
+}
+
+#modalAddTKB select {
+    border-radius: 8px;
+    height: 38px;
+}
+
+#modalAddTKB .modal-dialog {
+    margin-top: 110px; /* chỉnh 80–150px tùy mắt */
+}
+
+#modalAddTKB .modal-footer {
+    border-top: none;
+    padding: 15px 20px;
+}
+
+/* Nút */
+#modalAddTKB .btn-success {
+    border-radius: 8px;
+    padding: 6px 18px;
+    font-weight: 600;
+}
+
+#modalAddTKB .btn-secondary {
+    border-radius: 8px;
+}
+
+/* Info */
+#addInfo {
+    font-size: 16px;
+    color: #1e88e5;
+    margin-bottom: 15px;
+}
+
+.modal.fade .modal-dialog {
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+}
+
+.modal.show .modal-dialog {
+    transform: translateY(0);
+}
+
+
+
+
+/* ✅ tô full cột ngày hiện tại */
+.today-col {
+    background-color: #bbdefb !important;
+    border-left: 3px solid #1e88e5 !important;
+    border-right: 3px solid #1e88e5 !important;
+    box-shadow: inset 0 0 10px rgba(30,136,229,0.25);
+}
+
+``
+/*o nghi*/
+.tkb-nghi {
+    background: #fdecea;
+    color: #c62828;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px;
+    border-radius: 6px;
+}
+
+/*bỏ nghỉ */
+.tkb-bo-nghi {
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+    .tkb-bo-nghi:hover {
+        background: #ffebee;
+        color: #b71c1c;
+    }
+
+/* nút x trong nghỉ học*/
+#modalNghiHoc .modal-header {
+    position: relative;
+    background: #d32f2f; /* giữ nền đỏ của bạn */
+    color: white;
+}
+
+/* nút X kiểu mới */
+#modalNghiHoc .close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15); /* nền trong suốt nhẹ */
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 1;
+    transition: all 0.25s ease;
+}
+
+    /* hover giống ảnh */
+    #modalNghiHoc .close:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+    }
+
+/*nut x ngay bat dau hoc*/
+/* Modal Chọn ngày bắt đầu học */
+#modalSetNgayBatDauHoc .modal-header {
+    position: relative;
+}
+
+/* Nút X */
+#modalSetNgayBatDauHoc .close {
+    position: absolute;
+    top: 8px;
+    right: 8px; /* ✅ sát bên phải */
+
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 1;
+    transition: all 0.25s ease;
+}
+
+    /* Hover */
+    #modalSetNgayBatDauHoc .close:hover {
+        background: rgba(255, 255, 255, 0.35);
+        transform: scale(1.1);
+    }
+
+
+/*new ------------------*/
+/* ===== CONTAINER RESPONSIVE ===== */
+.tkb-container {
+    width: 100%;
+    overflow-x: auto; /* ✅ scroll ngang khi nhỏ */
+}
+
+    /* table không bị vỡ */
+    .tkb-container table {
+        min-width: 900px; /* ✅ giữ layout */
+    }
+
+
+/* ===== HEADER FORM ===== */
+.row > div {
+    margin-bottom: 10px;
+}
+
+/* button full mobile */
+@media (max-width: 768px) {
+    #btnSubmit {
+        width: 100%;
+    }
+}
+
+/* nhóm nút */
+.d-flex.justify-content-between {
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+    .d-flex.justify-content-between > div {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .d-flex.justify-content-between button {
+        flex: 1;
+    }
+}
+/* ===== TABLE ===== */
+table th, table td {
+    font-size: 14px;
+}
+
+/* mobile nhỏ */
+@media (max-width: 768px) {
+
+    table th, table td {
+        font-size: 12px;
+        padding: 4px;
+    }
+
+    /* ô tiết nhỏ lại */
+    .tkb-item {
+        font-size: 11px;
+        padding: 4px;
+    }
+
+    /* dấu + nhỏ lại */
+    .tkb-add {
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .modal-dialog {
+        margin: 10px;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    #modalAddTKB select,
+    #modalEditTKB select {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .today-col {
+        background-color: #bbdefb !important;
+        border-left: 2px solid #1e88e5 !important;
+        border-right: 2px solid #1e88e5 !important;
+    }
+}
+
+
