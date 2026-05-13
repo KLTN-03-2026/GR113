@@ -345,7 +345,7 @@ namespace demomvc.Controllers
                     LopHocID = g.LopHocID,
                     MonHocID = g.MonHocID,
                     GiaoVienID = g.GiaoVienID,
-                    PhongHocID = g.PhongHocID,
+                    PhongHocID = (int)g.PhongHocID,
                     HocKyID = g.HocKyID,
                     NamHocID = NamHocID,
                     Tuan = 1,                  // ✅ LUÔN LÀ TUẦN 1
