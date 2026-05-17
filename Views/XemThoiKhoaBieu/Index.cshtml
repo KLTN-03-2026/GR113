@@ -209,17 +209,17 @@
                                     n.Thu == thu
                                 );
 
-                        bool lachieu = Model.CaHoc == "Chieu";
-                        bool laSang = Model.CaHoc == "Sang";
+                        bool lachieu = Model.CaHoc == "CHIEU";
+                        bool laSang = Model.CaHoc == "SANG";
 
 
                         bool isChaoCo =
                              thu == 2 &&
-                             ((laSang && tiet == 10) || (!laSang && tiet == 1));
+                             ((laSang && tiet == 1) || (!laSang && tiet == 10));
 
                         bool isSinhHoat =
                             thu == 7 &&
-                            ((laSang && tiet == 10) || (!laSang && tiet == 5));
+                            ((laSang && tiet == 5) || (!laSang && tiet == 10));
 
 
                         //in dam ngay hien tai
@@ -382,14 +382,14 @@
     $.connection.hub.start();
 function nextWeek() {
     window.location.href =
-        '@Url.Action("Index")'
+        '@Url.Action("Index", "XemThoiKhoaBieu")'
         + '&tuan=' + (@Model.Tuan + 1)
     }
 
      // ===== TUẦN TIẾP =====
  function nextWeek() {
      window.location.href =
-         '@Url.Action("Index")'
+         '@Url.Action("Index", "XemThoiKhoaBieu")'
          + '?NamHocID=@Model.NamHocID'
          + '&HocKyID=@Model.HocKyID'
          + '&tuan=' + (@Model.Tuan + 1)
@@ -397,10 +397,11 @@ function nextWeek() {
     }
     function prevWeek() {
      window.location.href =
-         '@Url.Action("Index")'
+         '@Url.Action("Index", "XemThoiKhoaBieu")'
          + '?NamHocID=@Model.NamHocID'
          + '&HocKyID=@Model.HocKyID'
          + '&tuan=' + (@Model.Tuan - 1)
          + '&caHoc=@Model.CaHoc';
  }
 </script>
+

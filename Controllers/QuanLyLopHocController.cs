@@ -23,7 +23,7 @@ namespace demomvc.Controllers
             var model = new TimLopViewModel
             {
                 ListNamHoc = namHocList
-                   
+
                     .Select(x => new SelectListItem
                     {
                         Value = x.NamHocID.ToString(), //  OK (LINQ to Objects)
@@ -84,7 +84,7 @@ namespace demomvc.Controllers
                             .Select(g => g.NguoiDung.HoTen)
                             .FirstOrDefault() ?? "Không có GVCN",
                         TenKhoi = x.Khoi.TenKhoi,
-                         CaHoc = x.Lop.CaHoc,
+                        CaHoc = x.Lop.CaHoc,
                         TrangThaiNamHoc = x.Khoi.TrangThai // trạng thái năm học
                     })
                     .ToList();
@@ -99,7 +99,7 @@ namespace demomvc.Controllers
             return View("Index", vm);
 
         }
-      //xóa loppw
+        //xóa loppw
         public ActionResult Delete(int id)
         {
             var lop = db.LopHoc.FirstOrDefault(p => p.LopHocID == id);
@@ -116,7 +116,7 @@ namespace demomvc.Controllers
                 TempData["Error"] = "Lớp được sử dụng trong thời khóa biểu. Vui lòng đổi sang lớp khác trước khi xóa!";
                 return RedirectToAction("Index");
             }
-            
+
 
             db.LopHoc.Remove(lop);
             db.SaveChanges();
@@ -185,8 +185,9 @@ namespace demomvc.Controllers
                         Value = k.KhoiLopID.ToString(),
                         Text = k.TenKhoi
                     }).ToList();
-
+                TempData["Success"] = " Tạo thời khóa biểu thành công!";
                 return View(model);
+
 
             }
 
@@ -196,7 +197,7 @@ namespace demomvc.Controllers
                 GiaoVienChuNhiem = model.GiaoVienID.HasValue ? model.GiaoVienID.Value : (int?)null, // nếu không chọn thì null
                 NienKhoa = model.NamHocID,
                 KhoiLopID = model.KhoiLopID,
-                CaHoc=model.CaHoc
+                CaHoc = model.CaHoc
 
             };
 
@@ -376,6 +377,226 @@ namespace demomvc.Controllers
         }
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Deletelop(int id)
+        {
+            try
+            {
+                var lop = db.LopHoc.Find(id);
+                if (lop == null)
+                {
+                    return Json(new { ok = false, msg = "Không có lớp này" });
+                }
 
+                if (db.ThoiKhoaBieu.Any(x => x.LopHocID == id))
+                {
+                    return Json(new { ok = false, msg = "Đã có thời khóa biểu" });
+                }
+
+                if (db.PhanCongGiangDay.Any(x => x.LopHocID == id))
+                {
+                    return Json(new { ok = false, msg = "Đã có phân công" });
+                }
+
+                if (db.HocSinh.Any(x => x.LopHocID == id))
+                {
+                    return Json(new { ok = false, msg = "Đã có học sinh" });
+                }
+
+                db.LopHoc.Remove(lop);
+                db.SaveChanges();
+
+                return Json(new { ok = true, msg = "Xóa thành công" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { ok = false, msg = ex.Message });
+            }
+        }
+
+        //[HttpPost]
+        //public JsonResult LenLop(int namHocCu, int NamHocMoi)
+        //{
+        //    try
+        //    {
+        //        // ✅ 1. CHECK NĂM HỌC MỚI
+        //        bool coNamHocMoi = db.NamHoc.Any(n => n.NamHocID == NamHocMoi);
+        //        if (!coNamHocMoi)
+        //        {
+        //            return Json(new
+        //            {
+        //                success = false,
+        //                message = "❌ Chưa có năm học mới!"
+        //            });
+        //        }
+
+        //        // ✅ 2. LẤY LỚP NĂM CŨ
+        //        var dsLopCu = db.LopHoc
+        //            .Where(l => l.NienKhoa == namHocCu)
+        //            .ToList();
+
+        //        if (!dsLopCu.Any())
+        //        {
+        //            return Json(new
+        //            {
+        //                success = false,
+        //                message = "❌ Không có lớp ở năm học cũ!"
+        //            });
+        //        }
+
+        //        // ✅ 3. CHECK LỚP NĂM MỚI
+        //        var dsLopMoi = db.LopHoc
+        //            .Where(l => l.NienKhoa == NamHocMoi)
+        //            .ToList();
+
+        //        if (!dsLopMoi.Any())
+        //        {
+        //            return Json(new
+        //            {
+        //                success = false,
+        //                message = "❌ Chưa tạo lớp cho năm học mới!"
+        //            });
+        //        }
+
+        //        // ===== XỬ LÝ LÊN LỚP =====
+        //        foreach (var lopCu in dsLopCu)
+        //        {
+        //            int khoiCu = lopCu.KhoiLopID;
+
+        //            //  LỚP 9 → TỐT NGHIỆP
+        //            if (khoiCu == 9)
+        //            {
+        //                var hs9 = db.HocSinh
+        //                    .Where(h => h.LopHocID == lopCu.LopHocID)
+        //                    .ToList();
+
+        //                foreach (var hs in hs9)
+        //                {
+        //                    hs.TrangThaiHocTap = "Đã tốt nghiệp"; // 
+        //                }
+
+        //                continue;
+        //            }
+
+        //            int khoiMoi = khoiCu + 1;
+
+        //            //  lấy đuôi tên lớp (VD: 6A -> A)
+        //            string duoiTen = lopCu.TenLop.Substring(1);
+
+        //            var lopMoi = db.LopHoc.FirstOrDefault(
+        //                l => l.NienKhoa == NamHocMoi &&
+        //                     l.KhoiLopID == khoiMoi &&
+        //                     l.TenLop.EndsWith(duoiTen)
+        //            );
+
+        //            if (lopMoi == null)
+        //            {
+        //                continue;
+        //            }
+
+        //            //  lấy học sinh lớp cũ
+        //            var dsHS = db.HocSinh
+        //                .Where(h => h.LopHocID == lopCu.LopHocID)
+        //                .ToList();
+
+        //            foreach (var hs in dsHS)
+        //            {
+        //                hs.LopHocID = lopMoi.LopHocID;
+        //            }
+        //        }
+
+        //        db.SaveChanges();
+
+        //        return Json(new
+        //        {
+        //            success = true,
+        //            message = "✅ Lên lớp thành công!"
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new
+        //        {
+        //            success = false,
+        //            message = "❌ Lỗi: " + ex.Message
+        //        });
+        //    }
+        //}
+        [HttpPost]
+        public JsonResult LenLop(int namHocCu, int NamHocMoi)
+        {
+            try
+            {
+                var namCuObj = db.NamHoc.FirstOrDefault(n => n.NamHocID == namHocCu);
+                var namMoiObj = db.NamHoc.FirstOrDefault(n => n.NamHocID == NamHocMoi);
+
+                if (namCuObj == null || namMoiObj == null)
+                {
+                    return Json(new { success = false, message = "❌ Năm học không hợp lệ!" });
+                }
+
+                int namBatDauCu = int.Parse(namCuObj.TenNamHoc.Substring(0, 4));
+                int namBatDauMoi = int.Parse(namMoiObj.TenNamHoc.Substring(0, 4));
+
+                if (namBatDauMoi <= namBatDauCu)
+                {
+                    return Json(new { success = false, message = "❌ Năm học mới phải lớn hơn năm học cũ!" });
+                }
+
+                var dsLopCu = db.LopHoc.Where(l => l.NienKhoa == namHocCu).ToList();
+                if (!dsLopCu.Any())
+                    return Json(new { success = false, message = "❌ Không có lớp ở năm học cũ!" });
+
+                var dsLopMoi = db.LopHoc.Where(l => l.NienKhoa == NamHocMoi).ToList();
+                if (!dsLopMoi.Any())
+                    return Json(new { success = false, message = "❌ Chưa tạo lớp cho năm học mới!" });
+
+                foreach (var lopCu in dsLopCu)
+                {
+                    int khoiCu = lopCu.KhoiLopID;
+
+                    // ✅ Khối 9 → tốt nghiệp
+                    if (khoiCu == 9)
+                    {
+                        var hs9 = db.HocSinh.Where(h => h.LopHocID == lopCu.LopHocID).ToList();
+                        foreach (var hs in hs9)
+                        {
+                            hs.TrangThaiHocTap = "Đã tốt nghiệp";
+                        }
+                        continue;
+                    }
+
+                    int khoiMoi = khoiCu + 1;
+                    string duoiTen = lopCu.TenLop.Substring(1);
+
+                    var lopMoi = db.LopHoc.FirstOrDefault(l =>
+                        l.NienKhoa == NamHocMoi &&
+                        l.KhoiLopID == khoiMoi &&
+                        l.TenLop.EndsWith(duoiTen)
+                    );
+
+                    if (lopMoi == null) continue;
+
+                    var dsHS = db.HocSinh.Where(h => h.LopHocID == lopCu.LopHocID).ToList();
+                    foreach (var hs in dsHS)
+                    {
+                        hs.LopHocID = lopMoi.LopHocID;
+                    }
+                }
+
+                // ✅ cập nhật trạng thái năm học
+                namCuObj.TrangThai = "Đã kết thúc";
+                namMoiObj.TrangThai = "Đang học";
+
+                db.SaveChanges();
+
+                return Json(new { success = true, message = "✅ Lên lớp thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "❌ Lỗi: " + ex.Message });
+            }
+        }
     }
 }

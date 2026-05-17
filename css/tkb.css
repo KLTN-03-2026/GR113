@@ -410,3 +410,89 @@ table th, table td {
 }
 
 
+.title-wrapper {
+    text-align: center; /* canh giữa toàn bộ */
+    margin-top: 20px;
+}
+
+.title-page {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 26px;
+    color: #2c3e50;
+    position: relative;
+}
+
+    /* gạch chân */
+    .title-page::after {
+        content: "";
+        display: block;
+        width: 70px;
+        height: 4px;
+        background-color: #28a745;
+        margin: 8px auto 0;
+        border-radius: 5px;
+    }
+
+.select-group {
+    position: relative;
+}
+
+    .select-group .form-control {
+        padding-right: 40px; /* chừa chỗ dấu + */
+    }
+
+/* icon + */
+.icon-add {
+    position: absolute;
+    right: 10px;
+    color: #28a745;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.2s;
+}
+
+    /* hover */
+    .icon-add:hover {
+        color: #1e7e34;
+        transform: scale(1.2);
+    }
+/*foem học ki   nam hoc*/
+.modal-content {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.modal-header {
+    font-weight: 600;
+}
+
+
+.modal-body label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.modal-header .close {
+    font-size: 26px;
+    color: white;
+    opacity: 0.9;
+    background: transparent;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+    /* hover */
+    .modal-header .close:hover {
+        color: #ffdddd;
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+
+    /* click */
+    .modal-header .close:focus {
+        outline: none;
+    }
+.modal-dialog {
+    margin-top: 0 !important;
+}

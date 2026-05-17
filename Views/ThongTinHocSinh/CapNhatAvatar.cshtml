@@ -13,32 +13,7 @@
 <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
 <h3 class="text-center mt-4">Cập nhật ảnh đại diện</h3>
 <div id="toast" class="toast-message"></div>
-<script>
-     function showToast(message, isError = false) {
-         var toast = document.getElementById("toast");
-         toast.innerHTML = message;
 
-         if (isError) {
-             toast.classList.add("toast-error");
-         } else {
-             toast.classList.remove("toast-error");
-         }
-
-         toast.classList.add("toast-show");
-
-         setTimeout(function () {
-             toast.classList.remove("toast-show");
-         }, 3000);
-     }
-     @if (TempData["Success"] != null)
- {
-     <text>showToast('@TempData["Success"]', false);</text>
- }
- @if (TempData["Error"] != null)
- {
-     <text>showToast('@TempData["Error"]', true);</text>
- }
-</script>
 <form method="post" enctype="multipart/form-data" class="mt-3 text-center">
 
     <!-- Ảnh xem trước / click để chọn ảnh -->

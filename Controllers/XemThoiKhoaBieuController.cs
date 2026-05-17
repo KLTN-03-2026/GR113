@@ -9,15 +9,21 @@ using System.Web.Mvc;
 
 namespace demomvc.Controllers
 {
-    [RoleAuthorize(RolesRequired = "HocSinh,GiaoVien")]
+    [RoleAuthorize(RolesRequired = "HocSinh,GiaoVien,BiThu,HieuPho")]
     public class XemThoiKhoaBieuController : Controller
     {
         QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
         // GET: XemThoiKhoaBieu
         public ActionResult Index(int? tuan)
         {
+            //int userID = Convert.ToInt32(Session["UserID"]);
+            //var hocSinh = db.HocSinh.Find(userID);
             int userID = Convert.ToInt32(Session["UserID"]);
-            var hocSinh = db.HocSinh.Find(userID);
+
+            var hocSinh = db.HocSinh
+                .FirstOrDefault(x => x.NguoiDungID == userID);
+
+            //--------------------
             string vaitro = Session["VaiTro"].ToString();
             DateTime? ngayBatDauHoc = null;
 
@@ -36,10 +42,17 @@ namespace demomvc.Controllers
             {
                 var HocSinh = db.HocSinh
                     .Include("LopHoc")
-                    .FirstOrDefault(x => x.HocSinhID == userID);
+                   // .FirstOrDefault(x => x.HocSinhID == userID);
+                   .FirstOrDefault(x => x.NguoiDungID == userID);
+                //if (HocSinh == null)
+                //    return HttpNotFound();
 
                 if (HocSinh == null)
-                    return HttpNotFound();
+                {
+                    TempData["Error"] = "Tài khoản chưa được gán lớp học";
+                    return RedirectToAction("Index", "TrangChu");
+                }
+
 
                 vn.HocSinhID = HocSinh.HocSinhID;
                 vn.LopHocId = HocSinh.LopHocID;
@@ -91,9 +104,17 @@ namespace demomvc.Controllers
 
             if (vaitro == "GiaoVien")
             {
-                var GiaoVien = db.GiaoVien.Find(userID);
+                //var GiaoVien = db.GiaoVien.Find(userID);
+                var GiaoVien = db.GiaoVien
+    .FirstOrDefault(x => x.NguoiDungID == userID);
+
+                //if (GiaoVien == null)
+                //    return HttpNotFound();
                 if (GiaoVien == null)
-                    return HttpNotFound();
+                {
+                    TempData["Error"] = "Tài khoản chưa được gán giáo viên";
+                    return RedirectToAction("Index", "TrangChu");
+                }
 
                 vn.GiaoVienId = GiaoVien.GiaoVienID;
 

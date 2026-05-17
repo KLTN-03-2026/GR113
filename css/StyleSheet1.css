@@ -192,4 +192,106 @@
     transition: width 0.4s;
 }
 
+/* Base button */
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* Delete button */
+.delete-btn {
+    background: linear-gradient(135deg, #ff4d4f, #d9363e);
+    color: #fff;
+}
+
+    /* Icon */
+    .delete-btn i {
+        font-size: 14px;
+    }
+
+    /* Hover effect */
+    .delete-btn:hover {
+        background: linear-gradient(135deg, #ff7875, #cf1322);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(255, 77, 79, 0.3);
+    }
+
+    /* Click (active) */
+    .delete-btn:active {
+        transform: scale(0.95);
+    }
+
+    /* Disabled state */
+    .delete-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+.btn-back {
+    margin-top: 10px;
+    display: block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #37a183, #2c8c72);
+    color: #fff !important;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.25s ease;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+    /* hover */
+    .btn-back:hover {
+        background: linear-gradient(135deg, #2c8c72, #1f6f5a);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    /* click */
+    .btn-back:active {
+        transform: scale(0.95);
+    }
+.header-page {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* giữ nút bên trái */
+.btn-back {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #37a183, #2c8c72);
+    color: #fff !important;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+  
 

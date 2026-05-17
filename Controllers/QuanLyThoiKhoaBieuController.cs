@@ -11,9 +11,14 @@ using demomvc.Services.Hubs;
 using System;
 using System.Data.Entity.Infrastructure;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using static System.Web.Razor.Parser.SyntaxConstants;
+using DocumentFormat.OpenXml.Wordprocessing;
+using OpenXmlPowerTools;
+using System.Text.RegularExpressions;
 
 namespace demomvc.Controllers
 {
+
     [RoleAuthorize(RolesRequired = "HieuTruong")]
     public class QuanLyThoiKhoaBieuController : Controller
     {
@@ -84,23 +89,40 @@ namespace demomvc.Controllers
                 //new
                 NgayBatDauHoc = ngayBatDauHoc,
 
+                //ListNamHoc = db.NamHoc
+                //    .AsEnumerable()
+                //    .OrderBy(x => x.TenNamHoc)
+                //    .Select(x => new SelectListItem
+                //    {
+                //        Value = x.NamHocID.ToString(),
+                //        Text = x.TenNamHoc
+                //    }).ToList(),
                 ListNamHoc = db.NamHoc
-                    .AsEnumerable()
                     .OrderBy(x => x.TenNamHoc)
+                    .ToList() // 🔥 QUAN TRỌNG
                     .Select(x => new SelectListItem
                     {
                         Value = x.NamHocID.ToString(),
                         Text = x.TenNamHoc
                     }).ToList(),
 
-                ListHocKy = db.HocKy
-                    .AsEnumerable()
-                    .OrderBy(x => x.TenHocKy)
+                //ListHocKy = db.HocKy
+                //    .AsEnumerable()
+                //    .OrderBy(x => x.TenHocKy)
+                //    .Select(x => new SelectListItem
+                //    {
+                //        Value = x.HocKyID.ToString(),
+                //        Text = x.TenHocKy
+                //    }).ToList()
+                 ListHocKy = db.HocKy
+                    .Where(h => h.NamHocID == namHocId)
+                    .ToList() // 🔥 bắt buộc
                     .Select(x => new SelectListItem
                     {
                         Value = x.HocKyID.ToString(),
                         Text = x.TenHocKy
                     }).ToList()
+
             };
 
             if (namHocId.HasValue && hocKyId.HasValue)
@@ -248,53 +270,12 @@ namespace demomvc.Controllers
                     pc.GiaoVien.TrangThaiGiangDay != null)
                 .ToList();
 
+            if (!phanCong.Any())
+            {
+                TempData["Error"] = "Học Kì chưa nó phân công giáo viên giảng dạy";
+                return RedirectToAction("Index");
+            }
 
-            //  // 3. Xóa TKB cũ (nếu có)
-
-
-            ////xoa hoc bu
-
-            //var hocBu = db.HocBu
-            //    .Where(x =>
-            //        db.NgayHoc.Any(n =>
-            //            n.NgayHocID == x.NgayHocBuID ||
-            //            n.NgayHocID == x.NgayNghiID
-            //        )
-            //    ).ToList();
-
-            //foreach (var hb in hocBu)
-            //{
-            //    db.HocBu.Remove(hb);
-            //}
-
-
-            ////xoa ngay hoc
-
-            //var ngayHoc = db.NgayHoc
-            //    .Where(x => x.NamHocID == NamHocID && x.HocKyID == HocKyID)
-            //    .ToList();
-
-            //foreach (var n in ngayHoc)
-            //{
-            //    db.NgayHoc.Remove(n);
-            //}
-
-
-            ////var old = db.ThoiKhoaBieu
-            ////    .Where(x => x.HocKyID == HocKyID && x.LopHoc.NienKhoa == NamHocID);
-
-            ////------------------------------------
-            //var old = db.ThoiKhoaBieu
-            //    .Where(x => x.HocKyID == HocKyID
-            //             && x.NamHocID == NamHocID);
-            ////------------------------------------
-
-            //foreach (var item in old.ToList())
-            //{
-            //    db.ThoiKhoaBieu.Remove(item);
-            //}
-
-            //db.SaveChanges();
 
             // =========================
             // ✅ XÓA TOÀN BỘ DỮ LIỆU CŨ (CỰC CHUẨN)
@@ -337,7 +318,7 @@ namespace demomvc.Controllers
 
 
             //tao cho 1 tuan dda
-            // ✅ 6. LƯU THỜI KHÓA BIỂU TUẦN 1 (TUẦN MẪU)
+            //  6. LƯU THỜI KHÓA BIỂU TUẦN 1 (TUẦN MẪU)
             foreach (var g in best.Genes)
             {
                 db.ThoiKhoaBieu.Add(new ThoiKhoaBieu
@@ -348,7 +329,7 @@ namespace demomvc.Controllers
                     PhongHocID = (int)g.PhongHocID,
                     HocKyID = g.HocKyID,
                     NamHocID = NamHocID,
-                    Tuan = 1,                  // ✅ LUÔN LÀ TUẦN 1
+                    Tuan = 1,                  // LUÔN LÀ TUẦN 1
                     Thu = g.Thu,
                     TietHoc = g.Tiet
                 });
@@ -356,32 +337,7 @@ namespace demomvc.Controllers
 
             db.SaveChanges();
 
-            //chuyenr tuần 1 chuaane => các tuần còn lại của kh đó
-            //var tkbTuan1 = db.ThoiKhoaBieu.Where(x =>
-            //x.NamHocID == NamHocID &&
-            //x.HocKyID == HocKyID &&
-            //x.Tuan == 1).ToList();
 
-            //for (int tuan = 2; tuan <= soTuanHoc; tuan++)
-            //{
-            //    foreach (var t in tkbTuan1)
-            //    {
-            //        db.ThoiKhoaBieu.Add(new ThoiKhoaBieu
-            //        {
-            //            NamHocID = t.NamHocID,
-            //            HocKyID = t.HocKyID,
-            //            LopHocID = t.LopHocID,
-            //            MonHocID = t.MonHocID,
-            //            GiaoVienID = t.GiaoVienID,
-            //            PhongHocID = t.PhongHocID,
-            //            Thu = t.Thu,
-            //            TietHoc = t.TietHoc,
-            //            Tuan = tuan
-            //        });
-            //    }
-            //}
-
-            //db.SaveChanges();
             // =========================
             // CLONE TUẦN 1 → CÁC TUẦN KHÁC (NHANH)
             // =========================
@@ -424,9 +380,10 @@ namespace demomvc.Controllers
 
             db.SaveChanges();
 
+            db.Configuration.AutoDetectChangesEnabled = false;
+            //  CanBangSoTietNam(NamHocID, HocKyID);
+            CanBangTheoGA(NamHocID, HocKyID);
             db.Configuration.AutoDetectChangesEnabled = true;
-
-
             TempData["Success"] = " Tạo thời khóa biểu thành công!";
             return RedirectToAction("Index");
         }
@@ -467,12 +424,25 @@ namespace demomvc.Controllers
                     continue;
 
                 // ✅ ĐẾM SỐ TIẾT TUẦN 1 (LỊCH GỐC)
-                int soTietTuan1 = (int)Math.Round((double)soTietNam / tongTuanNam);
+                //int soTietTuan1 = (int)Math.Round((double)soTietNam / tongTuanNam);
+
+                //if (soTietTuan1 < 1) soTietTuan1 = 1;
+                //if (soTietTuan1 > 5) soTietTuan1 = 5;
+
+
+                double soTietTrungBinhTuan =
+                    (double)soTietNam / tongTuanNam;
+
+                int soTietTuan1 =
+                    Math.Max(1,
+                   (int)Math.Round(soTietTrungBinhTuan));
+
 
                 if (soTietTuan1 < 1) soTietTuan1 = 1;
                 if (soTietTuan1 > 5) soTietTuan1 = 5;
 
-                // ✅ TẠO ĐỦ GENE CHO TUẦN 1
+
+                //  TẠO ĐỦ GENE CHO TUẦN 1
                 for (int i = 0; i < soTietTuan1; i++)
                 {
                     genes.Add(new Gene
@@ -488,10 +458,212 @@ namespace demomvc.Controllers
                     });
                 }
             }
-
-
             return genes;
         }
+
+        private void CanBangTheoGA(int namHocId, int hocKyId)
+        {
+            var tkbAll = db.ThoiKhoaBieu
+                .Where(x => x.NamHocID == namHocId && x.HocKyID == hocKyId)
+                .ToList();
+
+            int tongTuanNam = db.HocKy
+                .Where(x => x.NamHocID == namHocId)
+                .Sum(x => x.SoTuanThucHoc);
+
+            int soTuanHocKy = db.HocKy
+                .Where(x => x.HocKyID == hocKyId && x.NamHocID == namHocId)
+                .Select(x => x.SoTuanThucHoc)
+                .FirstOrDefault();
+
+            int[] thus = { 2, 7, 3, 6, 4, 5 };
+            int[] tietSang = { 1, 2, 3, 4, 5 };
+            int[] tietChieu = { 6, 7, 8, 9, 10 };
+
+            var lopIds = tkbAll.Select(x => x.LopHocID).Distinct().ToList();
+
+            // =========================
+            //  1. TẠO GENEPOOL (TIẾT THIẾU)
+            // =========================
+
+            var genePool = new List<Gene>();
+
+            foreach (var group in tkbAll.GroupBy(x => new { x.LopHocID, x.MonHocID }))
+            {
+                var first = group.First();
+
+                int soTietNam = db.MonHocKhoi
+                    .Where(x => x.KhoiLopID == first.LopHoc.KhoiLopID && x.MonHocID == first.MonHocID)
+                    .Select(x => x.SoTietNam)
+                    .FirstOrDefault();
+
+                // int soTietHocKy = (int)Math.Round((double)soTietNam / tongTuanNam * soTuanHocKy);
+                int soTietHocKy = (int)Math.Floor((double)soTietNam * soTuanHocKy / tongTuanNam);
+                //---------------------------------------------------------------------------------
+                int soDangCo = group.Count();
+                int soCanThem = soTietHocKy - soDangCo;
+
+                for (int i = 0; i < soCanThem; i++)
+                {
+                    genePool.Add(new Gene
+                    {
+                        LopHocID = first.LopHocID,
+                        KhoiLopID = first.LopHoc.KhoiLopID,
+                        MonHocID = first.MonHocID,
+                        GiaoVienID = first.GiaoVienID,
+                        PhongHocID = first.PhongHocID,
+                        HocKyID = hocKyId,
+                        CaHoc = first.LopHoc.CaHoc
+                    });
+                }
+            }
+
+            int demSave = 0;
+
+
+            foreach (var thu in thus)
+            {
+                foreach (var ca in new[] { "SANG", "CHIEU" })
+                {
+                    var tietTrongCa = ca == "SANG" ? tietSang : tietChieu;
+
+                    foreach (var tiet in tietTrongCa)
+                    {
+                        if (FixedSlotHelper.IsFixedSlot(thu, tiet, ca))
+                            continue;
+
+                        // ✅ DUYỆT TUẦN SAU KHI CỐ ĐỊNH SLOT
+                        for (int tuan = 1; tuan <= soTuanHocKy; tuan++)
+                        {
+                            var lopSorted = lopIds
+                                .OrderBy(lopId =>
+                                    tkbAll.Count(x =>
+                                        x.LopHocID == lopId &&
+                                        x.Tuan == tuan))
+                                .ToList();
+
+                            foreach (var lopId in lopSorted)
+                            {
+                                bool daXep = false;
+
+                                // ✅ THỬ NHIỀU LẦN
+                                for (int attempt = 0; attempt < 3 && !daXep; attempt++)
+                                {
+                                    var candidates = genePool
+                                        .Where(g =>
+                                        {
+                                            if (g.LopHocID != lopId)
+                                                return false;
+
+                                            bool laTinHoacTD = g.MonHocID == 18 || g.MonHocID == 14;
+
+
+
+                                            bool hopLeCa = laTinHoacTD
+                                                ? g.CaHoc != ca
+                                                : g.CaHoc == ca;
+
+                                            if (!hopLeCa)
+                                                return false;
+                                            if (laTinHoacTD && (tiet == 5 || tiet == 6))
+                                                return false;
+
+
+                                            if (CaHocHelper.IsSaiCa(g.MonHocID, tiet, g.CaHoc))
+                                                return false;
+
+                                            return true;
+                                        })
+                                        .OrderBy(x => Guid.NewGuid())
+                                        .ToList();
+
+                                    foreach (var g in candidates)
+                                    {
+                                        bool trung = tkbAll.Any(x =>
+                                            x.Tuan == tuan &&
+                                            x.Thu == thu &&
+                                            x.TietHoc == tiet &&
+                                            (
+                                                x.LopHocID == lopId ||
+                                                x.GiaoVienID == g.GiaoVienID ||
+                                                x.PhongHocID == g.PhongHocID
+                                            ));
+
+                                        if (trung) continue;
+
+                                        int tietTrongTuan = tkbAll.Count(x =>
+                                            x.LopHocID == lopId &&
+                                            x.MonHocID == g.MonHocID &&
+                                            x.Tuan == tuan);
+
+                                        if (tietTrongTuan >= 2)
+                                            continue;
+
+                                        var tietTrongNgay = tkbAll
+                                            .Where(x =>
+                                                x.LopHocID == lopId &&
+                                                x.Tuan == tuan &&
+                                                x.Thu == thu)
+                                            .Select(x => x.TietHoc)
+                                            .ToList();
+
+                                        if (tietTrongNgay.Any())
+                                        {
+                                            bool lienKe = tietTrongNgay.Any(t => Math.Abs(t - tiet) == 1);
+                                            if (!lienKe) continue;
+                                        }
+
+                                        if (tietTrongNgay.Count >= 5)
+                                            continue;
+
+                                        if (!g.PhongHocID.HasValue)
+                                            continue;
+
+                                        // ✅ ADD
+                                        var newTiet = new ThoiKhoaBieu
+                                        {
+                                            LopHocID = g.LopHocID,
+                                            MonHocID = g.MonHocID,
+                                            GiaoVienID = g.GiaoVienID,
+                                            PhongHocID = g.PhongHocID.Value,
+                                            NamHocID = namHocId,
+                                            HocKyID = hocKyId,
+                                            Tuan = tuan,
+                                            Thu = thu,
+                                            TietHoc = tiet
+                                        };
+
+                                        db.ThoiKhoaBieu.Add(newTiet);
+                                        tkbAll.Add(newTiet);
+                                        genePool.Remove(g);
+
+                                        demSave++;
+
+                                        if (demSave >= 200)
+                                        {
+                                            db.SaveChanges();
+                                            demSave = 0;
+                                        }
+
+                                        daXep = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        // ✅ nếu hết gene thì break luôn
+                        if (genePool.Count == 0)
+                            break;
+                    }
+                }
+            }
+            if (demSave > 0)
+            {
+                db.SaveChanges();
+            }
+        }
+
 
 
         [HttpPost]
@@ -807,6 +979,7 @@ namespace demomvc.Controllers
                 NamHocID = dtoAdd.NamHocID,
                 HocKyID = dtoAdd.HocKyID
             };
+
             db.ThoiKhoaBieu.Add(tkb);
             db.SaveChanges();
 
@@ -836,8 +1009,6 @@ namespace demomvc.Controllers
             // update HocKy.NgayBatDauHoc
             return Json(new { oke = true, msg = "Đã thiết lập" });
         }
-
-
 
 
         //new
@@ -889,7 +1060,7 @@ namespace demomvc.Controllers
                 return Json(new { oke = false, msg = "Ngày này đã được đánh dấu nghỉ" });
             }
 
-            // ✅ INSERT NGÀY NGHỈ
+            //  INSERT NGÀY NGHỈ
             var ngayNghiEntity = new NgayHoc
             {
                 Ngay = ngayNghi,
@@ -905,11 +1076,11 @@ namespace demomvc.Controllers
 
 
 
-            // ✅ KHÔNG query lại — dùng luôn object vừa insert
+            //  KHÔNG query lại — dùng luôn object vừa insert
             var NgayNghiObj = ngayNghiEntity;
 
             // =======================
-            // ✅ TÌM NGÀY HỌC BÙ
+            //  TÌM NGÀY HỌC BÙ
             // =======================
 
             NgayHoc ngayHocBu = null;
@@ -943,7 +1114,7 @@ namespace demomvc.Controllers
                         x.TrangThai == "NGHI"
                     );
 
-                    // ✅ FIX CHÍNH: tách exist ra trước
+                    //  FIX CHÍNH: tách exist ra trước
                     var existNgayHoc = db.NgayHoc.FirstOrDefault(x =>
                         x.Tuan == t &&
                         x.Thu == th &&
@@ -957,7 +1128,7 @@ namespace demomvc.Controllers
                     bool laNgayNghi = existNgayHoc != null &&
                                       existNgayHoc.TrangThai == "NGHI";
 
-                    // ✅ điều kiện đầy đủ
+                    //  điều kiện đầy đủ
                     if (!daCoTKB &&
                         !laNgayNghiKhac &&
                         !daDuocDungLamHocBu &&
@@ -1047,7 +1218,153 @@ namespace demomvc.Controllers
             return Json(new { oke = true, msg = "Đã hủy ngày nghỉ" });
         }
 
+
+
+        [HttpPost]
+        public ActionResult ThemNamHoc(string tenNamHoc, string trangThai)
+        {
+            try
+            {
+                // ✅ 1. Check rỗng
+                if (string.IsNullOrWhiteSpace(tenNamHoc))
+                {
+                    return Json(new { success = false, message = "Tên năm học không được để trống" });
+                }
+
+                tenNamHoc = tenNamHoc.Trim();
+
+                // ✅ 2. Check đúng format: 2024-2025
+                if (!Regex.IsMatch(tenNamHoc, @"^\d{4}-\d{4}$"))
+                {
+                    return Json(new { success = false, message = "Sai định dạng (VD: 2024-2025)" });
+                }
+
+                // ✅ 3. Check logic năm
+                var parts = tenNamHoc.Split('-');
+                int namDau = int.Parse(parts[0]);
+                int namSau = int.Parse(parts[1]);
+
+                if (namSau != namDau + 1)
+                {
+                    return Json(new { success = false, message = "Năm sau phải = năm trước + 1" });
+                }
+
+                // ✅ 4. Check trùng
+                bool daTonTai = db.NamHoc.Any(n => n.TenNamHoc == tenNamHoc);
+                if (daTonTai)
+                {
+                    return Json(new { success = false, message = "Năm học đã tồn tại" });
+                }
+
+                // ✅ 5. Thêm mới
+                var namHoc = new NamHoc
+                {
+                    TenNamHoc = tenNamHoc,
+                    TrangThai = trangThai ?? "Đang hoạt động"
+                };
+
+                db.NamHoc.Add(namHoc);
+                db.SaveChanges();
+
+                // ✅ 6. Trả về để FE dùng luôn
+                return Json(new
+                {
+                    success = true,
+                    message = "Thêm năm học thành công!",
+                    id = namHoc.NamHocID,
+                    ten = namHoc.TenNamHoc
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Lỗi: " + ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult ThemHocKy(string tenHocKy, int namHocID, int soTuan)
+        {
+            try
+            {
+                //  validate
+                if (string.IsNullOrEmpty(tenHocKy))
+                {
+                    return Json(new { success = false, message = "Vui lòng chọn học kỳ" });
+                }
+
+                if (namHocID <= 0)
+                {
+                    return Json(new { success = false, message = "Vui lòng chọn năm học" });
+                }
+
+                if (soTuan <= 0)
+                {
+                    return Json(new { success = false, message = "Số tuần phải lớn hơn 0" });
+                }
+
+                //  check trùng
+                bool daTonTai = db.HocKy.Any(h =>
+                    h.NamHocID == namHocID &&
+                    h.TenHocKy == tenHocKy);
+
+                if (daTonTai)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = $"Năm học này đã có {tenHocKy}"
+                    });
+                }
+
+                //  thêm
+                var hocKy = new HocKy
+                {
+                    TenHocKy = tenHocKy,
+                    NamHocID = namHocID,
+                    SoTuanThucHoc = soTuan,
+                    NgayBatDauHoc = DateTime.Now
+                };
+
+                db.HocKy.Add(hocKy);
+                db.SaveChanges();
+
+                return Json(new
+                {
+                    success = true,
+                    message = $"Thêm {tenHocKy} thành công!"
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetHocKyByNamHoc(int namHocID)
+        {
+            var list = db.HocKy
+                .Where(x => x.NamHocID == namHocID)
+                .Select(x => new
+                {
+                    id = x.HocKyID,
+                    text = x.TenHocKy
+                })
+                .ToList();
+
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }
+
 
 

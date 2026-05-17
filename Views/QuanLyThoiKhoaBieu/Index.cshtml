@@ -447,8 +447,12 @@
         }
     }
     </style>*@
-
-<h2>Quản lý thời khóa biểu</h2>
+<div class="title-wrapper">
+    <h2 class="title-page">
+        <i class="fas fa-calendar-alt mr-2"></i>
+        Quản lý thời khóa biểu
+    </h2>
+</div>
 
 @*@if (TempData["Error"] != null)
     {
@@ -470,22 +474,56 @@
     @Html.AntiForgeryToken()
 
     <div class="row">
+        @*<div class="col-md-4">
+
+
+
+                <label>Năm học</label>
+                @Html.DropDownListFor(
+                    m => m.NamHocID,
+                    Model.ListNamHoc,
+                    "-- Chọn năm học --",
+                    new { @class = "form-control", required = "required" })
+
+            </div>*@
         <div class="col-md-4">
             <label>Năm học</label>
-            @Html.DropDownListFor(
-                m => m.NamHocID,
-                Model.ListNamHoc,
-                "-- Chọn năm học --",
-                new { @class = "form-control", required = "required" })
+
+            <div class="d-flex align-items-center select-group">
+                @Html.DropDownListFor(
+                    m => m.NamHocID,
+                    Model.ListNamHoc,
+                    "-- Chọn năm học --",
+                    new { @class = "form-control" })
+
+                <span class="icon-add" data-toggle="modal" data-target="#modalNamHoc">
+                    <i class="fas fa-plus"></i>
+                </span>
+            </div>
         </div>
 
+        @*<div class="col-md-4">
+                <label>Học kỳ</label>
+                @Html.DropDownListFor(
+                    m => m.HocKyID,
+                    Model.ListHocKy,
+                    "-- Chọn học kỳ --",
+                    new { @class = "form-control", required = "required" })
+            </div>*@
         <div class="col-md-4">
             <label>Học kỳ</label>
-            @Html.DropDownListFor(
-                m => m.HocKyID,
-                Model.ListHocKy,
-                "-- Chọn học kỳ --",
-                new { @class = "form-control", required = "required" })
+
+            <div class="d-flex align-items-center select-group">
+                @Html.DropDownListFor(
+                    m => m.HocKyID,
+                    Model.ListHocKy,
+                    "-- Chọn học kỳ --",
+                    new { @class = "form-control" })
+
+                <span class="icon-add" data-toggle="modal" data-target="#modalHocKy">
+                    <i class="fas fa-plus"></i>
+                </span>
+            </div>
         </div>
 
         <div class="col-md-4" style="margin-top:25px;">
@@ -1082,7 +1120,231 @@
     </div>
 </div>
 
+<!--Them năm học-->
+<div class="modal fade" id="modalNamHoc">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">➕ Thêm năm học</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+
+                <label>Tên năm học</label>
+                <input id="tenNamHoc" class="form-control mb-2" placeholder="VD: 2025-2026">
+
+                <label>Trạng thái</label>
+                <select id="trangThaiNamHoc" class="form-control">
+                    <option value="Đang hoạt động">Đang hoạt động</option>
+                    <option value="Đã kết thúc">Đã kết thúc</option>
+                </select>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-success" onclick="themNamHoc()">
+                    Lưu
+                </button>
+                <button class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--Temhojc ki-->
+<div class="modal fade" id="modalHocKy">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">📘 Thêm học kì</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+
+                <label>Tên học kì</label>
+
+                <select id="tenHocKy" class="form-control mb-2">
+                    <option value="">-- Chọn học kì --</option>
+                    <option value="Học kì 1">Học kì 1</option>
+                    <option value="Học kì 2">Học kì 2</option>
+                </select>
+
+
+                <label>Năm học</label>
+                <select id="namHocHocKy" class="form-control mb-2">
+                    <option value="" disabled selected>-- Chọn năm học --</option>
+
+                    @foreach (var item in Model.ListNamHoc)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+
+                <label>Số tuần thực học</label>
+                <input id="soTuan" type="number" class="form-control mb-2" placeholder="VD: 18" min="1" max="20">
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="themHocKy()">
+                    Lưu
+                </button>
+                <button class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 <script>
+   function themNamHoc() {
+    var tenNamHoc = $("#tenNamHoc").val().trim();
+    var trangThai = $("#trangThaiNamHoc").val();
+
+    // ✅ VALIDATE
+    if (tenNamHoc === "") {
+        showToast("Tên năm học không được để trống", "error");
+        return;
+    }
+
+    // regex đúng format 2024-2025
+    var regex = /^\d{4}-\d{4}$/;
+    if (!regex.test(tenNamHoc)) {
+        showToast("Năm học phải dạng 2024-2025", "error");
+        return;
+    }
+
+    // check logic năm
+    var parts = tenNamHoc.split("-");
+    if (parseInt(parts[1]) !== parseInt(parts[0]) + 1) {
+        showToast("Năm sau phải bằng năm trước + 1", "error");
+        return;
+    }
+
+    // ✅ disable nút tránh spam click
+    $(".btn-success").prop("disabled", true);
+
+    $.ajax({
+        url: '@Url.Action("ThemNamHoc", "QuanLyThoiKhoaBieu")',
+        type: 'POST',
+        data: {
+            tenNamHoc: tenNamHoc,
+            trangThai: trangThai
+        },
+        success: function (res) {
+
+            if (res.success) {
+                showToast(res.message, "success");
+
+                // đóng modal
+                $("#modalNamHoc").modal("hide");
+
+                // clear input
+                $("#tenNamHoc").val("");
+
+                // reload
+                setTimeout(() => {
+                    location.reload();
+                }, 800);
+            }
+            else {
+                showToast(res.message, "error");
+            }
+
+            // enable lại nút
+            $(".btn-success").prop("disabled", false);
+        },
+        error: function () {
+            showToast("Lỗi server!", "error");
+            $(".btn-success").prop("disabled", false);
+        }
+    });
+}
+    $("#tenNamHoc").on("input", function () {
+        let value = $(this).val();
+
+        // chỉ cho số và dấu -
+        value = value.replace(/[^0-9\-]/g, "");
+
+        // đảm bảo chỉ có 1 dấu -
+        let parts = value.split("-");
+        if (parts.length > 2) {
+            value = parts[0] + "-" + parts[1];
+        }
+
+        $(this).val(value);
+    });
+    $("#soTuan").on("input", function () {
+        if ($(this).val() < 1) {
+            $(this).val(1);
+        }
+    });
+
+    //Hoc ky
+    function themHocKy() {
+
+    var tenHocKy = $("#tenHocKy").val();
+    var namHocID = $("#namHocHocKy").val();
+    var soTuan = $("#soTuan").val();
+
+    // ✅ validate học kỳ
+    if (!tenHocKy) {
+        showToast("Vui lòng chọn học kỳ", "error");
+        return;
+    }
+
+    // ✅ validate năm học
+    if (!namHocID) {
+        showToast("Vui lòng chọn năm học", "error");
+        return;
+    }
+
+    // ✅ validate số tuần
+    if (!soTuan || soTuan <= 0) {
+        showToast("Số tuần phải lớn hơn 0", "error");
+        return;
+    }
+
+    $.ajax({
+        url: '@Url.Action("ThemHocKy", "QuanLyThoiKhoaBieu")',
+        type: 'POST',
+        data: {
+            tenHocKy: tenHocKy,
+            namHocID: namHocID,
+            soTuan: soTuan
+        },
+        success: function (res) {
+
+            if (res.success) {
+                showToast(res.message, "success");
+
+                // đóng modal
+                $("#modalHocKy").modal("hide");
+
+                // reset form
+                $("#tenHocKy").val("");
+                $("#namHocHocKy").val("");
+                $("#soTuan").val("");
+
+                // reload
+                setTimeout(() => {
+                    location.reload();
+                }, 800);
+            }
+            else {
+                showToast(res.message, "error");
+            }
+        },
+        error: function () {
+            showToast("Lỗi server!", "error");
+        }
+    });
+}
+
 
     // ===== SIGNALR (SAFE) =====
     if (typeof $.connection !== "undefined") {
@@ -1672,4 +1934,41 @@ $(document).on('click', '.tkb-bo-nghi', function () {
         $('body').removeClass('modal-open');
         $('.modal-backdrop').remove();
     }
+    $("#NamHocID").change(function () {
+
+    var namHocID = $(this).val();
+
+    if (!namHocID) return;
+
+    $.ajax({
+        url: '@Url.Action("GetHocKyByNamHoc", "QuanLyThoiKhoaBieu")',
+        type: 'GET',
+        data: { namHocID: namHocID },
+        success: function (data) {
+
+            var hocKyDropdown = $("#HocKyID");
+
+            hocKyDropdown.empty(); // xoá cũ
+
+            hocKyDropdown.append('<option value="">-- Chọn học kỳ --</option>');
+
+            if (data.length === 0) {
+                hocKyDropdown.append('<option value="">Chưa có học kỳ</option>');
+                return;
+            }
+
+            $.each(data, function (i, item) {
+                hocKyDropdown.append(
+                    '<option value="' + item.id + '">' + item.text + '</option>'
+                );
+            });
+
+            // ✅ auto chọn cái đầu
+            hocKyDropdown.val(data[0].id);
+        },
+        error: function () {
+            showToast("Không load được học kỳ", "error");
+        }
+    });
+});
 </script>

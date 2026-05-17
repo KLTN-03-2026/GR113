@@ -40,7 +40,7 @@ namespace demomvc.Models
 
 		//new
         public int? MonHocID { get; set; }
-        public int BoMonID { get; set; }  // từ bảng BoMon
-
+        public int? BoMonID { get; set; }  // từ bảng BoMon
+        public int? LopChuNhiemID { get; set; }
     }
 }

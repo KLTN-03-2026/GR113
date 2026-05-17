@@ -36,16 +36,7 @@ namespace demomvc.Controllers
         }
 
 
-        //public ActionResult CapNhat(int id)
-        //{
-        //    HocSinh hocsinh = db.HocSinh.Where(row => row.HocSinhID == id).FirstOrDefault();
-        //    ViewBag.KhoiLop = db.KhoiLop.ToList();
-        //    ViewBag.LopHoc = db.LopHoc.ToList();
-        //    ViewBag.NguoiDung = db.NguoiDung.ToList();
-        //    ViewBag.PhuHuynh_HocSinh = db.HocSinh_PhuHuynh.ToList();
-        //    ViewBag.PhuHuynh = db.PhuHuynh.ToList();
-        //    return View(hocsinh);
-        //}
+       
         public ActionResult CapNhat(int id)
         {
             var hocsinh = db.HocSinh
@@ -61,244 +52,7 @@ namespace demomvc.Controllers
         }
 
 
-        //[HttpPost]
-        //public ActionResult CapNhat(HocSinh hs, int hocSinhID, string HoTenBa, string SDTBa, string NgheNghiepBa, string EmailBa,
-        //                            string HoTenMe, string SDTMe, string NgheNghiepMe, string EmailMe)
-        //{
-        //    if (string.IsNullOrWhiteSpace(hs.NguoiDung?.HoTen))
-        //        ModelState.AddModelError("NguoiDung.HoTen", "Họ tên học sinh không được để trống");
-        //    if (hs.NgaySinh == null)
-        //        ModelState.AddModelError("NgaySinh", "Ngày sinh không được để trống");
-        //    if (string.IsNullOrWhiteSpace(hs.GioiTinh))
-        //        ModelState.AddModelError("GioiTinh", "Giới tính không được để trống");
-        //    if (string.IsNullOrWhiteSpace(hs.LopHoc?.KhoiLop?.TenKhoi))
-        //        ModelState.AddModelError("LopHoc.KhoiLop.TenKhoi", "Khối không được để trống");
-        //    if (string.IsNullOrWhiteSpace(hs.LopHoc?.TenLop))
-        //        ModelState.AddModelError("LopHoc.TenLop", "Lớp không được để trống");
-        //    if (string.IsNullOrWhiteSpace(hs.CCCD))
-        //        ModelState.AddModelError("CCCD", "CCCD không được để trống");
-        //    if (string.IsNullOrWhiteSpace(hs.DanToc))
-        //        ModelState.AddModelError("DanToc", "Dân tộc không được để trống");
-        //    if (string.IsNullOrWhiteSpace(hs.NguoiDung?.Email))
-        //        ModelState.AddModelError("NguoiDung.Email", "Email không được để trống");
-        //    if (string.IsNullOrWhiteSpace(hs.TinhThanhPho))
-        //        ModelState.AddModelError("TinhThanhPho", "Thành phố không được để trống");
-        //    if (string.IsNullOrWhiteSpace(hs.QuanHuyen))
-        //        ModelState.AddModelError("QuanHuyen", "Quận huyện không được để trống");
-        //    if (string.IsNullOrWhiteSpace(hs.DiaChiNha))
-        //        ModelState.AddModelError("DiaChiNha", "Địa chỉ không được để trống");
-        //    if (string.IsNullOrWhiteSpace(HoTenBa))
-        //        ModelState.AddModelError("HoTenBa", "Họ tên Ba không được để trống");
-        //    if (string.IsNullOrWhiteSpace(SDTBa))
-        //        ModelState.AddModelError("SDTBa", "SĐT Ba không được để trống");
-        //    if (string.IsNullOrWhiteSpace(NgheNghiepBa))
-        //        ModelState.AddModelError("NgheNghiepBa", "Nghề nghiệp Ba không được để trống");
-        //    if (string.IsNullOrWhiteSpace(EmailBa))
-        //        ModelState.AddModelError("EmailBa", "Email Ba không được để trống");
-        //    if (string.IsNullOrWhiteSpace(HoTenMe))
-        //        ModelState.AddModelError("HoTenMe", "Họ tên Mẹ không được để trống");
-        //    if (string.IsNullOrWhiteSpace(SDTMe))
-        //        ModelState.AddModelError("SDTMe", "SĐT Mẹ không được để trống");
-        //    if (string.IsNullOrWhiteSpace(NgheNghiepMe))
-        //        ModelState.AddModelError("NgheNghiepMe", "Nghề nghiệp Mẹ không được để trống");
-        //    if (string.IsNullOrWhiteSpace(EmailMe))
-        //        ModelState.AddModelError("EmailMe", "Email Mẹ không được để trống");
-        //    if (!ModelState.IsValid)
-        //        return View(hs);
-
-        //    //HocSinh hocsinh = db.HocSinh.Where(row => row.HocSinhID == hs.HocSinhID).FirstOrDefault();
-        //    var hocsinh = db.HocSinh
-        //             .Include("NguoiDung")
-        //             .Include(h => h.LopHoc.KhoiLop)
-        //             .FirstOrDefault(x => x.HocSinhID == hs.HocSinhID);
-
-        //    if (hocsinh == null) return HttpNotFound();
-
-        //    hocsinh.NguoiDung.HoTen = hs.NguoiDung.HoTen;
-        //    hocsinh.GioiTinh = hs.GioiTinh;
-        //    hocsinh.NgaySinh = hs.NgaySinh;
-        //    hocsinh.LopHoc.KhoiLop.TenKhoi = hs.LopHoc.KhoiLop.TenKhoi;
-        //    hocsinh.LopHoc.TenLop = hs.LopHoc.TenLop;
-        //    hocsinh.CCCD = hs.CCCD;
-        //    hocsinh.DanToc = hs.DanToc;
-        //    hocsinh.NguoiDung.Email = hs.NguoiDung.Email;
-        //    hocsinh.TinhThanhPho = hs.TinhThanhPho;
-        //    hocsinh.QuanHuyen = hs.QuanHuyen;
-        //    hocsinh.DiaChiNha = hs.DiaChiNha;
-
-
-        //    //phụ huynh
-        //    var ba = db.HocSinh_PhuHuynh
-        //        .Include(hp => hp.PhuHuynh)
-        //        .FirstOrDefault(x => x.HocSinhID == hs.HocSinhID && x.VaiTroTrongGiaDinh == "Ba")?.PhuHuynh;
-
-        //    if (ba != null)
-        //    {
-        //        ba.HoTen = HoTenBa;
-        //        ba.SDT = SDTBa;
-        //        ba.NgheNghiep = NgheNghiepBa;
-        //        ba.Email = EmailBa;
-        //    }
-
-        //    //mẹ
-        //    var me = db.HocSinh_PhuHuynh
-        //        .Include(hp => hp.PhuHuynh)
-        //        .FirstOrDefault(x => x.HocSinhID == hs.HocSinhID && x.VaiTroTrongGiaDinh == "Mẹ")?.PhuHuynh;
-
-        //    if (me != null)
-        //    {
-        //        me.HoTen = HoTenMe;
-        //        me.SDT = SDTMe;
-        //        me.NgheNghiep = NgheNghiepMe;
-        //        me.Email = EmailMe;
-        //    }
-
-
-        //    db.SaveChanges();
-        //    TempData["Success"] = "Cập nhật thành công!";
-        //    return RedirectToAction("Index");
-        //}
-        //[HttpPost]
-        //public ActionResult CapNhat(
-        //        HocSinh hs,
-        //        int hocSinhID,
-        //        string HoTenBa, string SDTBa, string NgheNghiepBa, string EmailBa,
-        //        string HoTenMe, string SDTMe, string NgheNghiepMe, string EmailMe)
-        //{
-        //    // VALIDATE
-        //    if (string.IsNullOrWhiteSpace(hs.NguoiDung?.HoTen))
-        //        ModelState.AddModelError("NguoiDung.HoTen", "Họ tên học sinh không được để trống");
-
-        //    if (hs.NgaySinh == null)
-        //        ModelState.AddModelError("NgaySinh", "Ngày sinh không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(hs.GioiTinh))
-        //        ModelState.AddModelError("GioiTinh", "Giới tính không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(hs.CCCD))
-        //        ModelState.AddModelError("CCCD", "CCCD không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(hs.DanToc))
-        //        ModelState.AddModelError("DanToc", "Dân tộc không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(hs.NguoiDung?.Email))
-        //        ModelState.AddModelError("NguoiDung.Email", "Email không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(hs.TinhThanhPho))
-        //        ModelState.AddModelError("TinhThanhPho", "Thành phố không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(hs.QuanHuyen))
-        //        ModelState.AddModelError("QuanHuyen", "Quận huyện không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(hs.DiaChiNha))
-        //        ModelState.AddModelError("DiaChiNha", "Địa chỉ không được để trống");
-
-        //    // phụ huynh
-        //    if (string.IsNullOrWhiteSpace(HoTenBa))
-        //        ModelState.AddModelError("HoTenBa", "Họ tên Ba không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(SDTBa))
-        //        ModelState.AddModelError("SDTBa", "SĐT Ba không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(NgheNghiepBa))
-        //        ModelState.AddModelError("NgheNghiepBa", "Nghề nghiệp Ba không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(EmailBa))
-        //        ModelState.AddModelError("EmailBa", "Email Ba không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(HoTenMe))
-        //        ModelState.AddModelError("HoTenMe", "Họ tên Mẹ không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(SDTMe))
-        //        ModelState.AddModelError("SDTMe", "SĐT Mẹ không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(NgheNghiepMe))
-        //        ModelState.AddModelError("NgheNghiepMe", "Nghề nghiệp Mẹ không được để trống");
-
-        //    if (string.IsNullOrWhiteSpace(EmailMe))
-        //        ModelState.AddModelError("EmailMe", "Email Mẹ không được để trống");
-
-
-
-        //    // Nếu có lỗi => load lại học sinh đầy đủ để View render đúng
-        //    if (!ModelState.IsValid)
-        //    {
-        //        var hsReload = db.HocSinh
-        //            .Include("NguoiDung")
-        //            .Include("LopHoc")
-        //            .Include("LopHoc.KhoiLop")
-        //            .Include("HocSinh_PhuHuynh.PhuHuynh")
-        //            .FirstOrDefault(x => x.HocSinhID == hs.HocSinhID);
-
-        //        return View(hsReload);
-        //    }
-
-
-        //    // Lấy từ DB
-        //    var hocsinh = db.HocSinh
-        //        .Include("NguoiDung")
-        //        .Include("LopHoc")
-        //        .Include("LopHoc.KhoiLop")
-        //        .Include("HocSinh_PhuHuynh.PhuHuynh")
-        //        .FirstOrDefault(x => x.HocSinhID == hs.HocSinhID);
-
-        //    if (hocsinh == null) return HttpNotFound();
-
-        //    // Cập nhật học sinh
-        //    hocsinh.NguoiDung.HoTen = hs.NguoiDung.HoTen;
-        //    hocsinh.GioiTinh = hs.GioiTinh;
-        //    hocsinh.NgaySinh = hs.NgaySinh;
-        //    hocsinh.CCCD = hs.CCCD;
-        //    hocsinh.DanToc = hs.DanToc;
-        //    hocsinh.NguoiDung.Email = hs.NguoiDung.Email;
-        //    hocsinh.TinhThanhPho = hs.TinhThanhPho;
-        //    hocsinh.QuanHuyen = hs.QuanHuyen;
-        //    hocsinh.DiaChiNha = hs.DiaChiNha;
-
-
-        //    // PHỤ HUYNH - BA
-        //    var baLink = hocsinh.HocSinh_PhuHuynh.FirstOrDefault(x => x.VaiTroTrongGiaDinh == "Ba");
-        //    var ba = baLink?.PhuHuynh;
-
-        //    if (ba != null)
-        //    {
-        //        ba.HoTen = HoTenBa;
-        //        ba.SDT = SDTBa;
-        //        ba.NgheNghiep = NgheNghiepBa;
-        //        ba.Email = EmailBa;
-        //    }
-
-        //    // PHỤ HUYNH - MẸ
-        //    var meLink = hocsinh.HocSinh_PhuHuynh.FirstOrDefault(x => x.VaiTroTrongGiaDinh == "Mẹ");
-        //    var me = meLink?.PhuHuynh;
-
-        //    if (me != null)
-        //    {
-        //        me.HoTen = HoTenMe;
-        //        me.SDT = SDTMe;
-        //        me.NgheNghiep = NgheNghiepMe;
-        //        me.Email = EmailMe;
-        //    }
-
-
-        //    try
-        //    {
-        //        db.SaveChanges();
-        //    }
-        //    catch (DbEntityValidationException ex)
-        //    {
-        //        var errors = ex.EntityValidationErrors
-        //            .SelectMany(e => e.ValidationErrors)
-        //            .Select(e => "Property: " + e.PropertyName + " - Error: " + e.ErrorMessage);
-
-        //        throw new Exception(string.Join("<br/>", errors));
-        //    }
-
-
-        //    TempData["Success"] = "Cập nhật thành công!";
-        //    return RedirectToAction("Index");
-        //}
-
+       
         [HttpPost]
         public ActionResult CapNhat(
             HocSinh hs,
@@ -415,46 +169,113 @@ namespace demomvc.Controllers
 
             // ===== UPDATE BA =====
             // ===== UPDATE BA =====
-            var baRelation = hocsinh.HocSinh_PhuHuynh
-                .FirstOrDefault(x => x.VaiTroTrongGiaDinh == "Ba");
+            //var baRelation = hocsinh.HocSinh_PhuHuynh
+            //    .FirstOrDefault(x => x.VaiTroTrongGiaDinh == "Ba");
 
-            if (baRelation != null && baRelation.PhuHuynh != null)
+            //if (baRelation != null && baRelation.PhuHuynh != null)
+            //{
+            //    var ba = baRelation.PhuHuynh;
+
+            //    // ✅ THÊM Ở ĐÂY
+            //    ba.HoTen = HoTenBa?.Trim();
+            //    ba.SDT = SDTBa?.Trim();
+            //    ba.Email = EmailBa?.Trim();
+            //    ba.NgheNghiep = NgheNghiepBa?.Trim();
+
+
+            //}
+            var baRelation = hocsinh.HocSinh_PhuHuynh
+    .FirstOrDefault(x => x.VaiTroTrongGiaDinh == "Ba");
+
+            if (baRelation == null)
+            {
+                var ba = new PhuHuynh
+                {
+                    HoTen = HoTenBa,
+                    SDT = SDTBa,
+                    Email = EmailBa,
+                    NgheNghiep = NgheNghiepBa
+                };
+
+                db.PhuHuynh.Add(ba);
+
+                var relation = new HocSinh_PhuHuynh
+                {
+                    HocSinhID = hocsinh.HocSinhID,
+                    PhuHuynh = ba,
+                    VaiTroTrongGiaDinh = "Ba"
+                };
+
+                db.HocSinh_PhuHuynh.Add(relation);
+            }
+            else
             {
                 var ba = baRelation.PhuHuynh;
 
-                // ✅ THÊM Ở ĐÂY
-                ba.HoTen = HoTenBa?.Trim();
-                ba.SDT = SDTBa?.Trim();
-                ba.Email = EmailBa?.Trim();
-                ba.NgheNghiep = NgheNghiepBa?.Trim();
-
-                
+                ba.HoTen = HoTenBa;
+                ba.SDT = SDTBa;
+                ba.Email = EmailBa;
+                ba.NgheNghiep = NgheNghiepBa;
             }
 
 
 
-            // ===== UPDATE MẸ =====
-            // ===== UPDATE MẸ =====
-            var meRelation = hocsinh.HocSinh_PhuHuynh
-                .FirstOrDefault(x => x.VaiTroTrongGiaDinh == "Mẹ");
 
-            if (meRelation != null && meRelation.PhuHuynh != null)
+            // ===== UPDATE MẸ =====
+            // ===== UPDATE MẸ =====
+            //var meRelation = hocsinh.HocSinh_PhuHuynh
+            //    .FirstOrDefault(x => x.VaiTroTrongGiaDinh == "Mẹ");
+
+            //if (meRelation != null && meRelation.PhuHuynh != null)
+            //{
+            //    var me = meRelation.PhuHuynh;
+
+            //    // ✅ THÊM Ở ĐÂY
+            //    me.HoTen = HoTenMe?.Trim();
+            //    me.SDT = SDTMe?.Trim();
+            //    me.Email = EmailMe?.Trim();
+            //    me.NgheNghiep = NgheNghiepMe?.Trim();
+
+
+            //}
+            var meRelation = hocsinh.HocSinh_PhuHuynh
+    .FirstOrDefault(x => x.VaiTroTrongGiaDinh == "Mẹ");
+
+            if (meRelation == null)
+            {
+                var me = new PhuHuynh
+                {
+                    HoTen = HoTenMe,
+                    SDT = SDTMe,
+                    Email = EmailMe,
+                    NgheNghiep = NgheNghiepMe
+                };
+
+                db.PhuHuynh.Add(me);
+
+                var relation = new HocSinh_PhuHuynh
+                {
+                    HocSinhID = hocsinh.HocSinhID,
+                    PhuHuynh = me,
+                    VaiTroTrongGiaDinh = "Mẹ"
+                };
+
+                db.HocSinh_PhuHuynh.Add(relation);
+            }
+            else
             {
                 var me = meRelation.PhuHuynh;
 
-                // ✅ THÊM Ở ĐÂY
-                me.HoTen = HoTenMe?.Trim();
-                me.SDT = SDTMe?.Trim();
-                me.Email = EmailMe?.Trim();
-                me.NgheNghiep = NgheNghiepMe?.Trim();
-
-               
+                me.HoTen = HoTenMe;
+                me.SDT = SDTMe;
+                me.Email = EmailMe;
+                me.NgheNghiep = NgheNghiepMe;
             }
 
 
             // ===== SAVE =====
-           
-                db.SaveChanges();
+
+            db.SaveChanges();
                
             TempData["Success"] = "Cập nhật thông tin học sinh & phụ huynh thành công!";
             return RedirectToAction("Index");
