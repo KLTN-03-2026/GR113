@@ -22,7 +22,7 @@ namespace demomvc.Controllers
     [RoleAuthorize(RolesRequired = "HieuTruong")]
     public class QuanLyThoiKhoaBieuController : Controller
     {
-        private readonly QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
+        private readonly QuanLyTruongHocEntities2 db = new QuanLyTruongHocEntities2();
         private readonly GeneticAlgorithmService gaService = new GeneticAlgorithmService();
 
 

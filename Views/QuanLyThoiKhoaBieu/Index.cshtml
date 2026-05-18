@@ -856,7 +856,7 @@
 
                                         var listHocBu = new List<demomvc.Models.ThoiKhoaBieu>();
 
-                                        using (var db2 = new demomvc.Models.QuanLyTruongHocEntities1())
+                                        using (var db2 = new demomvc.Models.QuanLyTruongHocEntities2())
                                         {
                                             listHocBu = db2.ThoiKhoaBieu
 
@@ -1351,34 +1351,7 @@
         try {
             var hub = $.connection.gaProgressHub;
 
-            //hub.client.updateProgress = function (message) {
-            //    $("#aiText").text(message);
-            //};
-            //hub.client.updateProgress = function (message) {
 
-            //    //$("#aiText").text(message);
-            //    $("#aiText").text(message);
-
-            //    $('#aiLog').prepend(`
-            //        <div style="margin-bottom:6px;">
-            //            > ${message}
-            //        </div>
-            //    `);
-
-            //    // ✅ Khi AI chạy xong
-            //    if (message.includes("Hoàn tất")) {
-
-            //        setTimeout(function () {
-
-            //            //  ẩn overlay
-            //            $("#aiOverlay").hide();
-
-            //            //  load lại trang để hiển thị TKB mới
-            //            location.reload();
-
-            //        }, 1500); // delay 1.5s cho đẹp
-            //    }
-            //};
             hub.client.updateProgress = function (message) {
 
                 // text status
@@ -1424,13 +1397,7 @@
         }
     }
 
-    // ===== SUBMIT =====
-    //function onSubmitTKB() {
-    //    $("#btnSubmit").prop("disabled", true);
-    //    $("#aiOverlay").css("display", "flex");
-    //    $("#aiText").text("AI đang khởi tạo...");
-    //    return true;
-    //}
+
     let isSubmittingTKB = false;
 
     function onSubmitTKB() {
@@ -1460,7 +1427,7 @@
 
             if (result.isConfirmed) {
 
-                // ✅ đánh dấu đang submit thật
+                //  đánh dấu đang submit thật
                 isSubmittingTKB = true;
 
                 // disable nút
@@ -1498,6 +1465,7 @@
             + '&tuan=' + (@Model.Tuan + 1)
             + '&caHoc=@Model.CaHoc';
     }
+
 
     // ===== CLICK Ô TKB =====
        $(document).ready(function () {
@@ -1803,13 +1771,31 @@ Thu: $('#addThu').val(),
     });
    });
 
-function prevWeek() {
+@*function prevWeek() {
     window.location.href =
         '@Url.Action("Index")'
         + '?NamHocID=@Model.NamHocID'
         + '&HocKyID=@Model.HocKyID'
         + '&tuan=' + (@Model.Tuan - 1)
         + '&caHoc=@Model.CaHoc';
+    }*@
+    function prevWeek() {
+
+        let tuan = @Model.Tuan;  // lấy từ Razor
+
+        tuan = tuan - 1;
+
+        // ✅ chặn tại đây
+        if (tuan < 1) {
+            tuan = 1;
+        }
+
+        window.location.href =
+            '@Url.Action("Index")'
+            + '?NamHocID=@Model.NamHocID'
+            + '&HocKyID=@Model.HocKyID'
+            + '&tuan=' + tuan
+            + '&caHoc=@Model.CaHoc';
     }
 
     //chon nhiu ngay nghi
@@ -1853,21 +1839,7 @@ function prevWeek() {
 
 
 
-    @*ngayList.forEach(ngay => {
 
-        $.post('@Url.Action("DatNgayNghi")', {
-            namHocId: @Model.NamHocID,
-            hocKyId: @Model.HocKyID,
-            ngayNghi: ngay.trim()
-        }, function (res) {
-
-            if (!res.oke) {
-                console.log(res.msg); // ❗ không alert từng cái
-            }
-
-        });
-
-    });*@
 
 
     for (let ngay of ngayList) {
@@ -1963,7 +1935,7 @@ $(document).on('click', '.tkb-bo-nghi', function () {
                 );
             });
 
-            // ✅ auto chọn cái đầu
+            //  auto chọn cái đầu
             hocKyDropdown.val(data[0].id);
         },
         error: function () {

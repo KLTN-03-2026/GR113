@@ -8,7 +8,7 @@ namespace demomvc.Controllers
 {
     public class DangNhapController : Controller
     {
-        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
+        QuanLyTruongHocEntities2 db = new QuanLyTruongHocEntities2();
 
         [HttpGet]
         public ActionResult Index()

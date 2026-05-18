@@ -11,7 +11,7 @@ namespace demomvc.Controllers
     [RoleAuthorize(RolesRequired = "HieuTruong")]
     public class QuanLyLopHocController : Controller
     {
-        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
+        QuanLyTruongHocEntities2 db = new QuanLyTruongHocEntities2();
 
         // GET: QuanLyLopHoc
         public ActionResult Index()
@@ -185,10 +185,19 @@ namespace demomvc.Controllers
                         Value = k.KhoiLopID.ToString(),
                         Text = k.TenKhoi
                     }).ToList();
-                TempData["Success"] = " Tạo thời khóa biểu thành công!";
+                //TempData["Error"] = "Dữ liệu không hợp lệ!";
                 return View(model);
 
 
+            }
+            //trung ten lop
+            var ktr = db.LopHoc.Any(x => x.TenLop.ToLower() == model.TenLop.ToLower() && x.NienKhoa == model.NamHocID);
+            if (ktr)
+            {
+                LoadDropdown(model);
+                TempData["Error"] = "Tên lớp đã tồn tại trong năm học này!";
+               
+                return View(model);
             }
 
             LopHoc lop = new LopHoc
@@ -204,10 +213,35 @@ namespace demomvc.Controllers
             db.LopHoc.Add(lop);
             db.SaveChanges();
 
-            ViewBag.Message = "Thêm thành công";
+            TempData["Success"] = "Thêm lớp thành công!";
             return RedirectToAction("Index");
         }
+        private void LoadDropdown(ThemLopViewModel model)
+        {
+            model.ListGiaoVien = db.GiaoVien
+                .ToList()
+                .Select(g => new SelectListItem
+                {
+                    Value = g.GiaoVienID.ToString(),
+                    Text = g.NguoiDung.HoTen
+                }).ToList();
 
+            model.ListNamHoc = db.NamHoc
+                .ToList()
+                .Select(n => new SelectListItem
+                {
+                    Value = n.NamHocID.ToString(),
+                    Text = n.TenNamHoc
+                }).ToList();
+
+            model.ListKhoiLop = db.KhoiLop
+                .ToList()
+                .Select(k => new SelectListItem
+                {
+                    Value = k.KhoiLopID.ToString(),
+                    Text = k.TenKhoi
+                }).ToList();
+        }
         public ActionResult PhanCongChuNhiem()
         {
             // 1. Lấy tất cả lớp ra list 

@@ -10,7 +10,7 @@ namespace demomvc.Services.GA
 {
     public class FitnessCalculator
     {
-        private readonly QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
+        private readonly QuanLyTruongHocEntities2 db = new QuanLyTruongHocEntities2();
         public double Calculate(Chromosome c)
         {
             double fitness = 100000;

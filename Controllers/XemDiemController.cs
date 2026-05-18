@@ -13,7 +13,7 @@ namespace demomvc.Controllers
     public class XemDiemController : Controller
     {
         // GET: XemDiem
-        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
+        QuanLyTruongHocEntities2 db = new QuanLyTruongHocEntities2();
         public ActionResult Index()
         {
             BangDiemViewModel model = new BangDiemViewModel();

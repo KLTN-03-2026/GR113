@@ -88,11 +88,14 @@
           </Key>
           <Property Name="KetQuaID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="HocSinhID" Type="int" Nullable="false" />
-          <Property Name="HocKyID" Type="int" Nullable="false" />
+          <Property Name="HocKyID" Type="int" />
           <Property Name="NamHocID" Type="int" Nullable="false" />
           <Property Name="DTBTong" Type="float" />
           <Property Name="HocLuc" Type="nvarchar" MaxLength="20" />
           <Property Name="HanhKiem" Type="nvarchar" MaxLength="20" />
+          <Property Name="DTBCaNam" Type="float" />
+          <Property Name="HocLucCaNam" Type="nvarchar" MaxLength="20" />
+          <Property Name="HanhKiemCaNam" Type="nvarchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="KhoiLop">
           <Key>
@@ -414,7 +417,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_KQHT_HocKy">
-          <End Role="HocKy" Type="Self.HocKy" Multiplicity="1" />
+          <End Role="HocKy" Type="Self.HocKy" Multiplicity="0..1" />
           <End Role="KetQuaHocTap" Type="Self.KetQuaHocTap" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="HocKy">
@@ -597,18 +600,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ThongBao_NguoiDung">
-          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
-          <End Role="ThongBao" Type="Self.ThongBao" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="NguoiDung">
-              <PropertyRef Name="NguoiDungID" />
-            </Principal>
-            <Dependent Role="ThongBao">
-              <PropertyRef Name="NguoiTaoID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_TKB_GiaoVien">
           <End Role="GiaoVien" Type="Self.GiaoVien" Multiplicity="1" />
           <End Role="ThoiKhoaBieu" Type="Self.ThoiKhoaBieu" Multiplicity="*" />
@@ -678,6 +669,18 @@
             </Principal>
             <Dependent Role="ThoiKhoaBieu">
               <PropertyRef Name="PhongHocID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ThongBao_NguoiDung">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="ThongBao" Type="Self.ThongBao" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="NguoiDungID" />
+            </Principal>
+            <Dependent Role="ThongBao">
+              <PropertyRef Name="NguoiTaoID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -816,10 +819,6 @@
             <End Role="ThongBao" EntitySet="ThongBao" />
             <End Role="ThongBaoDaDoc" EntitySet="ThongBaoDaDoc" />
           </AssociationSet>
-          <AssociationSet Name="FK_ThongBao_NguoiDung" Association="Self.FK_ThongBao_NguoiDung">
-            <End Role="NguoiDung" EntitySet="NguoiDung" />
-            <End Role="ThongBao" EntitySet="ThongBao" />
-          </AssociationSet>
           <AssociationSet Name="FK_TKB_GiaoVien" Association="Self.FK_TKB_GiaoVien">
             <End Role="GiaoVien" EntitySet="GiaoVien" />
             <End Role="ThoiKhoaBieu" EntitySet="ThoiKhoaBieu" />
@@ -843,6 +842,10 @@
           <AssociationSet Name="FK_TKB_PhongHoc" Association="Self.FK_TKB_PhongHoc">
             <End Role="PhongHoc" EntitySet="PhongHoc" />
             <End Role="ThoiKhoaBieu" EntitySet="ThoiKhoaBieu" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ThongBao_NguoiDung" Association="Self.FK_ThongBao_NguoiDung">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="ThongBao" EntitySet="ThongBao" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -957,11 +960,14 @@
           </Key>
           <Property Name="KetQuaID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="HocSinhID" Type="Int32" Nullable="false" />
-          <Property Name="HocKyID" Type="Int32" Nullable="false" />
+          <Property Name="HocKyID" Type="Int32" />
           <Property Name="NamHocID" Type="Int32" Nullable="false" />
           <Property Name="DTBTong" Type="Double" />
           <Property Name="HocLuc" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="HanhKiem" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="DTBCaNam" Type="Double" />
+          <Property Name="HocLucCaNam" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="HanhKiemCaNam" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="HocKy" Relationship="Self.FK_KQHT_HocKy" FromRole="KetQuaHocTap" ToRole="HocKy" />
           <NavigationProperty Name="HocSinh" Relationship="Self.FK_KQHT_HocSinh" FromRole="KetQuaHocTap" ToRole="HocSinh" />
           <NavigationProperty Name="NamHoc" Relationship="Self.FK_KQHT_NamHoc" FromRole="KetQuaHocTap" ToRole="NamHoc" />
@@ -1325,7 +1331,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_KQHT_HocKy">
-          <End Role="HocKy" Type="Self.HocKy" Multiplicity="1" />
+          <End Role="HocKy" Type="Self.HocKy" Multiplicity="0..1" />
           <End Role="KetQuaHocTap" Type="Self.KetQuaHocTap" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="HocKy">
@@ -1596,7 +1602,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="QuanLyTruongHocEntities1" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="QuanLyTruongHocEntities2" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="BoMon" EntityType="Self.BoMon" />
           <EntitySet Name="Diem" EntityType="Self.Diem" />
           <EntitySet Name="GiaoVien" EntityType="Self.GiaoVien" />
@@ -1765,7 +1771,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="QuanLyTruongHocModelStoreContainer" CdmEntityContainer="QuanLyTruongHocEntities1">
+        <EntityContainerMapping StorageEntityContainer="QuanLyTruongHocModelStoreContainer" CdmEntityContainer="QuanLyTruongHocEntities2">
           <EntitySetMapping Name="BoMon">
             <EntityTypeMapping TypeName="QuanLyTruongHocModel.BoMon">
               <MappingFragment StoreEntitySet="BoMon">
@@ -1859,6 +1865,9 @@
                 <ScalarProperty Name="DTBTong" ColumnName="DTBTong" />
                 <ScalarProperty Name="HocLuc" ColumnName="HocLuc" />
                 <ScalarProperty Name="HanhKiem" ColumnName="HanhKiem" />
+                <ScalarProperty Name="DTBCaNam" ColumnName="DTBCaNam" />
+                <ScalarProperty Name="HocLucCaNam" ColumnName="HocLucCaNam" />
+                <ScalarProperty Name="HanhKiemCaNam" ColumnName="HanhKiemCaNam" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

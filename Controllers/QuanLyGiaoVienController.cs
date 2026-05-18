@@ -16,7 +16,7 @@ namespace demomvc.Controllers
     public class QuanLyGiaoVienController : Controller
     {
         // GET: QuanLyGiaoVien
-        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
+        QuanLyTruongHocEntities2 db = new QuanLyTruongHocEntities2();
         public ActionResult Index(string type, string keyword)
         {
             keyword = keyword ?? "";
@@ -110,44 +110,7 @@ namespace demomvc.Controllers
 
 
 
-        //public ActionResult ChiTietGV(int id)
-        //{
-        //    var gvct = (from gv in db.GiaoVien
-        //                join nd in db.NguoiDung on gv.NguoiDungID equals nd.NguoiDungID
-        //                join mh in db.MonHoc on gv.MonHocID equals mh.MonHocID into monhocGroup
-        //                from mh in monhocGroup.DefaultIfEmpty()
-        //                join bm in db.BoMon on mh.BoMonID equals bm.BoMonID into bomonGroup
-        //                from bm in bomonGroup.DefaultIfEmpty()
-        //                join lh in db.LopHoc on gv.GiaoVienID equals lh.GiaoVienChuNhiem into temp
-        //                from lop in temp.DefaultIfEmpty()  // LEFT JOIN
-        //                where gv.GiaoVienID == id
-        //                select new GiaoVienVM
-        //                {
-        //                    GiaoVienID = gv.GiaoVienID,
-        //                    HoTen = nd.HoTen,
-        //                    NgaySinh = gv.NgaySinh,
-        //                    GioiTinh = gv.GioiTinh,
-        //                    LopChuNhiem = lop != null ? lop.TenLop : "Không chủ nhiệm",
-        //                    TenMonHoc = mh != null ? mh.TenMonHoc : "Chưa phân công",
-
-        //                    // Nếu bm null → Không có bộ môn
-        //                    TenBoMon = bm != null ? bm.TenBoMon : "Chưa phân công",
-
-        //                    TrangThaiGiangDay = gv.TrangThaiGiangDay,
-        //                    Email = nd.Email,
-        //                    SDT = nd.SDT,
-        //                    TrangThaiTK = nd.TrangThaiTK,
-        //                    VaiTro = nd.VaiTro
-        //                }).FirstOrDefault();
-
-        //    if (gvct == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-
-        //    return View(gvct);
-        //}
-
+       
         public ActionResult ChiTietGV(int id)
         {
             var gvct = (from gv in db.GiaoVien
@@ -294,9 +257,8 @@ namespace demomvc.Controllers
 
             db.GiaoVien.Add(gv);
             db.SaveChanges();
-            ViewBag.Message = "Thêm thành công";
-
-
+            //ViewBag.Message = "Thêm thành công";
+            TempData["Success"] = "Thêm giáo viên thành công!";
             return RedirectToAction("Index");
         }
 

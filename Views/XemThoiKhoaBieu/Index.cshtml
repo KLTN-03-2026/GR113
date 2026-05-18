@@ -387,13 +387,28 @@ function nextWeek() {
     }
 
      // ===== TUẦN TIẾP =====
- function nextWeek() {
+ @*function nextWeek() {
      window.location.href =
          '@Url.Action("Index", "XemThoiKhoaBieu")'
          + '?NamHocID=@Model.NamHocID'
          + '&HocKyID=@Model.HocKyID'
          + '&tuan=' + (@Model.Tuan + 1)
          + '&caHoc=@Model.CaHoc';
+    }*@
+    function nextWeek() {
+            let tuan = @Model.Tuan + 1;
+
+            // đảm bảo không nhỏ hơn 1
+            if (tuan < 1) {
+                tuan = 1;
+            }
+
+            window.location.href =
+                '@Url.Action("Index")'
+                + '?NamHocID=@Model.NamHocID'
+                + '&HocKyID=@Model.HocKyID'
+                + '&tuan=' + tuan
+                + '&caHoc=@Model.CaHoc';
     }
     function prevWeek() {
      window.location.href =

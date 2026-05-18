@@ -357,7 +357,6 @@
     <Compile Include="Controllers\QuanLyThoiKhoaBieuController.cs" />
     <Compile Include="Controllers\QuanLyThongBaoController.cs" />
     <Compile Include="Controllers\QuenMatKhauController.cs" />
-    <Compile Include="Controllers\TaoLenhHocAIController.cs" />
     <Compile Include="Controllers\ThongTinGiaoVienController.cs" />
     <Compile Include="Controllers\ThongTinHocSinhController.cs" />
     <Compile Include="Controllers\TrangchuController.cs" />
