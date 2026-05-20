@@ -496,3 +496,125 @@ table th, table td {
 .modal-dialog {
     margin-top: 0 !important;
 }
+
+/*-----------------------------------------------*/
+/* ========================= */
+/* ✅ CELL TABLE */
+/* ========================= */
+.table td {
+    vertical-align: top;
+    padding: 6px;
+}
+
+/* ========================= */
+/* ✅ CARD TKB */
+/* ========================= */
+.tkb-item {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    border-left: 4px solid #0d6efd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+    /* hover nhẹ */
+    .tkb-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    /* ========================= */
+    /* ✅ TEXT TRONG CARD */
+    /* ========================= */
+    .tkb-item b {
+        font-size: 14px;
+        color: #333;
+    }
+
+.tkb-item {
+    line-height: 1.4;
+    color: #444;
+}
+
+    /* ========================= */
+    /* ✅ HỌC BÙ */
+    /* ========================= */
+    .tkb-item .hocbu-label {
+        margin-top: 4px;
+        color: #dc3545;
+        font-weight: bold;
+        font-size: 12px;
+    }
+
+    /* nếu bạn muốn nền khác */
+    .tkb-item.hoc-bu {
+        background: #fff7f7;
+        border-left: 4px solid #dc3545;
+    }
+
+/* ========================= */
+/* ✅ NGHỈ */
+/* ========================= */
+.tkb-nghi {
+    background: #ffe5e5;
+    border-radius: 6px;
+    padding: 6px;
+    font-size: 13px;
+    color: #c82333;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* ========================= */
+/* ✅ NÚT + */
+/* ========================= */
+.tkb-add {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #0d6efd;
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* tooltip */
+.tkb-tooltip {
+    display: none;
+    position: absolute;
+    top: 25px;
+    right: 0;
+    background: #333;
+    color: white;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+.tkb-add:hover .tkb-tooltip {
+    display: block;
+}
+
+/* ========================= */
+/* ✅ FIX ĐỘ CAO CỘT */
+/* ========================= */
+.table td {
+    min-width: 120px;
+    min-height: 120px;
+}
+
+/* ========================= */
+/* ✅ TODAY */
+/* ========================= */
+.today-col {
+    background: #e8f3ff !important;
+}

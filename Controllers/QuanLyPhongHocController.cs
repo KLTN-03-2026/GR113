@@ -65,6 +65,7 @@ namespace demomvc.Controllers
             return View();
 
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ThemMoiPhong(PhongHocViewModel model)

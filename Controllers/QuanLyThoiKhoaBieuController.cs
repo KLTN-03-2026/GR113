@@ -89,14 +89,6 @@ namespace demomvc.Controllers
                 //new
                 NgayBatDauHoc = ngayBatDauHoc,
 
-                //ListNamHoc = db.NamHoc
-                //    .AsEnumerable()
-                //    .OrderBy(x => x.TenNamHoc)
-                //    .Select(x => new SelectListItem
-                //    {
-                //        Value = x.NamHocID.ToString(),
-                //        Text = x.TenNamHoc
-                //    }).ToList(),
                 ListNamHoc = db.NamHoc
                     .OrderBy(x => x.TenNamHoc)
                     .ToList() // 🔥 QUAN TRỌNG
@@ -106,15 +98,8 @@ namespace demomvc.Controllers
                         Text = x.TenNamHoc
                     }).ToList(),
 
-                //ListHocKy = db.HocKy
-                //    .AsEnumerable()
-                //    .OrderBy(x => x.TenHocKy)
-                //    .Select(x => new SelectListItem
-                //    {
-                //        Value = x.HocKyID.ToString(),
-                //        Text = x.TenHocKy
-                //    }).ToList()
-                 ListHocKy = db.HocKy
+
+                ListHocKy = db.HocKy
                     .Where(h => h.NamHocID == namHocId)
                     .ToList() // 🔥 bắt buộc
                     .Select(x => new SelectListItem
@@ -1094,8 +1079,9 @@ namespace demomvc.Controllers
 
             for (int t = tuan + 1; t <= maxtuanbonus; t++)
             {
-                var dsThu = new List<int> { thu }
-                    .Concat(Enumerable.Range(2, 6).Where(x => x != thu));
+                //var dsThu = new List<int> { thu }
+                //    .Concat(Enumerable.Range(2, 6).Where(x => x != thu));
+                var dsThu = Enumerable.Range(2, 6);
 
                 foreach (int th in dsThu)
                 {
@@ -1163,7 +1149,7 @@ namespace demomvc.Controllers
                     break;
             }
 
-            // ✅ nếu không tìm được slot
+            // nếu không tìm được slot
             if (ngayHocBu == null)
             {
                 return Json(new
@@ -1189,15 +1175,19 @@ namespace demomvc.Controllers
 
             return Json(new { oke = true, msg = "Đã đánh dấu nghỉ học" });
         }
+
         [HttpPost]
-        public JsonResult BoNgayNghi(int namHocId, int hocKyId, int tuan, int thu)
+        public JsonResult BoNgayNghi(int namHocId, int hocKyId, int tuan, int thu, int? tietHoc)
         {
             var ngayNghi = db.NgayHoc.FirstOrDefault(x =>
                             x.NamHocID == namHocId &&
                             x.HocKyID == hocKyId &&
                             x.Tuan == tuan &&
                             x.Thu == thu &&
-                            x.TrangThai == "NGHI");
+                            x.TrangThai == "NGHI" && (
+                                    (tietHoc == null && x.TietHoc == null) ||   //  nghỉ ngày
+                                    (tietHoc != null && x.TietHoc == tietHoc)//nghi tiet
+                            ));
             if (ngayNghi == null)
             {
                 return Json(new { oke = false, msg = "Không có ngày nghỉ" });
@@ -1218,6 +1208,396 @@ namespace demomvc.Controllers
             return Json(new { oke = true, msg = "Đã hủy ngày nghỉ" });
         }
 
+        //------------nghi theo tiiet
+        //[HttpPost]
+        //public JsonResult DatTietNghi(int namHocId, int hocKyId, DateTime ngayNghi, List<int> tietList)
+        //{
+        //    var hocKy = db.HocKy
+        //        .FirstOrDefault(h => h.HocKyID == hocKyId && h.NamHocID == namHocId);
+
+        //    if (hocKy == null || !hocKy.NgayBatDauHoc.HasValue)
+        //    {
+        //        return Json(new { oke = false, msg = "Chưa thiết lập ngày học" });
+        //    }
+
+        //    DateTime start = hocKy.NgayBatDauHoc.Value.Date;
+        //    int soNgay = (ngayNghi.Date - start).Days;
+
+        //    if (soNgay < 0)
+        //    {
+        //        return Json(new { oke = false, msg = "Ngày nghỉ không hợp lệ" });
+        //    }
+
+        //    int tuan = soNgay / 7 + 1;
+        //    int thu = ngayNghi.DayOfWeek == DayOfWeek.Sunday ? 8 : (int)ngayNghi.DayOfWeek + 1;
+
+        //    if (tietList == null || !tietList.Any())
+        //    {
+        //        return Json(new { oke = false, msg = "Chưa chọn tiết" });
+        //    }
+
+        //    int soThem = 0;
+        //    int soBoQua = 0;
+
+        //    foreach (var tietHoc in tietList)
+        //    {
+        //        // ✅ check có TKB
+        //        bool coLich = db.ThoiKhoaBieu.Any(x =>
+        //            x.NamHocID == namHocId &&
+        //            x.HocKyID == hocKyId &&
+        //            x.Tuan == tuan &&
+        //            x.Thu == thu &&
+        //            x.TietHoc == tietHoc
+        //        );
+
+        //        if (!coLich)
+        //        {
+        //            soBoQua++;
+        //            continue; // ✅ KHÔNG return
+        //        }
+
+        //        // ✅ check đã nghỉ
+        //        bool daCo = db.NgayHoc.Any(x =>
+        //            x.Tuan == tuan &&
+        //            x.Thu == thu &&
+        //            x.TietHoc == tietHoc &&
+        //            x.HocKyID == hocKyId &&
+        //            x.NamHocID == namHocId &&
+        //            x.TrangThai == "NGHI"
+        //        );
+
+        //        if (daCo)
+        //        {
+        //            soBoQua++;
+        //            continue; // ✅ KHÔNG return
+        //        }
+
+        //        // ✅ insert
+        //        db.NgayHoc.Add(new NgayHoc
+        //        {
+        //            Ngay = ngayNghi,
+        //            Tuan = tuan,
+        //            Thu = thu,
+        //            TietHoc = tietHoc,
+        //            TrangThai = "NGHI",
+        //            HocKyID = hocKyId,
+        //            NamHocID = namHocId
+        //        });
+
+        //        soThem++;
+        //    }
+
+        //    db.SaveChanges();
+
+        //    return Json(new
+        //    {
+        //        oke = true,
+        //        msg = $"✅ Thêm {soThem} tiết nghỉ, bỏ qua {soBoQua}"
+        //    });
+        //}
+        //[HttpPost]
+        //public JsonResult DatTietNghi(int namHocId, int hocKyId, DateTime ngayNghi, int tietHoc)
+        //{
+        //    try
+        //    {
+        //        var hocKy = db.HocKy
+        //            .FirstOrDefault(h => h.HocKyID == hocKyId && h.NamHocID == namHocId);
+
+        //        if (hocKy == null || !hocKy.NgayBatDauHoc.HasValue)
+        //        {
+        //            return Json(new { oke = false, msg = "Chưa thiết lập ngày học" });
+        //        }
+
+        //        DateTime start = hocKy.NgayBatDauHoc.Value.Date;
+        //        int soNgay = (ngayNghi.Date - start).Days;
+
+        //        if (soNgay < 0)
+        //        {
+        //            return Json(new { oke = false, msg = "Ngày nghỉ không hợp lệ" });
+        //        }
+
+        //        int tuan = soNgay / 7 + 1;
+        //        int thu = ngayNghi.DayOfWeek == DayOfWeek.Sunday
+        //                    ? 8
+        //                    : (int)ngayNghi.DayOfWeek + 1;
+
+        //        // 1. Check nghỉ ngày
+        //        bool daNghiNgay = db.NgayHoc.Any(x =>
+        //            x.NamHocID == namHocId &&
+        //            x.HocKyID == hocKyId &&
+        //            x.Tuan == tuan &&
+        //            x.Thu == thu &&
+        //            x.TietHoc == null &&
+        //            x.TrangThai == "NGHI"
+        //        );
+
+        //        if (daNghiNgay)
+        //        {
+        //            return Json(new { oke = false, msg = "Ngày này đã nghỉ cả ngày rồi" });
+        //        }
+
+        //        // 2. Check tồn tại tiết 
+        //        bool daCoTiet = db.NgayHoc.Any(x =>
+        //            x.NamHocID == namHocId &&
+        //            x.HocKyID == hocKyId &&
+        //            x.Tuan == tuan &&
+        //            x.Thu == thu &&
+        //            x.TietHoc == tietHoc &&
+        //            x.TrangThai == "NGHI"
+        //        );
+
+        //        if (daCoTiet)
+        //        {
+        //            return Json(new { oke = true, msg = $"Tiết {tietHoc} đã tồn tại" });
+        //        }
+
+        //        //  3. TẮT tracking để tránh crash
+        //        db.Configuration.AutoDetectChangesEnabled = false;
+
+        //        var entity = new NgayHoc
+        //        {
+        //            Ngay = ngayNghi.Date,
+        //            Tuan = tuan,
+        //            Thu = thu,
+        //            TietHoc = tietHoc,
+        //            TrangThai = "NGHI",
+        //            HocKyID = hocKyId,
+        //            NamHocID = namHocId
+        //        };
+
+        //        db.NgayHoc.Add(entity);
+        //        db.SaveChanges();
+
+        //        //  bật lại
+        //        db.Configuration.AutoDetectChangesEnabled = true;
+
+        //        return Json(new { oke = true, msg = $"Đã nghỉ tiết {tietHoc}" });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new
+        //        {
+        //            oke = false,
+        //            msg = ex.InnerException?.Message ?? ex.Message
+        //        });
+        //    }
+        //}
+        [HttpPost]
+        public JsonResult DatTietNghi(int namHocId, int hocKyId, DateTime ngayNghi, int tietHoc)
+        {
+            try
+            {
+                var hocKy = db.HocKy.FirstOrDefault(h =>
+                    h.HocKyID == hocKyId && h.NamHocID == namHocId);
+
+                if (hocKy == null || !hocKy.NgayBatDauHoc.HasValue)
+                    return Json(new { oke = false, msg = "Chưa thiết lập ngày học" });
+
+                DateTime start = hocKy.NgayBatDauHoc.Value.Date;
+                int soNgay = (ngayNghi.Date - start).Days;
+
+                if (soNgay < 0)
+                    return Json(new { oke = false, msg = "Ngày nghỉ không hợp lệ" });
+
+                int tuan = soNgay / 7 + 1;
+                int thu = ngayNghi.DayOfWeek == DayOfWeek.Sunday ? 8 : (int)ngayNghi.DayOfWeek + 1;
+
+                // ✅ 1. Check nghỉ ngày
+                bool daNghiNgay = db.NgayHoc.Any(x =>
+                    x.NamHocID == namHocId &&
+                    x.HocKyID == hocKyId &&
+                    x.Tuan == tuan &&
+                    x.Thu == thu &&
+                    x.TietHoc == null &&
+                    x.TrangThai == "NGHI");
+
+                if (daNghiNgay)
+                    return Json(new { oke = false, msg = "Ngày này đã nghỉ cả ngày" });
+
+                // ✅ 2. Check trùng tiết
+                bool daCoTiet = db.NgayHoc.Any(x =>
+                    x.NamHocID == namHocId &&
+                    x.HocKyID == hocKyId &&
+                    x.Tuan == tuan &&
+                    x.Thu == thu &&
+                    x.TietHoc == tietHoc &&
+                    x.TrangThai == "NGHI");
+
+                if (daCoTiet)
+                    return Json(new { oke = true, msg = "Tiết đã được nghỉ trước đó" });
+
+                // ✅ 3. INSERT NGÀY NGHỈ TIẾT
+                var ngayNghiTiet = new NgayHoc
+                {
+                    Ngay = ngayNghi.Date,
+                    Tuan = tuan,
+                    Thu = thu,
+                    TietHoc = tietHoc,
+                    TrangThai = "NGHI",
+                    NamHocID = namHocId,
+                    HocKyID = hocKyId
+                };
+
+                db.NgayHoc.Add(ngayNghiTiet);
+                db.SaveChanges();
+
+
+                // =============================
+                // ✅ 4. TÌM NGÀY HỌC BÙ (CÙNG CA)
+                // =============================
+
+                bool laTietSang = tietHoc <= 5;
+
+                NgayHoc ngayHocBu = null;
+
+                int maxTuan = db.HocKy
+                    .Where(h => h.HocKyID == hocKyId && h.NamHocID == namHocId)
+                    .Select(h => h.SoTuanThucHoc)
+                    .FirstOrDefault();
+
+                for (int t = tuan + 1; t <= maxTuan + 5; t++)
+                {
+                    for (int th = 2; th <= 7; th++)
+                    {
+                        // ✅ danh sách tiết theo ca
+                        var dsTiet = laTietSang
+                            ? new List<int> { 1, 2, 3, 4, 5 }
+                            : new List<int> { 6, 7, 8, 9, 10 };
+
+                        foreach (var tietBu in dsTiet)
+                        {
+                            // ✅ 1. CHẶN TIẾT HOẠT ĐỘNG
+                            if (
+                                (th == 2 && (tietBu == 1 || tietBu == 10)) ||   // Thứ 2
+                                (th == 7 && (tietBu == 5 || tietBu == 10))     // Thứ 7
+                            )
+                            {
+                                continue;
+                            }
+
+                            // ✅ 2. check slot đã có TKB
+                            bool coTKB = db.ThoiKhoaBieu.Any(x =>
+                                x.NamHocID == namHocId &&
+                                x.HocKyID == hocKyId &&
+                                x.Tuan == t &&
+                                x.Thu == th &&
+                                x.TietHoc == tietBu
+                            );
+
+                            if (coTKB)
+                                continue;
+
+                            // ✅ 3. check ngày nghỉ
+                            bool laNgayNghiKhac = db.NgayHoc.Any(x =>
+                                x.NamHocID == namHocId &&
+                                x.HocKyID == hocKyId &&
+                                x.Tuan == t &&
+                                x.Thu == th &&
+                                x.TrangThai == "NGHI"
+                            );
+
+                            if (laNgayNghiKhac)
+                                continue;
+
+                            // ✅ 4. check đã dùng làm học bù chưa
+                            var ngayHocBuIDs = db.HocBu
+                                .Select(h => h.NgayHocBuID)
+                                .ToList();
+
+                            bool daDuocDungLamHocBu = db.NgayHoc.Any(n =>
+                                ngayHocBuIDs.Contains(n.NgayHocID) &&
+                                n.NamHocID == namHocId &&
+                                n.HocKyID == hocKyId &&
+                                n.Tuan == t &&
+                                n.Thu == th &&
+                                n.TietHoc == tietBu
+                            );
+
+                            if (daDuocDungLamHocBu)
+                                continue;
+
+                            // ✅ 5. lấy hoặc tạo ngày học
+                            ngayHocBu = db.NgayHoc.FirstOrDefault(x =>
+                                x.NamHocID == namHocId &&
+                                x.HocKyID == hocKyId &&
+                                x.Tuan == t &&
+                                x.Thu == th &&
+                                x.TietHoc == tietBu &&
+                                x.TrangThai == "HOC"
+                            );
+
+                            if (ngayHocBu == null)
+                            {
+                                ngayHocBu = new NgayHoc
+                                {
+                                    Tuan = t,
+                                    Thu = th,
+                                    TietHoc = tietBu,
+                                    TrangThai = "HOC",
+                                    NamHocID = namHocId,
+                                    HocKyID = hocKyId,
+                                    Ngay = start.AddDays((t - 1) * 7 + (th - 2))
+                                };
+
+                                db.NgayHoc.Add(ngayHocBu);
+                                db.SaveChanges();
+                            }
+
+                            // ✅ 6. tránh trùng map học bù
+                            bool daCoHocBu = db.HocBu.Any(h =>
+                                h.NgayNghiID == ngayNghiTiet.NgayHocID &&
+                                h.NgayHocBuID == ngayHocBu.NgayHocID
+                            );
+
+                            if (daCoHocBu)
+                                continue;
+
+                            // ✅ 7. TÌM ĐƯỢC SLOT → THOÁT
+                            goto FOUND;
+                        }
+                    }
+                }
+
+            FOUND:
+
+                if (ngayHocBu == null)
+                {
+                    return Json(new
+                    {
+                        oke = false,
+                        msg = "Không tìm được ngày học bù phù hợp"
+                    });
+                }
+
+                // =============================
+                // ✅ 5. INSERT HỌC BÙ
+                // =============================
+
+                db.HocBu.Add(new HocBu
+                {
+                    NgayNghiID = ngayNghiTiet.NgayHocID,
+                    NgayHocBuID = ngayHocBu.NgayHocID,
+                    GhiChu = $"Học bù từ tiết {tietHoc} -> tiết {ngayHocBu.TietHoc} tuần {tuan}"
+                });
+
+                db.SaveChanges();
+
+                return Json(new
+                {
+                    oke = true,
+                    msg = $"✅ Nghỉ tiết {tietHoc} + đã xếp học bù tiết {ngayHocBu.TietHoc}"
+                });
+
+                }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    oke = false,
+                    msg = ex.InnerException?.Message ?? ex.Message
+                });
+            }
+        }
 
 
         [HttpPost]
@@ -1225,7 +1605,7 @@ namespace demomvc.Controllers
         {
             try
             {
-                // ✅ 1. Check rỗng
+                //  1. Check rỗng
                 if (string.IsNullOrWhiteSpace(tenNamHoc))
                 {
                     return Json(new { success = false, message = "Tên năm học không được để trống" });
@@ -1233,13 +1613,13 @@ namespace demomvc.Controllers
 
                 tenNamHoc = tenNamHoc.Trim();
 
-                // ✅ 2. Check đúng format: 2024-2025
+                //  2. Check đúng format: 2024-2025
                 if (!Regex.IsMatch(tenNamHoc, @"^\d{4}-\d{4}$"))
                 {
                     return Json(new { success = false, message = "Sai định dạng (VD: 2024-2025)" });
                 }
 
-                // ✅ 3. Check logic năm
+                //  3. Check logic năm
                 var parts = tenNamHoc.Split('-');
                 int namDau = int.Parse(parts[0]);
                 int namSau = int.Parse(parts[1]);
@@ -1249,14 +1629,14 @@ namespace demomvc.Controllers
                     return Json(new { success = false, message = "Năm sau phải = năm trước + 1" });
                 }
 
-                // ✅ 4. Check trùng
+                //  4. Check trùng
                 bool daTonTai = db.NamHoc.Any(n => n.TenNamHoc == tenNamHoc);
                 if (daTonTai)
                 {
                     return Json(new { success = false, message = "Năm học đã tồn tại" });
                 }
 
-                // ✅ 5. Thêm mới
+                //  5. Thêm mới
                 var namHoc = new NamHoc
                 {
                     TenNamHoc = tenNamHoc,
@@ -1266,7 +1646,7 @@ namespace demomvc.Controllers
                 db.NamHoc.Add(namHoc);
                 db.SaveChanges();
 
-                // ✅ 6. Trả về để FE dùng luôn
+                //  6. Trả về để FE dùng luôn
                 return Json(new
                 {
                     success = true,

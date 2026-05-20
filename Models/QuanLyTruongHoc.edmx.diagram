@@ -8,7 +8,7 @@
         <EntityTypeShape EntityType="QuanLyTruongHocModel.BoMon" Width="1.5" PointX="1.5" PointY="19.5" IsExpanded="true" />
         <EntityTypeShape EntityType="QuanLyTruongHocModel.Diem" Width="1.5" PointX="5.25" PointY="13" IsExpanded="true" />
         <EntityTypeShape EntityType="QuanLyTruongHocModel.GiaoVien" Width="1.5" PointX="0.75" PointY="5.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="QuanLyTruongHocModel.HocBu" Width="1.5" PointX="13" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="QuanLyTruongHocModel.HocBu" Width="1.5" PointX="11.875" PointY="1.5" IsExpanded="true" />
         <EntityTypeShape EntityType="QuanLyTruongHocModel.HocKy" Width="1.5" PointX="3" PointY="15.5" IsExpanded="true" />
         <EntityTypeShape EntityType="QuanLyTruongHocModel.HocSinh" Width="1.5" PointX="8.25" PointY="7.5" IsExpanded="true" />
         <EntityTypeShape EntityType="QuanLyTruongHocModel.HocSinh_PhuHuynh" Width="1.5" PointX="10.5" PointY="8.625" IsExpanded="true" />
@@ -18,7 +18,7 @@
         <EntityTypeShape EntityType="QuanLyTruongHocModel.MonHoc" Width="1.5" PointX="1.5" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="QuanLyTruongHocModel.MonHocKhoi" Width="1.5" PointX="3.75" PointY="4.875" IsExpanded="true" />
         <EntityTypeShape EntityType="QuanLyTruongHocModel.NamHoc" Width="1.5" PointX="0.75" PointY="11.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="QuanLyTruongHocModel.NgayHoc" Width="1.5" PointX="10.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="QuanLyTruongHocModel.NgayHoc" Width="1.5" PointX="9.875" PointY="0.875" IsExpanded="true" />
         <EntityTypeShape EntityType="QuanLyTruongHocModel.NguoiDung" Width="1.5" PointX="1.5" PointY="22.625" IsExpanded="true" />
         <EntityTypeShape EntityType="QuanLyTruongHocModel.PhanCongGiangDay" Width="1.5" PointX="5.25" PointY="17.875" IsExpanded="true" />
         <EntityTypeShape EntityType="QuanLyTruongHocModel.PhongHoc" Width="1.5" PointX="0.75" PointY="28" IsExpanded="true" />

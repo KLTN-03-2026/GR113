@@ -1,0 +1,231 @@
+﻿@model demomvc.Models.HanhKiem
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
+}
+<link href="~/css/xethanhkiem.css" rel="stylesheet" />
+<h2 class="title-page">Xét Hạnh Kiểm</h2>
+
+<form method="post" class="row form-filter">
+    <div class="col-md-4">
+        <label>Năm học</label>
+
+        <select class="form-control custom-select" name="NamHocID" onchange="changeNamHoc(this)">
+            @foreach (var item in Model.NamHocs)
+            {
+                <option value="@item.NamHocID"
+                        @(item.NamHocID == Model.NamHocID ? "selected" : "")>
+                    @item.TenNamHoc
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <label>Học kỳ</label>
+
+        <select class="form-control custom-select" name="HocKyID">
+            @foreach (var hk in Model.HocKys)
+            {
+                <option value="@hk.HocKyID"
+                        @(hk.HocKyID == Model.HocKyID ? "selected" : "")>
+                    @hk.TenHocKy
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary btn-search" onclick="return validateForm()">
+            <i class="fa-solid fa-magnifying-glass"></i> Tìm lớp
+        </button>
+    </div>
+
+    <div id="loiMessage" class="alert alert-warning mt-3" style="display:none;"></div>
+    @if (Model.HocSinhs != null && Model.HocSinhs.Any())
+    {
+        <div class="card mt-3">
+            <div class="card-header bg-success text-white">
+                Lớp: <b>@Model.TenLop</b>
+            </div>
+
+            <table class="table table-bordered mb-0">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên học sinh</th>
+                        <th>Hạnh kiểm</th>
+
+                        @if (ViewBag.LaHocKy2)
+                        {
+                            <th>Hạnh kiểm cả năm</th>
+                        }
+
+                        <th>Xét hạnh kiểm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int stt = 1;
+                        var dict = ViewBag.HanhKiemDict as Dictionary<int, string>;
+                    }
+
+                    @foreach (var hs in Model.HocSinhs)
+                    {
+                        var hk = (dict != null && dict.ContainsKey(hs.HocSinhID))
+                            ? dict[hs.HocSinhID]
+                            : "";
+
+                        <tr>
+                            <td>@stt</td>
+                            <td>@hs.NguoiDung.HoTen</td>
+
+                            <!--  HIỂN THỊ HẠNH KIỂM -->
+                            <td class="text-center1">
+                                @if (string.IsNullOrEmpty(hk))
+                                {
+                                    <span class="badge-hk">Chưa có</span>
+                                }
+                                else if (hk == "Tốt")
+                                {
+                                    <span class="badge-hk badge-tot">Tốt</span>
+                                }
+                                else if (hk == "Khá")
+                                {
+                                    <span class="badge-hk badge-kha">Khá</span>
+                                }
+                                else if (hk == "Trung bình")
+                                {
+                                    <span class="badge-hk badge-tb">Trung bình</span>
+                                }
+                                else if (hk == "Yếu")
+                                {
+                                    <span class="badge-hk badge-yeu">Yếu</span>
+                                }
+                            </td>
+                            @if (ViewBag.LaHocKy2)
+                            {
+                                <td class="text-center">
+                                    @{
+                                        var dictNam = ViewBag.HanhKiemNamDict as Dictionary<int, string>;
+                                        var hkNam = (dictNam != null && dictNam.ContainsKey(hs.HocSinhID))
+                                            ? dictNam[hs.HocSinhID]
+                                            : "";
+                                    }
+
+                                    @if (string.IsNullOrEmpty(hkNam))
+                                    {
+                                        <span class="badge-hk">Chưa có</span>
+                                    }
+                                    else if (hkNam == "Tốt")
+                                    {
+                                        <span class="badge-hk badge-tot">Tốt</span>
+                                    }
+                                    else if (hkNam == "Khá")
+                                    {
+                                        <span class="badge-hk badge-kha">Khá</span>
+                                    }
+                                    else if (hkNam == "Trung bình")
+                                    {
+                                        <span class="badge-hk badge-tb">Trung bình</span>
+                                    }
+                                    else if (hkNam == "Yếu")
+                                    {
+                                        <span class="badge-hk badge-yeu">Yếu</span>
+                                    }
+                                </td>
+                            }
+                            <!-- DROPDOWN -->
+                            <td>
+                                <select name="hanhKiem[@hs.HocSinhID]"
+                                        class="form-control hanh-kiem-select">
+                                    <option value="">-- Xét hạnh kiểm --</option>
+                                    <option value="Tốt">Tốt</option>
+                                    <option value="Khá">Khá</option>
+                                    <option value="Trung bình">Trung bình</option>
+                                    <option value="Yếu">Yếu</option>
+                                </select>
+                            </td>
+                        </tr>
+                        stt++;
+                    }
+                </tbody>
+            </table>
+            <div class="p-3 d-flex justify-content-end">
+                <button type="submit"
+                        formaction="/XetHanhKiem/AddHanhKiem"
+                        class="btn btn-success">
+
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu hạnh kiểm
+                </button>
+            </div>
+
+        </div>
+    }
+    @if (ViewBag.Loi != null)
+    {
+        <div class="alert alert-warning mt-3">
+            @ViewBag.Loi
+        </div>
+    }
+</form>
+
+<script>
+   
+    function changeNamHoc(el) {
+        var id = el.value;
+        window.location.href = '/XetHanhKiem/Index?namHocId=' + id;
+    }
+
+    function validateForm() {
+        var namHoc = document.querySelector("select[name='NamHocID']").value;
+        var hocKy = document.querySelector("select[name='HocKyID']").value;
+        var loiDiv = document.getElementById("loiMessage");
+
+        // reset
+        loiDiv.style.display = "none";
+        loiDiv.innerHTML = "";
+
+        if (!namHoc) {
+            loiDiv.innerHTML = "Vui lòng chọn năm học";
+            loiDiv.style.display = "block";
+            return false;
+        }
+
+        if (!hocKy) {
+            loiDiv.innerHTML = "Vui lòng chọn học kỳ";
+            loiDiv.style.display = "block";
+            return false;
+        }
+        return true; // cho submit tiếp
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const selects = document.querySelectorAll(".hanh-kiem-select");
+
+        function updateColor(select) {
+            select.classList.remove("hk-tot", "hk-kha", "hk-tb", "hk-yeu");
+
+            switch (select.value) {
+                case "Tốt":
+                    select.classList.add("hk-tot");
+                    break;
+                case "Khá":
+                    select.classList.add("hk-kha");
+                    break;
+                case "Trung bình":
+                    select.classList.add("hk-tb");
+                    break;
+                case "Yếu":
+                    select.classList.add("hk-yeu");
+                    break;
+            }
+        }
+
+        selects.forEach(s => {
+            updateColor(s);
+            s.addEventListener("change", function () {
+                updateColor(this);
+            });
+        });
+    });
+</script>

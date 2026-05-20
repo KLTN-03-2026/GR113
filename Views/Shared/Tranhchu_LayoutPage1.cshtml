@@ -207,6 +207,15 @@
                             Gửi bản điểm
                         </a>
                     }
+                    @if (Session["VaiTro"] != null &&
+                        (Session["VaiTro"].ToString() == "GiaoVien"
+                        || Session["VaiTro"].ToString() == "HieuTruong"))
+                    {
+                        <a class="dropdown-item" href="@Url.Action("Index", "XetHanhKiem")">
+                            <i class="fa-solid fa-pen-to-square mr-2"></i>
+                            Xét hạnh kiểm
+                        </a>
+                    }
 
                     <div class="dropdown-divider"></div>
 
@@ -229,7 +238,7 @@
         <div class="container py-5 position-relative">
             <div class="text-center mb-4">
                 <img src="~/img/logo1.png" alt="Logo" style="height:70px;">
-                <h2 class="mt-3 font-weight-bold">TRƯỜNG TRUNG HỌC CƠ SỞ AT10</h2>
+                <h2 class="mt-3 font-weight-bold">TRƯỜNG TRUNG HỌC CƠ SỞ NHÓM 113</h2>
 
 
             </div>
@@ -370,14 +379,7 @@
         </script>
     }
 
-    @*@if (TempData["Error"] != null)
-        {
-            <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                showToast("@Html.Raw(TempData["Error"])", "error");
-            });
-            </script>
-        }*@
+
     @if (TempData["Error"] != null)
     {
         <script>

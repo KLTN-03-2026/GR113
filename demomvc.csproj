@@ -271,6 +271,7 @@
     <Content Include="css\trangchu.css" />
     <Content Include="css\updateelete.css" />
     <Content Include="css\updatePhong.css" />
+    <Content Include="css\xethanhkiem.css" />
     <Content Include="Global.asax" />
     <Content Include="img\03.jpg" />
     <Content Include="img\04.jpg" />
@@ -362,6 +363,7 @@
     <Compile Include="Controllers\TrangchuController.cs" />
     <Compile Include="Controllers\XemDiemController.cs" />
     <Compile Include="Controllers\XemThoiKhoaBieuController.cs" />
+    <Compile Include="Controllers\XetHanhKiemController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -380,6 +382,7 @@
     <Compile Include="Models\GiaoVienModel.cs" />
     <Compile Include="Models\GiaoVienVM.cs" />
     <Compile Include="Models\GuiBangDiemViewModel.cs" />
+    <Compile Include="Models\HanhKiem.cs" />
     <Compile Include="Models\HocBu.cs">
       <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
     </Compile>
@@ -546,6 +549,7 @@
     <Content Include="Views\QuanLyDiem\DsLop.cshtml" />
     <Content Include="Views\QuanLyDiem\BangDiem.cshtml" />
     <Content Include="Views\QuanLyDiem\NhapDiem.cshtml" />
+    <Content Include="Views\XetHanhKiem\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
