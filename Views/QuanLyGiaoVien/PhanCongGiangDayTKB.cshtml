@@ -26,10 +26,7 @@
 
         <select id="hocKy">
             <option value="">-- Học kỳ --</option>
-            @foreach (var hk in ViewBag.HocKy)
-            {
-                <option value="@hk.HocKyID">@hk.TenHocKy</option>
-            }
+           
         </select>
     </div>
 
@@ -200,4 +197,36 @@
             toast.removeClass("show");
         }, 2000);
     }
+    $("#namHoc").change(function () {
+
+        let namHocId = $(this).val();
+
+        // reset học kỳ
+        $("#hocKy").html('<option value="">-- Học kỳ --</option>');
+
+        if (!namHocId) return;
+
+        $.get("/QuanLyGiaoVien/GetHocKyByNamHoc",
+            { namHocId: namHocId },
+            function (res) {
+
+                if (res.length === 0) {
+                    $("#hocKy").append('<option value="">Chưa có học kỳ</option>');
+                    return;
+                }
+
+                res.forEach(hk => {
+                    $("#hocKy").append(`
+                    <option value="${hk.HocKyID}">
+                        ${hk.TenHocKy}
+                    </option>
+                `);
+                });
+            }
+        );
+    });
+
+    $("#namHoc").change(function () {
+        closeAll();
+    });
 </script>
