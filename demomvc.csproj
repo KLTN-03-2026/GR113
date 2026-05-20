@@ -368,6 +368,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\RemoveDiacritics.cs" />
+    <Compile Include="Helpers\UpdateKQ.cs" />
     <Compile Include="Models\BangDiemVM.cs" />
     <Compile Include="Models\BoMon.cs">
       <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
@@ -479,6 +480,7 @@
     <Compile Include="Services\GA\Gene.cs" />
     <Compile Include="Services\GA\GeneticAlgorithmService.cs" />
     <Compile Include="Services\Hubs\Startup.cs" />
+    <Compile Include="ViewModel\DiemTongVM.cs" />
     <Compile Include="ViewModel\ThongTinHocSinhVM.cs" />
     <Compile Include="ViewModel\ThongTinLopHocVM.cs" />
   </ItemGroup>

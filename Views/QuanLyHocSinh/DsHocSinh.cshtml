@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Danh Sách Học Sinh";
     Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
+
 }
 
 <style>
@@ -120,202 +121,259 @@
         font-weight: 500;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
+
+    .modal-content {
+    border-radius: 16px;
+    animation: zoomIn 0.3s ease;
+}
+
+ zoomIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
 </style>
 
 <div class="page-wrapper">
     <div class="container-fluid">
 
         <!-- Hiển thị thông báo (Alerts) -->
-    @if (TempData["Errors"] != null)
-{
-    var errors = TempData["Errors"] as List<string> ?? new List<string>();
+        @if (TempData["Errors"] != null)
+        {
+            var errors = TempData["Errors"] as List<string> ?? new List<string>();
 
-    <div id="errorAlert" class="alert alert-danger alert-custom alert-dismissible fade show">
-        <strong>
-            <i class="bi bi-exclamation-triangle-fill"></i>
-            Có @errors.Count lỗi khi import:
-        </strong>
+            <div class="modal fade" id="errorModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                    <div class="modal-content">
 
-        <ul class="mb-0 mt-2" style="max-height:200px; overflow:auto;">
-            @foreach (var err in errors)
-            {
-                <li>@err</li>
-            }
-        </ul>
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title">
+                                ⚠ Có @errors.Count lỗi khi import
+                            </h5>
 
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
+                            <button type="button"
+                                    class="btn-close btn-close-white"
+                                    data-bs-dismiss="modal">
+                            </button>
+                        </div>
 
-@if (TempData["Success"] != null)
-{
-    <div id="successAlert" class="alert alert-success alert-custom alert-dismissible fade show">
-        <strong>
-            <i class="bi bi-check-circle-fill"></i>
-            Thành công!
-        </strong>
-        @TempData["Success"]
+                        <div class="modal-body">
 
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
+                            <ul class="list-group">
+                                @foreach (var err in errors)
+                                {
+                                    <li class="list-group-item">
+                                        @err
+                                    </li>
+                                }
+                            </ul>
 
-    <div class="glass-card">
-      
-        <div class="mb-4 text-center">
-            <h1 class="page-title">Danh Sách Học Sinh</h1>
-        </div>
+                        </div>
 
-        <!-- Toolbar: Tìm kiếm & Nút chức năng -->
-        <div class="row gy-3 align-items-center mb-4">
-
-            <!-- Khu vực tìm kiếm -->
-            <div class="col-lg-6">
-                <form action="@Url.Action("DsHocSinh", "QuanLyHocSinh")" method="get" class="search-bar-wrapper d-flex gap-2">
-                    <select class="form-select border-0 shadow-sm" name="TypeSearch" style="max-width: 160px; border-radius: 8px;">
-                        <option value="Name">Họ tên</option>
-                        <option value="Id">Mã HS</option>
-                        <option value="Class">Lớp</option>
-                    </select>
-                    <input type="text" class="form-control border-0 shadow-sm" name="Keyword" placeholder="Nhập từ khóa..." style="border-radius: 8px;">
-                    <button class="btn btn-custom-primary shadow-sm" type="submit">Tìm</button>
-                </form>
-            </div>
-
-            <!-- Khu vực Thêm & Upload -->
-            <div class="col-lg-6 d-flex flex-wrap justify-content-lg-end gap-3">
-
-                <a href="@Url.Action("ThemHocSinh", "QuanLyHocSinh")"
-                   class="btn btn-custom-primary d-flex align-items-center">
-                    <span class="me-2">➕</span> Thêm Mới
-                </a>
-
-                <form id="uploadForm"
-                      action="@Url.Action("UploadFile", "QuanLyHocSinh")"
-                      method="post"
-                      enctype="multipart/form-data"
-                      class="m-0">
-
-                    <div class="input-group shadow-sm" style="border-radius: 8px;">
-
-                        <input type="file"
-                               id="fileInput"
-                               name="file"
-                               class="form-control"
-                               style="border-radius: 8px 0 0 8px; border: 1px solid #edf2f9;" />
-
-                        <button type="submit"
-                                class="btn btn-success"
-                                style="border-radius: 0 8px 8px 0; font-weight: 600;">
-                            ⬆️ Upload
-                        </button>
+                        <div class="modal-footer">
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+                                Đóng
+                            </button>
+                        </div>
 
                     </div>
+                </div>
+            </div>
+        }
 
-                    <!-- thông báo lỗi -->
-                    <div id="msg" class="mt-2"></div>
+        @*@if (TempData["Success"] != null)
+        {
+            <div id="successAlert" class="alert alert-success alert-custom alert-dismissible fade show">
+                <strong>
+                    <i class="bi bi-check-circle-fill"></i>
+                    Thành công!
+                </strong>
+                @TempData["Success"]
 
-                </form>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }*@
+
+        <div class="glass-card">
+
+            <div class="mb-4 text-center">
+                <h1 class="page-title">Danh Sách Học Sinh</h1>
             </div>
 
-        <!-- Bảng dữ liệu -->
-        <div class="table-responsive" style="border-radius: 12px; border: 1px solid #edf2f9;">
-            <table class="table table-custom table-hover mb-0">
-                <thead>
-                    <tr>
-                        <th class="ps-4">Mã HS</th>
-                        <th>Họ Tên</th>
-                        <th>Lớp</th>
-                        <th>Ngày Sinh</th>
-                        <th>Giới Tính</th>
-                        <th>Tỉnh Thành</th>
-                        <th>Quận Huyện</th>
-                        <th>Địa Chỉ</th>
-                        <th>CCCD</th>
-                        <th>Dân Tộc</th>
-                        <th>GVCN</th>
-                        <th class="text-center pe-4">Thao Tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        foreach (var item in Model)
-                        {
+            <!-- Toolbar: Tìm kiếm & Nút chức năng -->
+            <div class="row gy-3 align-items-center mb-4">
+
+                <!-- Khu vực tìm kiếm -->
+                <div class="col-lg-6">
+                    <form action="@Url.Action("DsHocSinh", "QuanLyHocSinh")" method="get" class="search-bar-wrapper d-flex gap-2">
+                        <select class="form-select border-0 shadow-sm" name="TypeSearch" style="max-width: 160px; border-radius: 8px;">
+                            <option value="Name">Họ tên</option>
+                            <option value="Id">Mã HS</option>
+                            <option value="Class">Lớp</option>
+                        </select>
+                        <input type="text" class="form-control border-0 shadow-sm" name="Keyword" placeholder="Nhập từ khóa..." style="border-radius: 8px;">
+                        <button class="btn btn-custom-primary shadow-sm" type="submit">Tìm</button>
+                    </form>
+                </div>
+
+                <!-- Khu vực Thêm & Upload -->
+                <div class="col-lg-6 d-flex flex-wrap justify-content-lg-end gap-3">
+
+                    <a href="@Url.Action("ThemHocSinh", "QuanLyHocSinh")"
+                       class="btn btn-custom-primary d-flex align-items-center">
+                        <span class="me-2">➕</span> Thêm Mới
+                    </a>
+
+                    <form id="uploadForm"
+                          action="@Url.Action("UploadFile", "QuanLyHocSinh")"
+                          method="post"
+                          enctype="multipart/form-data"
+                          class="m-0">
+
+                        <div class="input-group shadow-sm" style="border-radius: 8px;">
+
+                            <input type="file"
+                                   id="fileInput"
+                                   name="file"
+                                   class="form-control"
+                                   style="border-radius: 8px 0 0 8px; border: 1px solid #edf2f9;" />
+
+                            <button type="submit"
+                                    class="btn btn-success"
+                                    style="border-radius: 0 8px 8px 0; font-weight: 600;">
+                                ⬆️ Upload
+                            </button>
+
+                        </div>
+
+                        <!-- thông báo lỗi -->
+                        <div id="msg" class="mt-2"></div>
+
+                    </form>
+                </div>
+
+                <!-- Bảng dữ liệu -->
+                <div class="table-responsive" style="border-radius: 12px; border: 1px solid #edf2f9;">
+                    <table class="table table-custom table-hover mb-0">
+                        <thead>
                             <tr>
-                                <td class="ps-4 fw-bold">@item.MaHocSinh</td>
-                                <td class="fw-bold text-primary">@item.HoTen</td>
-                                <td><span class="badge bg-light text-dark border">@item.TenLop</span></td>
-                                <td>@item.NgaySinh</td>
-                                <td>@item.GioiTinh</td>
-                                <td>@item.TinhThanh</td>
-                                <td>@item.QuanHuyen</td>
-                                <td>@item.DiaChi</td>
-                                <td>@item.CCCD</td>
-                                <td>@item.DanToc</td>
-                                <td>@item.GiaoVienChuNhiem</td>
-                                <td class="text-center pe-4">
-                                    <a href="@Url.Action("Edit", "QuanLyHocSinh", new { id = item.MaHocSinh })" class="btn-action-edit">Edit</a>
-                                    <a href="@Url.Action("Delete", "QuanLyHocSinh", new { id = item.MaHocSinh })" class="btn-action-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa học sinh này không?');">Delete</a>
-                                </td>
+                                <th class="ps-4">Mã HS</th>
+                                <th>Họ Tên</th>
+                                <th>Lớp</th>
+                                <th>Ngày Sinh</th>
+                                <th>Giới Tính</th>
+                                <th>Tỉnh Thành</th>
+                                <th>Quận Huyện</th>
+                                <th>Địa Chỉ</th>
+                                <th>CCCD</th>
+                                <th>Dân Tộc</th>
+                                <th>GVCN</th>
+                                <th class="text-center pe-4">Thao Tác</th>
                             </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="12" class="text-center py-5 text-muted">
-                                <em>Chưa có dữ liệu học sinh nào.</em>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="ps-4 fw-bold">@item.MaHocSinh</td>
+                                        <td class="fw-bold text-primary">@item.HoTen</td>
+                                        <td><span class="badge bg-light text-dark border">@item.TenLop</span></td>
+                                        <td>@item.NgaySinh</td>
+                                        <td>@item.GioiTinh</td>
+                                        <td>@item.TinhThanh</td>
+                                        <td>@item.QuanHuyen</td>
+                                        <td>@item.DiaChi</td>
+                                        <td>@item.CCCD</td>
+                                        <td>@item.DanToc</td>
+                                        <td>@item.GiaoVienChuNhiem</td>
+                                        <td class="text-center pe-4">
+                                            <a href="@Url.Action("Edit", "QuanLyHocSinh", new { id = item.MaHocSinh })" class="btn-action-edit">Edit</a>
+                                            <a href="@Url.Action("Delete", "QuanLyHocSinh", new { id = item.MaHocSinh })" class="btn-action-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa học sinh này không?');">Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="12" class="text-center py-5 text-muted">
+                                        <em>Chưa có dữ liệu học sinh nào.</em>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
         </div>
-
     </div>
-    </div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script tự động ẩn thông báo sau 4 giây -->
+    <script>
+        //document.addEventListener("DOMContentLoaded", function () {
+        //    setTimeout(function () {
+        //        let errorAlert = document.getElementById("errorAlert");
+        //        if (errorAlert) {
+        //            errorAlert.classList.remove('show');
+        //            setTimeout(() => errorAlert.remove(), 150); // Chờ hiệu ứng fade out
+        //        }
 
-<!-- Script tự động ẩn thông báo sau 4 giây -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(function () {
-            let errorAlert = document.getElementById("errorAlert");
-            if (errorAlert) {
-                errorAlert.classList.remove('show');
-                setTimeout(() => errorAlert.remove(), 150); // Chờ hiệu ứng fade out
+        //        let successAlert = document.getElementById("successAlert");
+        //        if (successAlert) {
+        //            successAlert.classList.remove('show');
+        //            setTimeout(() => successAlert.remove(), 150);
+        //        }
+        //    }, 4000);
+        //});
+
+        const form = document.getElementById("uploadForm");
+        const fileInput = document.getElementById("fileInput");
+        const msg = document.getElementById("msg");
+
+        // khi submit form
+        form.addEventListener("submit", function (e) {
+
+            // reset lỗi cũ
+            fileInput.setCustomValidity("");
+
+            if (!fileInput.value) {
+                e.preventDefault(); // chặn submit
+
+                // 🔥 thay message lỗi mặc định
+                fileInput.setCustomValidity("⚠ Vui lòng chọn file Excel trước khi upload");
+
+                // bắt browser hiển thị lỗi
+                fileInput.reportValidity();
+
+                // (tuỳ chọn) hiển thị thêm UI đẹp
+                ;
+            }
+        });
+        fileInput.addEventListener("change", function () {
+            fileInput.setCustomValidity(""); // reset lỗi khi người dùng chọn file
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            let errorModal = document.getElementById('errorModal');
+
+            if (errorModal) {
+                let modal = new bootstrap.Modal(errorModal);
+                modal.show();
             }
 
-            let successAlert = document.getElementById("successAlert");
-            if (successAlert) {
-                successAlert.classList.remove('show');
-                setTimeout(() => successAlert.remove(), 150);
-            }
-        }, 4000);
-    });
+        });
 
-    const form = document.getElementById("uploadForm");
-    const fileInput = document.getElementById("fileInput");
-    const msg = document.getElementById("msg");
-
-    // khi submit form
-    form.addEventListener("submit", function (e) {
-
-        // reset lỗi cũ
-        fileInput.setCustomValidity("");
-
-        if (!fileInput.value) {
-            e.preventDefault(); // chặn submit
-
-            // 🔥 thay message lỗi mặc định
-            fileInput.setCustomValidity("⚠ Vui lòng chọn file Excel trước khi upload");
-
-            // bắt browser hiển thị lỗi
-            fileInput.reportValidity();
-
-            // (tuỳ chọn) hiển thị thêm UI đẹp
-           ;
-        }
-    });
-</script>
+    </script>
