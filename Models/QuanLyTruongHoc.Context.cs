@@ -13,10 +13,10 @@ namespace demomvc.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class QuanLyTruongHocEntities1 : DbContext
+    public partial class QuanLyTruongHocEntities2 : DbContext
     {
-        public QuanLyTruongHocEntities1()
-            : base("name=QuanLyTruongHocEntities1")
+        public QuanLyTruongHocEntities2()
+            : base("name=QuanLyTruongHocEntities2")
         {
         }
     

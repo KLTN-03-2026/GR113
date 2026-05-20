@@ -1,185 +1,418 @@
-﻿@model demomvc.Models.GiaoVienVM
+﻿@*@model demomvc.Models.GiaoVienVM
+    @{
+        ViewBag.Title = "ChiTietGV";
+        Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
+    }
+
+    <style>
+        /* Card chứa toàn bộ thông tin */
+        .gv-card {
+            max-width: 850px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+            .gv-card h2 {
+                text-align: center;
+                font-size: 26px;
+                margin-bottom: 20px;
+                color: #0d6efd;
+                font-weight: bold;
+            }
+
+        /* Bảng chi tiết */
+        .gv-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 17px;
+        }
+
+            .gv-table th {
+                width: 35%;
+                background-color: #f0f4f8;
+                padding: 10px;
+                text-align: left;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .gv-table td {
+                padding: 10px;
+                background-color: #fff;
+                color: #222;
+            }
+
+            /* Màu xen kẽ */
+            .gv-table tr:nth-child(odd) td {
+                background-color: #f9fbfc;
+            }
+
+            /* Hiệu ứng hover */
+            .gv-table tr:hover td {
+                background: #e7f3ff;
+                transition: 0.2s;
+            }
+
+        /* Nút quay lại */
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 18px;
+            background: #0d6efd;
+            color: white !important;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+            .btn-back:hover {
+                background: #084298;
+            }
+
+
+        @@media (max-width: 768px) {
+            .gv-card {
+                padding: 15px;
+            }
+
+            .gv-table th, .gv-table td {
+                font-size: 15px;
+                display: block;
+                width: 100%;
+            }
+
+            .gv-table tr {
+                margin-bottom: 12px;
+                display: block;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .gv-table th {
+                background: none;
+                font-size: 14px;
+                color: #555;
+                padding-bottom: 3px;
+            }
+
+            .gv-table td {
+                background: #fff;
+                padding-top: 0px;
+            }
+        }
+    </style>
+
+    <a href="@Url.Action("Index","QuanLyGiaoVien")" class="btn-back" style="background-color: #37a183;">← Quay lại</a>
+    <div class="gv-card">
+        <h2>Thông tin chi tiết giáo viên</h2>
+
+        <table class="gv-table">
+            <tr>
+                <th>Mã giáo viên</th>
+                <td>@Model.GiaoVienID</td>
+            </tr>
+            <tr>
+                <th>Họ tên</th>
+                <td>@Model.HoTen</td>
+            </tr>
+            <tr>
+                <th>Giới tính</th>
+                <td>@Model.GioiTinh</td>
+            </tr>
+            <tr>
+                <th>Ngày sinh</th>
+                <td>@(Model.NgaySinh.HasValue ? Model.NgaySinh.Value.ToString("dd/MM/yyyy") : "—")</td>
+            </tr>
+            <tr>
+                <th>Môn giảng dạy</th>
+                <td>@Model.TenMonHoc</td>
+            </tr>
+            <tr>
+                <th>Tổ bộ môn</th>
+                <td>@Model.TenBoMon</td>
+            </tr>
+            <tr>
+                <th>Trạng thái giảng dạy</th>
+                <td>@Model.TrangThaiGiangDay</td>
+            </tr>
+            <tr>
+                <th>Lớp chủ nhiệm</th>
+                <td>@Model.LopChuNhiem</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>@Model.Email</td>
+            </tr>
+            <tr>
+                <th>Số điện thoại</th>
+                <td>@Model.SDT</td>
+            </tr>
+            <tr>
+                <th>Trạng thái tài khoản</th>
+                <td>@Model.TrangThaiTK</td>
+            </tr>
+            <tr>
+                <th>Vai trò</th>
+                <td>@converRole(Model.VaiTro)</td>
+            </tr>
+        </table>
+
+
+    </div>
+
+        @functions{
+            public string converRole(string role)
+            {
+                switch (role)
+                {
+                    case "GiaoVien":
+                        return "Giáo Viên";
+                    case "HieuTruong":
+                        return "Hiệu Trưởng";
+                    case "BiThu":
+                        return "Bí Thư";
+                    case "HieuPho":
+                        return "Hiệu Phó";
+                    default:
+                        return role;
+                }
+            }
+            }*@
+
+@model demomvc.Models.GiaoVienVM
+
 @{
+
     ViewBag.Title = "ChiTietGV";
     Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
+
 }
 
+<link rel="stylesheet" href="https://code.jquery.com/cdn/jquery-3.7.1.min.css">
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<link href="~/css/editteacher.css" rel="stylesheet" />
 <style>
-    /* Card chứa toàn bộ thông tin */
     .gv-card {
         max-width: 850px;
         margin: 20px auto;
-        background: #ffffff;
+        background: #fff;
         border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
         .gv-card h2 {
             text-align: center;
-            font-size: 26px;
-            margin-bottom: 20px;
             color: #0d6efd;
-            font-weight: bold;
+            margin-bottom: 20px;
         }
 
-    /* Bảng chi tiết */
-    .gv-table {
+    .gv-table td {
+        padding: 10px;
+        vertical-align: middle;
+    }
+
+    .gv-table input, .gv-table select {
         width: 100%;
-        border-collapse: collapse;
-        font-size: 17px;
-    }
-
-        .gv-table th {
-            width: 35%;
-            background-color: #f0f4f8;
-            padding: 10px;
-            text-align: left;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .gv-table td {
-            padding: 10px;
-            background-color: #fff;
-            color: #222;
-        }
-
-        /* Màu xen kẽ */
-        .gv-table tr:nth-child(odd) td {
-            background-color: #f9fbfc;
-        }
-
-        /* Hiệu ứng hover */
-        .gv-table tr:hover td {
-            background: #e7f3ff;
-            transition: 0.2s;
-        }
-
-    /* Nút quay lại */
-    .btn-back {
-        display: inline-block;
-        margin-top: 20px;
-        padding: 10px 18px;
-        background: #0d6efd;
-        color: white !important;
+        padding: 7px;
         border-radius: 6px;
-        text-decoration: none;
-        font-size: 16px;
+        border: 1px solid #ccc;
     }
 
-        .btn-back:hover {
-            background: #084298;
-        }
-
-
-    @@media (max-width: 768px) {
-        .gv-card {
-            padding: 15px;
-        }
-
-        .gv-table th, .gv-table td {
-            font-size: 15px;
-            display: block;
-            width: 100%;
-        }
-
-        .gv-table tr {
-            margin-bottom: 12px;
-            display: block;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .gv-table th {
-            background: none;
-            font-size: 14px;
-            color: #555;
-            padding-bottom: 3px;
-        }
-
-        .gv-table td {
-            background: #fff;
-            padding-top: 0px;
-        }
+    .btn-save {
+        background: #0d6efd;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        border: none;
     }
 </style>
+<a href="@Url.Action("Index","QuanLyGiaoVien")" class="btn-back">
+    <i class="fa fa-arrow-left"></i>Quay lại
+</a>
+<div class="gv-card" style="background-color: #d1ebed; ">
+    <h2>Chi tiết giáo viên</h2>
 
+    @using (Html.BeginForm("CapNhatGV", "QuanLyGiaoVien", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.GiaoVienID)
 
-<div class="gv-card">
-    <h2>Thông tin chi tiết giáo viên</h2>
+        <table class="gv-table">
 
-    <table class="gv-table">
-        <tr>
-            <th>Mã giáo viên</th>
-            <td>@Model.GiaoVienID</td>
-        </tr>
-        <tr>
-            <th>Họ tên</th>
-            <td>@Model.HoTen</td>
-        </tr>
-        <tr>
-            <th>Giới tính</th>
-            <td>@Model.GioiTinh</td>
-        </tr>
-        <tr>
-            <th>Ngày sinh</th>
-            <td>@(Model.NgaySinh.HasValue ? Model.NgaySinh.Value.ToString("dd/MM/yyyy") : "—")</td>
-        </tr>
-        <tr>
-            <th>Môn giảng dạy</th>
-            <td>@Model.TenMonHoc</td>
-        </tr>
-        <tr>
-            <th>Tổ bộ môn</th>
-            <td>@Model.TenBoMon</td>
-        </tr>
-        <tr>
-            <th>Trạng thái giảng dạy</th>
-            <td>@Model.TrangThaiGiangDay</td>
-        </tr>
-        <tr>
-            <th>Lớp chủ nhiệm</th>
-            <td>@Model.LopChuNhiem</td>
-        </tr>
-        <tr>
-            <th>Email</th>
-            <td>@Model.Email</td>
-        </tr>
-        <tr>
-            <th>Số điện thoại</th>
-            <td>@Model.SDT</td>
-        </tr>
-        <tr>
-            <th>Trạng thái tài khoản</th>
-            <td>@Model.TrangThaiTK</td>
-        </tr>
-        <tr>
-            <th>Vai trò</th>
-            <td>@converRole(Model.VaiTro)</td>
-        </tr>
-    </table>
+            <tr>
+                <td>Mã giáo viên</td>
+                <td>@Model.GiaoVienID</td>
+            </tr>
 
-    <a href="@Url.Action("Index","QuanLyGiaoVien")" class="btn-back">← Quay lại</a>
+            <tr>
+                <td>Họ tên</td>
+                <td>@Html.TextBoxFor(m => m.HoTen)</td>
+            </tr>
+
+            <tr>
+                <td>Giới tính</td>
+                <td>
+                    @Html.DropDownListFor(m => m.GioiTinh,
+                        new List<SelectListItem>{
+                            new SelectListItem{Text="Nam", Value="Nam"},
+                            new SelectListItem{Text="Nữ", Value="Nữ"}
+                        })
+                </td>
+            </tr>
+
+            <tr>
+                <td>Ngày sinh</td>
+                <td>
+                    @Html.TextBoxFor(m => m.NgaySinh, "{0:yyyy-MM-dd}",
+                        new { type = "date" })
+                </td>
+            </tr>
+
+            <tr>
+                <td>Email</td>
+                <td>@Html.TextBoxFor(m => m.Email)</td>
+            </tr>
+
+            <tr>
+                <td>SĐT</td>
+                <td>@Html.TextBoxFor(m => m.SDT)</td>
+            </tr>
+
+            <!-- ✅ CHỌN MÔN -->
+            <tr>
+                <td>Môn giảng dạy</td>
+                <td>
+                    @Html.DropDownListFor(m => m.MonHocID,
+                        ViewBag.ListMonHoc as List<SelectListItem>,
+                        "-- Chọn môn --",
+                        new { @id = "monHoc" })
+                </td>
+            </tr>
+
+            <!-- ✅ TỔ AUTO -->
+            <tr>
+                <td>Tổ bộ môn</td>
+                <td>
+                    <input type="text" id="tenBoMon" readonly value="@Model.TenBoMon" />
+                </td>
+            </tr>
+
+            <!-- ✅ LỚP CN -->
+            <tr>
+                <td>Lớp chủ nhiệm</td>
+                <td>
+                    @Html.DropDownListFor(m => m.LopChuNhiemID,
+                        ViewBag.ListLop as List<SelectListItem>,
+                        "-- Không có --")
+                </td>
+            </tr>
+
+            <tr>
+                <td>Trạng thái giảng dạy</td>
+                <td>
+                    @Html.DropDownListFor(m => m.TrangThaiGiangDay,
+                        new List<SelectListItem>{
+                            new SelectListItem{Text="Đang giảng dạy", Value="Đang giảng dạy"},
+                            new SelectListItem{Text="Nghỉ phép", Value="Nghỉ phép"},
+                            new SelectListItem{Text="Chuyển công tác", Value="Chuyển công tác"},
+                            new SelectListItem{Text="Ngừng dạy", Value="Ngừng dạy"}
+                        })
+                </td>
+            </tr>
+
+            <tr>
+                <td>Trạng thái tài khoản</td>
+                <td>
+                    @Html.DropDownListFor(m => m.TrangThaiTK,
+                        new List<SelectListItem>{
+                            new SelectListItem{Text="Hoạt động", Value="Hoạt động"},
+                            new SelectListItem{Text="Khóa", Value="Khóa"}
+                        })
+                </td>
+            </tr>
+
+            <tr>
+                <td>Vai trò</td>
+                <td>
+                    @Html.DropDownListFor(m => m.VaiTro,
+                        new List<SelectListItem>{
+                            new SelectListItem{Text="Giáo viên", Value="GiaoVien"},
+                            new SelectListItem{Text="Hiệu trưởng", Value="HieuTruong"},
+                            new SelectListItem{Text="Hiệu phó", Value="HieuPho"}
+                        })
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>
+                    <button type="submit" class="btn-save">💾 Cập nhật</button>
+                </td>
+            </tr>
+
+        </table>
+    }
 </div>
 
-    @functions{
-        public string converRole(string role)
-        {
-            switch (role)
-            {
-                case "GiaoVien":
-                    return "Giáo Viên";
-                case "HieuTruong":
-                    return "Hiệu Trưởng";
-                case "BiThu":
-                    return "Bí Thư";
-                case "HieuPho":
-                    return "Hiệu Phó";
-                default:
-                    return role;
+<!-- ✅ JS AUTO TỔ -->
+<script>
+    function loadBoMon(monId) {
+        if (!monId) return;
+
+        $("#tenBoMon").val("Đang tải...");
+
+        $.ajax({
+            url: '/QuanLyGiaoVien/GetBoMonByMon',
+            type: 'GET',
+            data: { monHocID: monId },
+
+            success: function (res) {
+                if (res) {
+                    $("#tenBoMon").val(res.tenBoMon);
+                } else {
+                    $("#tenBoMon").val("");
+                }
             }
+        });
+    }
+
+    //  change môn
+    $("#monHoc").change(function () {
+        var monId = $(this).val();
+        loadBoMon(monId);
+    });
+
+    // LOAD NGAY KHI PAGE MỞ
+    $(document).ready(function () {
+        var monId = $("#monHoc").val();
+        loadBoMon(monId);
+    });
+    // ✅ CHẶN TÊN (không số, không ký tự đặc biệt)
+    $("input[name='HoTen']").on("input", function () {
+        let value = $(this).val();
+
+        // chỉ cho chữ + khoảng trắng
+        value = value.replace(/[^a-zA-ZÀ-ỹ\s]/g, "");
+
+        $(this).val(value);
+    });
+
+    // ✅ SĐT chỉ cho số + max 12 số
+    $("input[name='SDT']").on("input", function () {
+        let value = $(this).val();
+
+        // chỉ giữ số
+        value = value.replace(/\D/g, "");
+
+        // max 12 số
+        if (value.length > 12) {
+            value = value.substring(0, 12);
         }
-        }
 
-
-
+        $(this).val(value);
+    });
+</script>

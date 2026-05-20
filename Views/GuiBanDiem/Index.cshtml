@@ -3,32 +3,92 @@
     Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
 }
 
-<h2>Gửi Bảng Điểm</h2>
+<style>
+    /* ✅ FORM WRAPPER */
+    .form-wrapper {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
 
-<form method="post" action="/GuiBanDiem/GuiBangDiemPost">
-    <label>Năm học:</label>
-    @Html.DropDownList("NamHocID", (SelectList)ViewBag.NamHocID,
-        "-- Chọn năm học --",
-        new { @class = "form-control", id = "NamHocID" })
+    /* ✅ TITLE */
+    h2 {
+        text-align: center;
+        color: #2f5f73;
+        font-weight: bold;
+        margin-bottom: 25px;
+    }
 
-    <br />
+    /* ✅ LABEL */
+    label {
+        font-weight: 600;
+        margin-bottom: 6px;
+        display: block;
+    }
 
-    <label>Học kỳ:</label>
-    @Html.DropDownList("HocKyID", (SelectList)ViewBag.HocKyID,
-        "-- Chọn học kỳ --",
-        new { @class = "form-control", id = "HocKyID" })
+    /* ✅ INPUT */
+    .form-control {
+        border-radius: 8px;
+        height: 42px;
+        margin-bottom: 12px;
+    }
 
-    <br />
-    <button class="btn btn-primary">Gửi bảng điểm</button>
-</form>
+    /* ✅ BUTTON */
+    .btn-submit {
+        display: block;
+        margin: 20px auto 0;
+        padding: 10px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+        background: #2f5f73;
+        border: none;
+        transition: 0.3s;
+        color: white;
+    }
 
-<!-- NHỚ IMPORT JQUERY -->
+        .btn-submit:hover {
+            background: #1e4353;
+            transform: scale(1.05);
+            color: #fff;
+        }
+</style>
+
+<div class="form-wrapper">
+
+    <h2>Gửi Bảng Điểm</h2>
+
+    <form method="post" action="/GuiBanDiem/GuiBangDiemPost">
+
+        <label>Năm học:</label>
+        @Html.DropDownList("NamHocID", (SelectList)ViewBag.NamHocID,
+            "-- Chọn năm học --",
+            new { @class = "form-control", id = "NamHocID" })
+
+        <label>Học kỳ:</label>
+        @Html.DropDownList("HocKyID", (SelectList)ViewBag.HocKyID,
+            "-- Chọn học kỳ --",
+            new { @class = "form-control", id = "HocKyID" })
+
+        <button type="submit" class="btn-submit">
+            Gửi bảng điểm
+        </button>
+
+    </form>
+
+</div>
+
+<!-- ✅ JQUERY -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+    // ✅ LOAD HỌC KỲ THEO NĂM
     $("#NamHocID").change(function () {
 
         var id = $(this).val();
+
         if (id == "") {
             $("#HocKyID").empty().append("<option value=''>-- Chọn học kỳ --</option>");
             return;
@@ -37,12 +97,19 @@
         $.getJSON("@Url.Action("LoadHocKy", "GuiBanDiem")",
             { namHocId: id },
             function (data) {
+
                 var hk = $("#HocKyID");
                 hk.empty();
                 hk.append("<option value=''>-- Chọn học kỳ --</option>");
+
                 $.each(data, function (i, v) {
                     hk.append("<option value='" + v.HocKyID + "'>" + v.TenHocKy + "</option>");
                 });
             });
+    });
+
+    // ✅ UX nhỏ: đổi text khi submit
+    $("form").submit(function () {
+        $(".btn-submit").text("Đang gửi...");
     });
 </script>

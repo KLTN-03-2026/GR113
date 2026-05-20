@@ -14,7 +14,7 @@ namespace demomvc.Controllers
     public class XemDiemController : Controller
     {
         // GET: XemDiem
-        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
+        QuanLyTruongHocEntities2 db = new QuanLyTruongHocEntities2();
         public ActionResult Index()
         {
             BangDiemViewModel model = new BangDiemViewModel();
@@ -86,11 +86,11 @@ namespace demomvc.Controllers
             if (hk1 != null && hk2 != null)
             {
                 DiemTB_CN = Math.Round(((hk1.DTBTong ?? 0) + (hk2.DTBTong ?? 0) * 2) / 3, 2);
-                ;
+                
             }
 
             //hanh kiem ca nam
-            string hanhKiemCN = hk2?.HanhKiem ?? hk1?.HanhKiem ?? "_";
+            string hanhKiemCN = hk2?.HanhKiem ?? hk1?.HanhKiem ?? "";
 
             //xep loai hoc luc ca nam
             string xepLoaiCN = "_";

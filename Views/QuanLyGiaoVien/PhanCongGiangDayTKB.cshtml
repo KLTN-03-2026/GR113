@@ -6,7 +6,14 @@
 
 
 <link href="~/css/StyleSheet1.css" rel="stylesheet" />
-<h2 class="title">Phân công giảng dạy</h2>
+<div class="header-page">
+    <a href="@Url.Action("Index","QuanLyGiaoVien")" class="btn-back">
+        <i class="fa fa-arrow-left"></i> Quay lại
+    </a>
+
+    <h2 class="title">Phân công giảng dạy</h2>
+</div>
+
 <div class="container-page">
     <div class="filter-bar">
         <select id="namHoc">
@@ -64,52 +71,52 @@
 
     <!-- overlay click ngoài -->
     <div id="overlay"></div>
-    </div>
+</div>
 
-    <!-- toast -->
-    <div id="toast" class="toast">
-        <span id="toastIcon"></span>
-        <span id="toastMsg"></span>
-    </div>
+<!-- toast -->
+<div id="toast" class="toast">
+    <span id="toastIcon"></span>
+    <span id="toastMsg"></span>
+</div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        function showLop(gvID) {
+<script>
+    function showLop(gvID) {
 
-            let namHoc = $("#namHoc").val();
-            let hocKy = $("#hocKy").val();
+        let namHoc = $("#namHoc").val();
+        let hocKy = $("#hocKy").val();
 
-            if (!namHoc || !hocKy) {
-                showToast("Chọn năm học + học kỳ!", "warning");
-                return;
-            }
+        if (!namHoc || !hocKy) {
+            showToast("Chọn năm học + học kỳ!", "warning");
+            return;
+        }
 
-            closeAll();
-            $("#overlay").show();
+        closeAll();
+        $("#overlay").show();
 
-            let box = $("#lop_" + gvID);
+        let box = $("#lop_" + gvID);
 
-            $.get("/QuanLyGiaoVien/GetLopByNamHoc",
-                {
-                    namHocId: namHoc,
-                    hocKyId: hocKy,
-                    giaoVienId: gvID
-                },
-                function (res) {
+        $.get("/QuanLyGiaoVien/GetLopByNamHoc",
+            {
+                namHocId: namHoc,
+                hocKyId: hocKy,
+                giaoVienId: gvID
+            },
+            function (res) {
 
-                    let html = "";
+                let html = "";
 
-                    res.dsLop.forEach(l => {
+                res.dsLop.forEach(l => {
 
-                        let checked = res.daChon.includes(l.LopHocID);
-                        let isTaken = res.lopBiTrung.includes(l.LopHocID);
+                    let checked = res.daChon.includes(l.LopHocID);
+                    let isTaken = res.lopBiTrung.includes(l.LopHocID);
 
-                        let cls = "item";
-                        if (checked) cls += " selected";
-                        else if (isTaken) cls += " disabled";
+                    let cls = "item";
+                    if (checked) cls += " selected";
+                    else if (isTaken) cls += " disabled";
 
-                        html += `
+                    html += `
                         <div class="${cls}">
                             <label>
                                 <input type="checkbox"
@@ -120,77 +127,77 @@
                                 ${l.TenLop}
                             </label>
                         </div>`;
-                    });
-
-                    box.html(html).show();
-                    $("#count_" + gvID).text(res.daChon.length);
                 });
-        }
 
-        function closeAll() {
-            $(".dropdown").hide();
-            $("#overlay").hide();
-        }
-
-        $("#overlay").click(closeAll);
-
-        $(document).on("click", ".dropdown", function (e) {
-            e.stopPropagation();
-        });
-
-        $(document).on("click", "input[type=checkbox]", function (e) {
-            e.stopPropagation();
-        });
-
-        $(document).on("change", "input[type=checkbox]", function () {
-            let gvID = $(this).attr("class").split("_")[1];
-            let count = $(".lop_" + gvID + ":checked").length;
-            $("#count_" + gvID).text(count);
-        });
-
-        function luu(gvID) {
-
-            let hocKy = $("#hocKy").val();
-
-            let lopIDs = [];
-            $(".lop_" + gvID + ":checked").each(function () {
-                lopIDs.push(parseInt($(this).val()));
+                box.html(html).show();
+                $("#count_" + gvID).text(res.daChon.length);
             });
+    }
 
-            $.post("/QuanLyGiaoVien/PhanCongTableAjax",
-                {
-                    giaoVienId: gvID,
-                    hocKyId: hocKy,
-                    lopIDs: lopIDs
-                },
-                function (res) {
+    function closeAll() {
+        $(".dropdown").hide();
+        $("#overlay").hide();
+    }
 
-                    if (res.success) {
-                        showToast("Phân công thành công!");
-                        closeAll();
-                    } else {
-                        showToast(res.message, "error");
-                    }
-                });
-        }
+    $("#overlay").click(closeAll);
 
-        function showToast(msg, type = "success") {
+    $(document).on("click", ".dropdown", function (e) {
+        e.stopPropagation();
+    });
 
-            let icon = "✅";
-            if (type === "error") icon = "❌";
-            if (type === "warning") icon = "⚠️";
+    $(document).on("click", "input[type=checkbox]", function (e) {
+        e.stopPropagation();
+    });
 
-            $("#toastIcon").text(icon);
-            $("#toastMsg").text(msg);
+    $(document).on("change", "input[type=checkbox]", function () {
+        let gvID = $(this).attr("class").split("_")[1];
+        let count = $(".lop_" + gvID + ":checked").length;
+        $("#count_" + gvID).text(count);
+    });
 
-            let toast = $("#toast");
+    function luu(gvID) {
 
-            toast.removeClass("success error warning")
-                .addClass(type)
-                .addClass("show");
+        let hocKy = $("#hocKy").val();
 
-            setTimeout(() => {
-                toast.removeClass("show");
-            }, 2000);
-        }
-    </script>
+        let lopIDs = [];
+        $(".lop_" + gvID + ":checked").each(function () {
+            lopIDs.push(parseInt($(this).val()));
+        });
+
+        $.post("/QuanLyGiaoVien/PhanCongTableAjax",
+            {
+                giaoVienId: gvID,
+                hocKyId: hocKy,
+                lopIDs: lopIDs
+            },
+            function (res) {
+
+                if (res.success) {
+                    showToast("Phân công thành công!");
+                    closeAll();
+                } else {
+                    showToast(res.message, "error");
+                }
+            });
+    }
+
+    function showToast(msg, type = "success") {
+
+        let icon = "✅";
+        if (type === "error") icon = "❌";
+        if (type === "warning") icon = "⚠️";
+
+        $("#toastIcon").text(icon);
+        $("#toastMsg").text(msg);
+
+        let toast = $("#toast");
+
+        toast.removeClass("success error warning")
+            .addClass(type)
+            .addClass("show");
+
+        setTimeout(() => {
+            toast.removeClass("show");
+        }, 2000);
+    }
+</script>

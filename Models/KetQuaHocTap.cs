@@ -16,11 +16,14 @@ namespace demomvc.Models
     {
         public int KetQuaID { get; set; }
         public int HocSinhID { get; set; }
-        public int HocKyID { get; set; }
+        public Nullable<int> HocKyID { get; set; }
         public int NamHocID { get; set; }
         public Nullable<double> DTBTong { get; set; }
         public string HocLuc { get; set; }
         public string HanhKiem { get; set; }
+        public Nullable<double> DTBCaNam { get; set; }
+        public string HocLucCaNam { get; set; }
+        public string HanhKiemCaNam { get; set; }
     
         public virtual HocKy HocKy { get; set; }
         public virtual HocSinh HocSinh { get; set; }

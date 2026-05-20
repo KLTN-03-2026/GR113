@@ -1,0 +1,131 @@
+﻿.gv-card {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 30px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+    .gv-card h2 {
+        text-align: center;
+        color: #1854d1;
+        font-weight: 600;
+        margin-bottom: 25px;
+    }
+
+/* Table layout */
+.gv-table {
+    width: 100%;
+}
+
+    .gv-table tr {
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    .gv-table td {
+        padding: 12px 8px;
+        vertical-align: middle;
+    }
+
+        .gv-table td:first-child {
+            font-weight: 500;
+            color: #555;
+            width: 35%;
+        }
+
+    /* INPUT STYLE */
+    .gv-table input,
+    .gv-table select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        transition: all 0.2s ease;
+        font-size: 14px;
+    }
+
+        .gv-table input:focus,
+        .gv-table select:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 2px rgba(78,115,223,0.1);
+            outline: none;
+        }
+
+/* readonly field */
+#tenBoMon {
+    background: #f5f7fa;
+    color: #555;
+    cursor: not-allowed;
+}
+
+/* BUTTON */
+.btn-save {
+    background: linear-gradient(135deg, #4e73df, #224abe);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+    .btn-save:hover {
+        background: linear-gradient(135deg, #224abe, #1c3faa);
+    }
+
+/* spacing button */
+.gv-table tr:last-child td {
+    padding-top: 20px;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+    .gv-card {
+        padding: 20px;
+    }
+
+    .gv-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .gv-table tr {
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .gv-table td:first-child {
+        font-size: 13px;
+        color: #888;
+        padding-bottom: 3px;
+    }
+}
+.btn-back {
+    margin-top:10px;
+    display:block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #37a183, #2c8c72);
+    color: #fff !important;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.25s ease;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+    /* hover */
+    .btn-back:hover {
+        background: linear-gradient(135deg, #2c8c72, #1f6f5a);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    /* click */
+    .btn-back:active {
+        transform: scale(0.95);
+    }

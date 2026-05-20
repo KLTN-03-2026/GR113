@@ -1,12 +1,16 @@
 ﻿
+using demomvc.Models;
 using demonvc.Services.GA;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Web.Razor.Parser.SyntaxConstants;
 
 namespace demomvc.Services.GA
 {
     public class FitnessCalculator
     {
+        private readonly QuanLyTruongHocEntities2 db = new QuanLyTruongHocEntities2();
         public double Calculate(Chromosome c)
         {
             double fitness = 100000;
@@ -47,7 +51,7 @@ namespace demomvc.Services.GA
 
                 // ===== 5. TIN / TD SAI CA =====
                 if (CaHocHelper.IsSaiCa(g.MonHocID, g.Tiet, g.CaHoc))
-                    fitness -= 200;
+                    fitness -= 2000;
             }
 
             //// ===== 6. ƯU TIÊN TOÁN – VĂN – ANH HỌC 2 TIẾT LIỀN =====
@@ -60,7 +64,7 @@ namespace demomvc.Services.GA
 
                 string nextTiet = $"{g.LopHocID}-{g.MonHocID}-{g.Tuan}-{g.Thu}-{g.Tiet + 1}";
                 if (checkLienTiet.Contains(nextTiet))
-                    fitness += 5000;
+                    fitness += 300;
 
                 string curTiet = $"{g.LopHocID}-{g.MonHocID}-{g.Tuan}-{g.Thu}-{g.Tiet}";
                 checkLienTiet.Add(curTiet);
@@ -87,7 +91,7 @@ namespace demomvc.Services.GA
                 {
                     if (tiets[i] != tiets[i - 1] + 1)
                     {
-                        fitness -= 500; // ❌ PHẠT NẶNG TIẾT LẺ
+                        fitness -= 10000; // ❌ PHẠT NẶNG TIẾT LẺ
                     }
                 }
             }
@@ -105,6 +109,7 @@ namespace demomvc.Services.GA
                     // Thứ 2 idx=0 → +50
                     // Thứ 7 idx=1 → +45 ...
                     fitness += (6 - idx) * 100;
+
                 }
                 else
                 {
@@ -131,7 +136,106 @@ namespace demomvc.Services.GA
                 }
             }
 
+
+            // ===== 11.PHẠT LỆCH SỐ TIẾT THEO MÔN / TUẦN(CHÍNH XÁC) =====
+            var demMonTheoLop = c.Genes
+                .Where(g => g.Tuan == 1)   // ✅ chỉ tính tuần mẫu
+                .GroupBy(g => new { g.LopHocID, g.MonHocID })
+                .ToList();
+
+            foreach (var group in demMonTheoLop)
+            {
+                var g0 = group.First();
+
+                int soTietThucTe = group.Count(); // số tiết tuần 1
+                int soTietMucTieu = GetTargetSoTietTuan(
+                    g0.KhoiLopID,
+                    g0.MonHocID,
+                    g0.HocKyID
+                );
+
+                int lech = Math.Abs(soTietThucTe - soTietMucTieu);
+
+                if (lech > 0)
+                {
+                    // ❌ PHẠT CỰC NẶNG
+                    fitness -= lech * 1000;
+                }
+            }
+
+
             return fitness;
         }
+        //private int GetTargetSoTietTuan(int khoiLopId, int monHocId, int hocKyId)
+        //{
+        //    int soTietNam = db.MonHocKhoi
+        //        .Where(x => x.KhoiLopID == khoiLopId && x.MonHocID == monHocId)
+        //        .Select(x => x.SoTietNam)
+        //        .FirstOrDefault();
+
+        //    int namHocId = db.HocKy
+        //        .Where(h => h.HocKyID == hocKyId)
+        //        .Select(h => h.NamHocID)
+        //        .FirstOrDefault();
+
+        //    int tongTuanNam = db.HocKy
+        //        .Where(h => h.NamHocID == namHocId)
+        //        .Sum(h => h.SoTuanThucHoc);
+
+        //    if (soTietNam <= 0 || tongTuanNam <= 0)
+        //        return 0;
+
+        //    return (int)Math.Round((double)soTietNam / tongTuanNam);
+        //}
+
+        private int GetTargetSoTietTuan(int khoiLopId, int monHocId, int hocKyId)
+        {
+            string key = $"{khoiLopId}-{monHocId}-{hocKyId}";
+
+            // =========================
+            // CACHE
+            // =========================
+
+            if (cacheSoTiet.ContainsKey(key))
+                return cacheSoTiet[key];
+
+            // =========================
+            // QUERY 1 LẦN
+            // =========================
+
+            int soTietNam = db.MonHocKhoi
+                .Where(x =>
+                    x.KhoiLopID == khoiLopId &&
+                    x.MonHocID == monHocId)
+                .Select(x => x.SoTietNam)
+                .FirstOrDefault();
+
+            int namHocId = db.HocKy
+                .Where(h => h.HocKyID == hocKyId)
+                .Select(h => h.NamHocID)
+                .FirstOrDefault();
+
+            int tongTuanNam = db.HocKy
+                .Where(h => h.NamHocID == namHocId)
+                .Select(h => h.SoTuanThucHoc)
+                .ToList()
+                .Sum();
+
+            if (soTietNam <= 0 || tongTuanNam <= 0)
+                return 0;
+
+            int result =
+                (int)Math.Round((double)soTietNam / tongTuanNam);
+
+            // =========================
+            // SAVE CACHE
+            // =========================
+
+            cacheSoTiet[key] = result;
+
+            return result;
+        }
+
+        private static Dictionary<string, int> cacheSoTiet = new Dictionary<string, int>();
     }
 }

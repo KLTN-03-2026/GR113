@@ -16,7 +16,7 @@ namespace demomvc.Controllers
     public class QuanLyGiaoVienController : Controller
     {
         // GET: QuanLyGiaoVien
-        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
+        QuanLyTruongHocEntities2 db = new QuanLyTruongHocEntities2();
         public ActionResult Index(string type, string keyword)
         {
             keyword = keyword ?? "";
@@ -110,28 +110,39 @@ namespace demomvc.Controllers
 
 
 
+       
         public ActionResult ChiTietGV(int id)
         {
             var gvct = (from gv in db.GiaoVien
                         join nd in db.NguoiDung on gv.NguoiDungID equals nd.NguoiDungID
+
                         join mh in db.MonHoc on gv.MonHocID equals mh.MonHocID into monhocGroup
                         from mh in monhocGroup.DefaultIfEmpty()
+
                         join bm in db.BoMon on mh.BoMonID equals bm.BoMonID into bomonGroup
                         from bm in bomonGroup.DefaultIfEmpty()
+
                         join lh in db.LopHoc on gv.GiaoVienID equals lh.GiaoVienChuNhiem into temp
-                        from lop in temp.DefaultIfEmpty()  // LEFT JOIN
+                        from lop in temp.DefaultIfEmpty()
+
                         where gv.GiaoVienID == id
+
                         select new GiaoVienVM
                         {
                             GiaoVienID = gv.GiaoVienID,
                             HoTen = nd.HoTen,
                             NgaySinh = gv.NgaySinh,
                             GioiTinh = gv.GioiTinh,
+
+                            //  HIỂN THỊ
                             LopChuNhiem = lop != null ? lop.TenLop : "Không chủ nhiệm",
                             TenMonHoc = mh != null ? mh.TenMonHoc : "Chưa phân công",
-
-                            // Nếu bm null → Không có bộ môn
                             TenBoMon = bm != null ? bm.TenBoMon : "Chưa phân công",
+
+                            // QUAN TRỌNG (DÙNG CHO EDIT)
+                            MonHocID = gv.MonHocID,
+                            BoMonID = mh != null ? mh.BoMonID : (int?)null,
+                            LopChuNhiemID = lop != null ? (int?)lop.LopHocID : null,
 
                             TrangThaiGiangDay = gv.TrangThaiGiangDay,
                             Email = nd.Email,
@@ -145,10 +156,25 @@ namespace demomvc.Controllers
                 return HttpNotFound();
             }
 
+            // ✅ BỔ SUNG DROPDOWN (KHÔNG MẤT LOGIC CŨ)
+            ViewBag.ListMonHoc = db.MonHoc
+                .ToList()
+                .Select(x => new SelectListItem
+                {
+                    Value = x.MonHocID.ToString(),
+                    Text = x.TenMonHoc
+                }).ToList();
+
+            ViewBag.ListLop = db.LopHoc
+                .ToList()
+                .Select(x => new SelectListItem
+                {
+                    Value = x.LopHocID.ToString(),
+                    Text = x.TenLop
+                }).ToList();
+
             return View(gvct);
         }
-
-
 
 
         private string TaoTenDangNhap(string hoTen)
@@ -231,9 +257,8 @@ namespace demomvc.Controllers
 
             db.GiaoVien.Add(gv);
             db.SaveChanges();
-            ViewBag.Message = "Thêm thành công";
-
-
+            //ViewBag.Message = "Thêm thành công";
+            TempData["Success"] = "Thêm giáo viên thành công!";
             return RedirectToAction("Index");
         }
 
@@ -394,5 +419,78 @@ namespace demomvc.Controllers
 
             return Json(new { success = true, message = "✅ Thành công!" });
         }
+
+        public JsonResult GetBoMonByMon(int monHocID)
+        {
+            var mon = db.MonHoc.FirstOrDefault(x => x.MonHocID == monHocID);
+
+            if (mon == null)
+                return Json(null, JsonRequestBehavior.AllowGet);
+
+            var bm = db.BoMon.FirstOrDefault(x => x.BoMonID == mon.BoMonID);
+
+            return Json(new
+            {
+                tenBoMon = bm.TenBoMon
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CapNhatGV(GiaoVienVM model)
+        {
+            var gv = db.GiaoVien.FirstOrDefault(x => x.GiaoVienID == model.GiaoVienID);
+            if (gv == null)
+            {
+                TempData["Error"] = "Không tìm thấy giáo viên";
+                return RedirectToAction("Index");
+            }
+
+            // 2.Lấy người dùng tương ứng
+            var nd = db.NguoiDung.FirstOrDefault(x => x.NguoiDungID == gv.NguoiDungID);
+
+            // ==== UPDATE NGUOIDUNG ====
+            nd.HoTen = model.HoTen;
+            nd.Email = model.Email;
+            nd.SDT = model.SDT;
+            nd.TrangThaiTK = model.TrangThaiTK;
+            nd.VaiTro = model.VaiTro;
+
+            // ==== UPDATE GIAOVIEN ====
+            gv.NgaySinh = model.NgaySinh;
+            gv.GioiTinh = model.GioiTinh;
+            gv.TrangThaiGiangDay = model.TrangThaiGiangDay;
+
+            // ✅ cập nhật môn
+            gv.MonHocID = model.MonHocID;
+
+            // ✅ cập nhật lớp chủ nhiệm
+            if (model.LopChuNhiemID.HasValue)
+            {
+                // reset lớp cũ nếu có
+                var lopCu = db.LopHoc
+                    .Where(x => x.GiaoVienChuNhiem == gv.GiaoVienID)
+                    .ToList();
+
+                foreach (var l in lopCu)
+                {
+                    l.GiaoVienChuNhiem = null;
+                }
+
+                // set lớp mới
+                var lopMoi = db.LopHoc.FirstOrDefault(x => x.LopHocID == model.LopChuNhiemID);
+                if (lopMoi != null)
+                {
+                    lopMoi.GiaoVienChuNhiem = gv.GiaoVienID;
+                }
+            }
+
+            db.SaveChanges();
+
+            TempData["Success"] = "✅ Cập nhật giáo viên thành công!";
+            return RedirectToAction("Index");
+
+        }
+
     }
 }

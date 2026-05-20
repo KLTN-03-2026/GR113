@@ -5,107 +5,208 @@
 
 @model demomvc.Models.GiaoVienVM
 
-<h2 class="mb-3">Thêm mới giáo viên</h2>
+<style>
+    /* ✅ bọc form */
+    .form-wrapper {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 25px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
 
-<form action="/QuanLyGiaoVien/ThemMoiGV" method="post">
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    h2 {
+        text-align: center;
+        color: #2f5f73;
+        font-weight: bold;
+        margin-bottom: 25px;
+    }
 
-    <div class="row">
+    label {
+        font-weight: 600;
+    }
 
-        <!-- Họ tên -->
-        <div class="col-md-6">
-            <label>Họ tên</label>
-            @Html.TextBoxFor(m => m.HoTen, new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.HoTen, "", new { @class = "text-danger" })
+    .form-control {
+        border-radius: 8px;
+        height: 40px;
+    }
+
+    .row {
+        margin-top: 10px;
+    }
+
+    /* ✅ nút giữa */
+    .btn-submit {
+        display: block;
+        margin: 25px auto 0;
+        padding: 10px 28px;
+        border-radius: 10px;
+        font-weight: bold;
+        background: #2f5f73;
+        border: none;
+        transition: 0.3s;
+    }
+
+        .btn-submit:hover {
+            background: #1e4353;
+            transform: scale(1.05);
+        }
+    /* giữ nút bên trái */
+    .btn-back {
+        position: absolute;
+        left: 10px;
+        top: 80px; /* ✅ sát lên trên */
+
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: linear-gradient(135deg, #37a183, #2c8c72);
+        color: #fff !important;
+        padding: 8px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+</style>
+<a href="@Url.Action("Index","QuanLyGiaoVien")" class="btn-back">
+    <i class="fa fa-arrow-left"></i> Quay lại
+</a>
+<div class="form-wrapper">
+
+    <h2>Thêm mới giáo viên</h2>
+
+    <form action="/QuanLyGiaoVien/ThemMoiGV" method="post">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="row">
+
+            <div class="col-md-6">
+                <label>Họ tên</label>
+                @Html.TextBoxFor(m => m.HoTen, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.HoTen, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-6">
+                <label>Giới tính</label>
+                @Html.DropDownListFor(m => m.GioiTinh,
+                    new SelectList(new[] { "Nam", "Nữ" }),
+                    "-- Chọn giới tính --",
+                    new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.GioiTinh, "", new { @class = "text-danger" })
+            </div>
+
         </div>
 
-        <!-- Giới tính -->
-        <div class="col-md-6">
-            <label>Giới tính</label>
-            @Html.DropDownListFor(m => m.GioiTinh,
-                new SelectList(new[] { "Nam", "Nữ" }),
-                "-- Chọn giới tính --",
-                new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.GioiTinh, "", new { @class = "text-danger" })
+        <div class="row mt-3">
+
+            <div class="col-md-6">
+                <label>Ngày sinh</label>
+                @Html.TextBoxFor(m => m.NgaySinh, new { @type = "date", @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.NgaySinh, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-6">
+                <label>Trạng thái giảng dạy</label>
+                @Html.DropDownListFor(m => m.TrangThaiGiangDay,
+                 new SelectList(new[] {
+                     new { Value="Đang giảng dạy", Text="Đang giảng dạy"},
+                     new { Value="Nghỉ phép", Text="Nghỉ phép"},
+                     new { Value="Tạm ngưng", Text="Tạm ngưng"}
+                 }, "Value", "Text"),
+                 "-- Chọn trạng thái --",
+                 new { @class = "form-control" })
+            </div>
+
         </div>
 
-    </div>
+        <div class="row mt-3">
 
-    <div class="row mt-3">
+            <div class="col-md-6">
+                <label>Môn giảng dạy</label>
+                @Html.DropDownListFor(m => m.MonHocID,
+                 new SelectList(ViewBag.MonHoc, "MonHocID", "TenMonHoc"),
+                 "-- Chưa chọn môn dạy --",
+                 new { @class = "form-control" })
+            </div>
 
-        <!-- Ngày sinh -->
-        <div class="col-md-6">
-            <label>Ngày sinh</label>
-            @Html.TextBoxFor(m => m.NgaySinh, new { @type = "date", @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.NgaySinh, "", new { @class = "text-danger" })
+            <div class="col-md-6">
+                <label>Trạng thái tài khoản</label>
+                @Html.DropDownListFor(m => m.TrangThaiTK,
+                    new SelectList(new[] { "Đang hoạt động", "Khóa" }),
+                    new { @class = "form-control" })
+            </div>
+
         </div>
 
-        <!-- Trạng thái giảng dạy -->
-        <div class="col-md-6">
-            <label>Trạng thái giảng dạy</label>
-            @Html.DropDownListFor(m => m.TrangThaiGiangDay,
-             new SelectList(new[] {
-                 new { Value="Đang giảng dạy", Text="Đang giảng dạy"},
-                 new { Value="Nghỉ phép", Text="Nghỉ phép"},
-                 new { Value="Tạm ngưng", Text="Tạm ngưng"}
-             }, "Value", "Text"),
-             "-- Chọn trạng thái --",
-             new { @class = "form-control" })
+        <div class="row mt-3">
+
+            <div class="col-md-6">
+                <label>Email</label>
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-6">
+                <label>Số điện thoại</label>
+                @Html.TextBoxFor(m => m.SDT, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.SDT, "", new { @class = "text-danger" })
+            </div>
+
         </div>
 
-    </div>
+        <div class="row mt-3">
 
-    <div class="row mt-3">
+            <div class="col-md-6">
+                <label>Vai trò</label>
+                @Html.DropDownListFor(m => m.VaiTro,
+                    new SelectList(new[] {
+                        new { Value="GiaoVien", Text="Giáo Viên"},
+                        new { Value="HieuTruong", Text="Hiệu Trưởng"},
+                        new { Value="BiThu", Text="Bí Thư" }
+                    }, "Value", "Text"),
+                    "-- Chọn vai trò --",
+                    new { @class = "form-control" })
 
-        <!-- Môn học -->
-        <div class="col-md-6">
-            <label>Môn giảng dạy</label>
-            @Html.DropDownListFor(m => m.MonHocID,
-             new SelectList(ViewBag.MonHoc, "MonHocID", "TenMonHoc"),
-             "-- Chưa chọn môn dạy --",
-             new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.VaiTro, "", new { @class = "text-danger" })
+            </div>
 
-            <!-- Không có ValidationMessage để không bắt buộc -->
         </div>
 
-        <!-- Trạng thái tài khoản -->
-        <div class="col-md-6">
-            <label>Trạng thái tài khoản</label>
-            @Html.DropDownListFor(m => m.TrangThaiTK,
-                new SelectList(new[] { "Đang hoạt động", "Khóa" }),
-                new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="row mt-3">
-        <!-- Email -->
-        <div class="col-md-6">
-            <label>Email</label>
-            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-        </div>
-        <!-- SDT -->
-        <div class="col-md-6">
-            <label>Số điện thoại</label>
-            @Html.TextBoxFor(m => m.SDT, new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.SDT, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="row mt-3">
-        <!-- Vai trò -->
-        <div class="col-md-6">
-            <label>Vai trò</label>
-            @Html.DropDownListFor(m => m.VaiTro,
-                new SelectList(new[] {
-                    new { Value="GiaoVien", Text="Giáo Viên"},
-                    new { Value="HieuTruong", Text="Hiệu Trưởng"},
-                    new { Value="BiThu", Text="Bí Thư" }
-                }, "Value", "Text"),
-                "-- Chọn vai trò --",
-                new { @class = "form-control" })
+        <button type="submit" class="btn btn-primary btn-submit">Thêm mới</button>
+    </form>
 
-            @Html.ValidationMessageFor(m => m.VaiTro, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary mt-4">Thêm mới</button>
-</form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        let today = new Date();
+        today.setFullYear(today.getFullYear() - 15); // ✅ -15 tuổi
+
+        let yyyy = today.getFullYear();
+        let mm = String(today.getMonth() + 1).padStart(2, '0');
+        let dd = String(today.getDate()).padStart(2, '0');
+
+        let maxDate = yyyy + "-" + mm + "-" + dd;
+
+        // ✅ set max
+        document.querySelector("input[name='NgaySinh']").setAttribute("max", maxDate);
+
+        // ✅ chặn submit (extra)
+        document.querySelector("form").addEventListener("submit", function (e) {
+            let val = document.querySelector("input[name='NgaySinh']").value;
+
+            if (val) {
+                let ns = new Date(val);
+                if (ns > today) {
+                    alert("Giáo viên phải đủ 15 tuổi!");
+                    e.preventDefault();
+                }
+            }
+        });
+    });
+</script>

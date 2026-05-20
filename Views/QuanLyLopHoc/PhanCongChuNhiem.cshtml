@@ -153,14 +153,22 @@
 
 
 <script>
+
 function showDropdown(id){
     var html = `<select id="select_${id}" class="form-control">`;
+
     @foreach (var gv in Model.FirstOrDefault()?.ListGiaoVien ?? new List<SelectListItem>())
     {
+        var isUsed = Model.Any(m => m.TenGiaoVien == gv.Text);
+
         <text>
-        html += `<option value="@gv.Value">@gv.Text</option>`;
+        html += `<option value="@gv.Value"
+                        style="@(isUsed ? "color:black; font-weight:bold; background-color:#99FFCC" : "")">
+                        @gv.Text
+                 </option>`;
         </text>
     }
+
     html += `</select>`;
     document.getElementById("gv_" + id).innerHTML = html;
 
@@ -168,7 +176,6 @@ function showDropdown(id){
         `<button class="btn btn-success" onclick="saveGVCN(${id})">Lưu</button>
          <button class="btn btn-secondary" onclick="cancelEdit(${id})">Hủy</button>`;
 }
-
 function saveGVCN(id){
     var gvID = document.getElementById("select_" + id).value;
     $.post("/QuanLyLopHoc/CapNhatChuNhiem",

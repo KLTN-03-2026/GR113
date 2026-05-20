@@ -57,11 +57,8 @@
     <Reference Include="EntityFramework, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="EPPlus, Version=8.0.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
-      <HintPath>packages\EPPlus.8.0.1\lib\net462\EPPlus.dll</HintPath>
-    </Reference>
-    <Reference Include="EPPlus.Interfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
-      <HintPath>packages\EPPlus.Interfaces.8.0.0\lib\net462\EPPlus.Interfaces.dll</HintPath>
+    <Reference Include="EPPlus">
+      <HintPath>..\..\newlpp\EPPlus.dll</HintPath>
     </Reference>
     <Reference Include="itext.barcodes, Version=9.4.0.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>packages\itext.9.4.0\lib\net461\itext.barcodes.dll</HintPath>
@@ -175,8 +172,8 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -260,6 +257,7 @@
     <Content Include="css\dangnhap.css" />
     <Content Include="css\danhsachlop.css" />
     <Content Include="css\DoiMK.css" />
+    <Content Include="css\editteacher.css" />
     <Content Include="css\menuchu.css" />
     <Content Include="css\phonghocadd.css" />
     <Content Include="css\quanlyTKB.css" />
@@ -273,6 +271,7 @@
     <Content Include="css\trangchu.css" />
     <Content Include="css\updateelete.css" />
     <Content Include="css\updatePhong.css" />
+    <Content Include="css\xethanhkiem.css" />
     <Content Include="Global.asax" />
     <Content Include="img\03.jpg" />
     <Content Include="img\04.jpg" />
@@ -359,12 +358,12 @@
     <Compile Include="Controllers\QuanLyThoiKhoaBieuController.cs" />
     <Compile Include="Controllers\QuanLyThongBaoController.cs" />
     <Compile Include="Controllers\QuenMatKhauController.cs" />
-    <Compile Include="Controllers\TaoLenhHocAIController.cs" />
     <Compile Include="Controllers\ThongTinGiaoVienController.cs" />
     <Compile Include="Controllers\ThongTinHocSinhController.cs" />
     <Compile Include="Controllers\TrangchuController.cs" />
     <Compile Include="Controllers\XemDiemController.cs" />
     <Compile Include="Controllers\XemThoiKhoaBieuController.cs" />
+    <Compile Include="Controllers\XetHanhKiemController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -384,6 +383,7 @@
     <Compile Include="Models\GiaoVienModel.cs" />
     <Compile Include="Models\GiaoVienVM.cs" />
     <Compile Include="Models\GuiBangDiemViewModel.cs" />
+    <Compile Include="Models\HanhKiem.cs" />
     <Compile Include="Models\HocBu.cs">
       <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
     </Compile>
@@ -452,6 +452,7 @@
       <DependentUpon>QuanLyTruongHoc.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\ResetModel.cs" />
+    <Compile Include="Models\SlotHoc.cs" />
     <Compile Include="Models\sysdiagrams.cs">
       <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>
     </Compile>
@@ -550,6 +551,7 @@
     <Content Include="Views\QuanLyDiem\DsLop.cshtml" />
     <Content Include="Views\QuanLyDiem\BangDiem.cshtml" />
     <Content Include="Views\QuanLyDiem\NhapDiem.cshtml" />
+    <Content Include="Views\XetHanhKiem\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

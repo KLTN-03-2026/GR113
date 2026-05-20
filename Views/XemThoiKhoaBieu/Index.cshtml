@@ -83,28 +83,182 @@
         border-right: 3px solid #1e88e5 !important;
         box-shadow: inset 0 0 10px rgba(30,136,229,0.25);
     }
+
+    .title-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 18px 0 22px;
+        margin-bottom: 20px;
+        /* nền nhẹ */
+        background: linear-gradient(135deg, #e3f2fd, #ffffff);
+        /* viền + bo */
+        border-radius: 14px;
+        border: 1px solid #e0e0e0;
+        /* đổ bóng nhẹ */
+        box-shadow: 0 6px 18px rgba(30, 136, 229, 0.12);
+    }
+
+        /* tiêu đề bên trong */
+        .title-wrapper h2 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e88e5;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    /* ========================= */
+    /* ✅ FIX TABLE */
+    /* ========================= */
+    .table {
+        table-layout: fixed;
+    }
+
+        .table td, .table th {
+            text-align: center;
+            vertical-align: top;
+        }
+
+        /* ✅ mỗi cell cao đều */
+        .table td {
+            height: 130px;
+            padding: 6px;
+            position: relative;
+        }
+
+    /* ========================= */
+    /* ✅ CARD TKB */
+    /* ========================= */
+    .tkb-item {
+        display: block;
+        width: 100%;
+        border-radius: 8px;
+        padding: 6px 8px;
+        margin-bottom: 5px;
+        font-size: 13px;
+        line-height: 1.4;
+        background: #ffffff;
+        border-left: 4px solid #1e88e5;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        transition: all 0.2s ease;
+    }
+
+        /* hover đẹp hơn */
+        .tkb-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+        }
+
+        /* ========================= */
+        /* ✅ TEXT */
+        /* ========================= */
+        .tkb-item b {
+            font-size: 14px;
+            color: #222;
+        }
+
+        .tkb-item span {
+            font-size: 12px;
+            color: #555;
+        }
+
+    /* ========================= */
+    /* ✅ NGHỈ */
+    /* ========================= */
+    .tkb-nghi {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #ff5252, #c62828);
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+
+    /* ========================= */
+    /* ✅ CELL TRỐNG */
+    /* ========================= */
+    .tkb-empty {
+        color: #bbb;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    /* ========================= */
+    /* ✅ LABEL HỌC BÙ */
+    /* ========================= */
+    .hocbu-label {
+        font-size: 11px;
+        margin-top: 4px;
+        color: #ff9800;
+        font-weight: 600;
+    }
+
+    /* ========================= */
+    /* ✅ TODAY */
+    /* ========================= */
+    .today-col {
+        background-color: #e3f2fd !important;
+    }
+
+    /* ========================= */
+    /* ✅ HEADER */
+    /* ========================= */
+    .table thead th {
+        background: #f5f7fa;
+        font-weight: 600;
+    }
+    .nav-week {
+        display: flex;
+        justify-content: flex-end; /* đẩy sang phải */
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+        .nav-week button {
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: #3b82f6; /* xanh đẹp */
+            color: white;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+            /* hover mượt */
+            .nav-week button:hover {
+                background: #2563eb;
+                transform: translateY(-2px);
+            }
+
+            /* nhấn */
+            .nav-week button:active {
+                transform: scale(0.95);
+            }
+
+    /* nếu muốn prev khác màu */
+    .btn-prev {
+        background: #6b7280;
+    }
+
+        .btn-prev:hover {
+            background: #4b5563;
+        }
+
 </style>
+<div class="title-wrapper">
+    <h2>
+        <i class="fas fa-calendar-alt"></i>
+        Thời Khóa Biểu
+    </h2>
+</div>
 
-<h2>Thời Khóa Biểu</h2>
-
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-
-@if (Model.ThoiKhoaBieus == null || !Model.ThoiKhoaBieus.Any())
-{
-    <div class="alert alert-warning text-center fw-bold">
-        Thời khóa biểu chưa được xếp cho tuần này
-    </div>
-    return;
-}
-
-@if (Model.ThoiKhoaBieus != null && Model.ThoiKhoaBieus.Any())
+@if (true)
 {
     <hr />
 
@@ -114,21 +268,16 @@
     </div>
 
     <!-- NÚT CA + NÚT NEXT -->
-    <div class="d-flex justify-content-between mb-3">
+    <div class="d-flex justify-content-end mb-3 gap-2">
+        <button class="btn btn-outline-secondary" onclick="prevWeek()">
+            ⬅ Tuần trước
+        </button>
 
-        <div>
-
-            <button class="btn btn-secondary me-2"
-                    onclick="prevWeek()">
-                ⬅
-            </button>
-
-            <button class="btn btn-secondary"
-                    onclick="nextWeek()">
-                Tuần tiếp theo ➡
-            </button>
-        </div>
+        <button class="btn btn-primary" onclick="nextWeek()">
+            Tuần sau ➡
+        </button>
     </div>
+
 
     <!-- BẢNG TKB -->
     <table class="table table-bordered text-center align-middle">
@@ -138,9 +287,9 @@
 
 
                 @for (int thu = 2; thu <= 8; thu++)
-                {
-                    <th>Thứ @(thu == 8 ? "CN" : thu.ToString())</th>
-                }
+                                {
+                                    <th>Thứ @(thu == 8 ? "CN" : thu.ToString())</th>
+                                }
             </tr>
 
 
@@ -203,28 +352,43 @@
                             .Where(x => x.Thu == thu && x.TietHoc == tiet)
                             .ToList();
 
+                        //bool laNgayNghi = Model.DsNgayNghi != null
+                        //        && Model.DsNgayNghi.Any(n =>
+                        //            n.Tuan == Model.Tuan &&
+                        //            n.Thu == thu
+                        //        );
                         bool laNgayNghi = Model.DsNgayNghi != null
-                                && Model.DsNgayNghi.Any(n =>
-                                    n.Tuan == Model.Tuan &&
-                                    n.Thu == thu
-                                );
+                            && Model.DsNgayNghi.Any(n =>
+                                n.Tuan == Model.Tuan &&
+                                n.Thu == thu &&
+                                n.TietHoc == null       //  nghỉ cả ngày
+                            );
 
-                        bool lachieu = Model.CaHoc == "Chieu";
-                        bool laSang = Model.CaHoc == "Sang";
+                        bool laTietNghi = Model.DsNgayNghi != null
+                            && Model.DsNgayNghi.Any(n =>
+                                n.Tuan == Model.Tuan &&
+                                n.Thu == thu &&
+                                n.TietHoc == tiet       //  nghỉ đúng tiết
+                            );
+
+                        bool lachieu = Model.CaHoc == "CHIEU";
+                        bool laSang = Model.CaHoc == "SANG";
 
 
                         bool isChaoCo =
                              thu == 2 &&
-                             ((laSang && tiet == 10) || (!laSang && tiet == 1));
+                             ((laSang && tiet == 1) || (!laSang && tiet == 10));
 
                         bool isSinhHoat =
                             thu == 7 &&
-                            ((laSang && tiet == 10) || (!laSang && tiet == 5));
+                            ((laSang && tiet == 5) || (!laSang && tiet == 10));
 
 
                         //in dam ngay hien tai
                         DateTime today = DateTime.Now.Date;
-                        DateTime start = Model.NgayBatDauHoc.Value;
+                        // DateTime start = Model.NgayBatDauHoc.Value;
+                        DateTime start = Model.NgayBatDauHoc ?? DateTime.Now;
+
 
                         int diff = (7 + (start.DayOfWeek - DayOfWeek.Monday)) % 7;
                         DateTime mondayOfWeek = start.AddDays(-diff);
@@ -234,109 +398,108 @@
                         DateTime day = mondayOfWeek.AddDays(index).Date;
 
                         <td class="text-start
-                                @(laNgayNghi ? "bg-danger text-white" : "")
-                                @(day == today ? "today-col" : "")">
-                            @{
+                    @(laNgayNghi ? "bg-danger text-white" : "")
+                    @(day == today ? "today-col" : "")">
 
+                            @{
                                 var hocBu = Model.DsHocBu?
                                     .FirstOrDefault(x =>
                                     {
                                         var ngayHocBu = Model.DsNgayHoc
-                                    .FirstOrDefault(n => n.NgayHocID == x.NgayHocBuID);
+                                            .FirstOrDefault(n => n.NgayHocID == x.NgayHocBuID);
 
-                                        if (ngayHocBu == null)
+                                        var ngayNghi = Model.DsNgayHoc
+                                            .FirstOrDefault(n => n.NgayHocID == x.NgayNghiID);
+
+                                        if (ngayHocBu == null || ngayNghi == null)
                                             return false;
 
+                                        // ✅ nghỉ tiết → match đúng ô
+                                        if (ngayNghi.TietHoc != null)
+                                        {
+                                            return ngayHocBu.Tuan == Model.Tuan
+                                                && ngayHocBu.Thu == thu
+                                                && ngayHocBu.TietHoc == tiet;
+                                        }
+
+                                        // ✅ nghỉ ngày → match theo thứ
                                         return ngayHocBu.Tuan == Model.Tuan
-                                    && ngayHocBu.Thu == thu;
+                                            && ngayHocBu.Thu == thu;
                                     });
                             }
 
-                            @if (hocBu != null)
+                            @* ✅ ƯU TIÊN: nghỉ *@
+                            @if (laTietNghi)
                             {
-                                var ngayHocBu = Model.DsNgayHoc
-                                    .FirstOrDefault(n => n.NgayHocID == hocBu.NgayHocBuID);
-
-                                var ngayNghi = Model.DsNgayHoc
-                                    .FirstOrDefault(n => n.NgayHocID == hocBu.NgayNghiID);
-
-                                if (ngayHocBu != null && ngayNghi != null)
-                                {
-                                    // ✅ TKB HIỆN TẠI
-                                    var listCurrent = Model.ThoiKhoaBieus
-                                        .Where(x => x.Thu == thu && x.TietHoc == tiet)
-                                        .ToList();
-
-                                    // ✅ TKB HỌC BÙ (GIỐNG QLTKB)
-                                    var listHocBu = new List<demomvc.Models.ThoiKhoaBieu>();
-
-                                    using (var db2 = new demomvc.Models.QuanLyTruongHocEntities1())
-                                    {
-                                        listHocBu = db2.ThoiKhoaBieu
-                                            .Include("PhongHoc")
-                                            .Include("LopHoc")
-                                            .Include("MonHoc")
-                                            .Include("GiaoVien.NguoiDung")
-                                            .Where(x =>
-
-                                                x.Tuan == ngayNghi.Tuan &&   // ✅ tuần gốc
-                                                x.Thu == ngayNghi.Thu &&
-                                                x.TietHoc == tiet && (
-
-                                                    x.LopHocID == Model.LopHocId
-                                                    || x.GiaoVienID == Model.GiaoVienId
-
-                                                )
-
-                                            )
-                                            .ToList();
-                                    }
-
-                                    // ✅ 1. HIỆN TKB THẬT
-                                    foreach (var item in listCurrent)
-                                    {
-                                        <div class="tkb-item">
-                                            <b>@item.PhongHoc.TenPhong</b><br />
-                                            Lớp: <b>@item.LopHoc.TenLop</b><br />
-                                            Môn học: @item.MonHoc.TenMonHoc<br />
-                                            @if (Model.LaHocSinh)
-                                            {
-                                                <span>GV: @item.GiaoVien.NguoiDung.HoTen</span>
-                                            }
-                                        </div>
-                                    }
-
-                                    // ✅ 2. HIỆN HỌC BÙ
-                                    foreach (var item in listHocBu)
-                                    {
-                                        <div class="tkb-item">
-
-
-
-                                            <b>@item.PhongHoc.TenPhong</b><br />
-                                            Lớp: <b>@item.LopHoc.TenLop</b><br />
-                                            Môn học: @item.MonHoc.TenMonHoc<br />
-
-                                            @if (Model.LaHocSinh)
-                                            {
-                                                <span>GV: @item.GiaoVien.NguoiDung.HoTen</span>
-                                            }
-                                        </div>
-                                    }
-                                }
+                                <div class="tkb-nghi">🚫 NGHỈ</div>
                             }
                             else if (laNgayNghi)
                             {
-                                <div class="tkb-nghi tkb-bo-nghi">
-                                    <i class="fa-solid fa-ban"></i> NGHỈ
-                                </div>
+                                <div class="tkb-nghi">🚫 NGHỈ</div>
                             }
+
+                            @* ✅ HỌC BÙ *@
+                            else if (hocBu != null)
+                            {
+                                var ngayNghi = Model.DsNgayHoc
+                                    .FirstOrDefault(n => n.NgayHocID == hocBu.NgayNghiID);
+
+                                var listHocBu = new List<demomvc.Models.ThoiKhoaBieu>();
+
+                                using (var db2 = new demomvc.Models.QuanLyTruongHocEntities2())
+                                {
+                                    listHocBu = db2.ThoiKhoaBieu
+                                        .Include("PhongHoc")
+                                        .Include("LopHoc")
+                                        .Include("MonHoc")
+                                        .Include("GiaoVien.NguoiDung")
+                                        .Where(x =>
+                                            x.Tuan == ngayNghi.Tuan &&
+                                            x.Thu == ngayNghi.Thu &&
+                                            (
+                                                // ✅ nghỉ tiết
+                                                (ngayNghi.TietHoc != null && x.TietHoc == ngayNghi.TietHoc)
+
+                                                ||
+
+                                                // ✅ nghỉ ngày → map từng tiết
+                                                (ngayNghi.TietHoc == null && x.TietHoc == tiet)
+                                            )
+                                            &&
+                                            (
+                                                x.LopHocID == Model.LopHocId
+                                                || x.GiaoVienID == Model.GiaoVienId
+                                            )
+                                        )
+                                        .ToList();
+                                }
+
+                                foreach (var item in listHocBu)
+                                {
+                                    <div class="tkb-item">
+
+                                        <b>@item.PhongHoc.TenPhong</b><br />
+                                        Lớp: <b>@item.LopHoc.TenLop</b><br />
+                                        Môn học: @item.MonHoc.TenMonHoc<br />
+
+                                        @if (Model.LaHocSinh)
+                                        {
+                                            <span>GV: @item.GiaoVien.NguoiDung.HoTen</span>
+                                        }
+
+                                        <div style="font-size:11px;color:#ff9800;">
+                                            🔁 Học bù
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                            @* ✅ BÌNH THƯỜNG *@
                             else
                             {
                                 if (isChaoCo || isSinhHoat)
                                 {
                                     <div class="tkb-item">
-
                                         @if (isChaoCo)
                                         {
                                             <div>⭐ Chào cờ</div>
@@ -347,10 +510,8 @@
                                         }
                                     </div>
                                 }
-
                                 else
                                 {
-
                                     foreach (var item in list)
                                     {
                                         <div class="tkb-item">
@@ -358,16 +519,16 @@
                                             <b>@item.PhongHoc.TenPhong</b><br />
                                             Lớp: <b>@item.LopHoc.TenLop</b><br />
                                             Môn học: @item.MonHoc.TenMonHoc<br />
+
                                             @if (Model.LaHocSinh)
                                             {
-                                                <span> GV: @item.GiaoVien.NguoiDung.HoTen</span>
+                                                <span>GV: @item.GiaoVien.NguoiDung.HoTen</span>
                                             }
-
                                         </div>
-
                                     }
                                 }
                             }
+
                         </td>
                     }
                 </tr>
@@ -380,14 +541,10 @@
 <script>
 
     $.connection.hub.start();
-function nextWeek() {
-    window.location.href =
-        '@Url.Action("Index")'
-        + '&tuan=' + (@Model.Tuan + 1)
-    }
 
-     // ===== TUẦN TIẾP =====
- function nextWeek() {
+
+
+     function nextWeek() {
      window.location.href =
          '@Url.Action("Index")'
          + '?NamHocID=@Model.NamHocID'
@@ -395,12 +552,25 @@ function nextWeek() {
          + '&tuan=' + (@Model.Tuan + 1)
          + '&caHoc=@Model.CaHoc';
     }
-    function prevWeek() {
+
+
+  function prevWeek() {
+
+     let tuan = @Model.Tuan;  // lấy từ Razor
+
+     tuan = tuan - 1;
+
+     // ✅ chặn tại đây
+     if (tuan < 1) {
+         tuan = 1;
+     }
+
      window.location.href =
          '@Url.Action("Index")'
          + '?NamHocID=@Model.NamHocID'
          + '&HocKyID=@Model.HocKyID'
-         + '&tuan=' + (@Model.Tuan - 1)
+         + '&tuan=' + tuan
          + '&caHoc=@Model.CaHoc';
  }
 </script>
+

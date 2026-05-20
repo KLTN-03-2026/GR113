@@ -12,7 +12,7 @@ namespace demomvc.Controllers
     [RoleAuthorize(RolesRequired = "HieuTruong,GiaoVien,HieuPho,BiThu")]
     public class GuiBanDiemController : Controller
     {
-        QuanLyTruongHocEntities1 db = new QuanLyTruongHocEntities1();
+        QuanLyTruongHocEntities2 db = new QuanLyTruongHocEntities2();
 
         public ActionResult Index()
         {
@@ -56,7 +56,11 @@ namespace demomvc.Controllers
                 l.NienKhoa == NamHocID
             );
 
-            if (lop == null) return Content("Không có lớp chủ nhiệm trong năm học này.");
+            if (lop == null)
+            {
+                TempData["Error"] = "Không có lớp chủ nhiệm để gửi bản điểm";
+                return RedirectToAction("Index");
+            }
 
             // 4. Lấy danh sách học sinh
             var hocsinh = db.HocSinh.Where(h => h.LopHocID == lop.LopHocID).ToList();
@@ -179,8 +183,8 @@ namespace demomvc.Controllers
                 // 8. Gửi email
                 GuiEmailThuc(ph, subject, body);
             }
-
-            return Content("Đã gửi toàn bộ bảng điểm!");
+            TempData["Success"] ="Gửi bản điểm cho học sinh thành công";
+            return RedirectToAction("Index");
         }
 
 
