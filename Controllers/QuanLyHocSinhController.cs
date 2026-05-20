@@ -150,11 +150,11 @@ namespace demomvc.Controllers
                 db.HocSinh.Add(hocsinh);
                 db.SaveChanges();
 
-                TempData["reponse"] = "success";
+                TempData["Success"] = "Thêm học sinh thành công";
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                TempData["reponse"] = "error";
+                TempData["Error"] = e.Message ;
             }
 
 
@@ -415,7 +415,8 @@ namespace demomvc.Controllers
 
                 }
             }
-            TempData.Keep("Errors");
+            //  TempData.Keep("Errors");
+            TempData["Errors"] = errors;
             TempData["Success"] = $"Đã thêm {listHocSinh.Count} học sinh";
             foreach (var hs in listHocSinh)
             {

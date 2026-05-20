@@ -5,26 +5,36 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
+
 namespace demomvc.Helpers
 {
     public class RemoveDiacritics
     {
         public static string RemoveDiacritic(string text)
         {
-            if (string.IsNullOrEmpty(text)) return text;
+            if (string.IsNullOrWhiteSpace(text))
+                return "";
 
             string normalized = text.Normalize(NormalizationForm.FormD);
-            var sb = new StringBuilder();
+
+            StringBuilder sb = new StringBuilder();
 
             foreach (char c in normalized)
             {
-                if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                if (CharUnicodeInfo.GetUnicodeCategory(c)
+                    != UnicodeCategory.NonSpacingMark)
                 {
                     sb.Append(c);
                 }
             }
 
-            return sb.ToString().Normalize(NormalizationForm.FormC);
+            return sb.ToString()
+                     .Normalize(NormalizationForm.FormC)
+                     .Replace("đ", "d")
+                     .Replace("Đ", "D")
+                     .Replace(" ", "")
+                     .Trim()
+                     .ToLower();
         }
     }
 }

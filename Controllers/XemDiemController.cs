@@ -1,5 +1,6 @@
 ﻿using demomvc.App_Start;
 using demomvc.Models;
+using demomvc.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +18,7 @@ namespace demomvc.Controllers
         public ActionResult Index()
         {
             BangDiemViewModel model = new BangDiemViewModel();
+            
             model.NamHocs = db.NamHoc.ToList();
             model.HocKys = db.HocKy.ToList();
             return View(model);
@@ -43,12 +45,12 @@ namespace demomvc.Controllers
                 DiemGK = d.DiemGK,
                 DiemCK = d.DiemCK,
                 DiemTBMon = d.DiemTB ?? 0,
-            }).ToList();                                                                                           
+            }).ToList();
 
             //DTBMON
             foreach (var item in diemList)
             {
-                
+
 
                 // ĐÁNH GIÁ Đ / CĐ CHO Âm nhạc + Mỹ thuật + Thể dục
                 if (item.TenMon.Contains("Âm nhạc")
@@ -58,7 +60,7 @@ namespace demomvc.Controllers
                     item.DiemDanhGia = item.DiemTBMon >= 6 ? "Đ" : "CĐ";
                 }
             }
-           
+
             var ketQua = db.KetQuaHocTap
                 .FirstOrDefault(x => x.HocSinhID == hs.HocSinhID
                         && x.NamHocID == NamHocID
@@ -92,7 +94,7 @@ namespace demomvc.Controllers
 
             //xep loai hoc luc ca nam
             string xepLoaiCN = "_";
-            if(DiemTB_CN != null)
+            if (DiemTB_CN != null)
             {
                 if (DiemTB_CN >= 8) xepLoaiCN = "Giỏi";
                 else if (DiemTB_CN >= 6.5) xepLoaiCN = "Khá";
@@ -111,9 +113,9 @@ namespace demomvc.Controllers
                 DiemTBHocKy = tbHocKy,
                 XepLoai = xepLoai,
                 HanhKiem = hanhKiem,
-                DiemTBHocCaNam=DiemTB_CN,
-                HanhKiemCaNam=hanhKiemCN,
-                XepLoaiCaNam=xepLoaiCN
+                DiemTBHocCaNam = DiemTB_CN,
+                HanhKiemCaNam = hanhKiemCN,
+                XepLoaiCaNam = xepLoaiCN
             };
 
             return View(model);
