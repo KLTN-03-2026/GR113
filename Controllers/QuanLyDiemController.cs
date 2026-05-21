@@ -208,7 +208,12 @@ namespace demomvc.Controllers
                 return View(diem); 
             }
 
-            var diems = db.Diem.FirstOrDefault(d => d.DiemID == diem.DiemID);
+            var diems = db.Diem.FirstOrDefault(d =>
+    d.HocSinhID == diem.HocSinhID &&
+    d.MonHocID == diem.MonHocID &&
+    d.HocKyID == diem.HocKyID &&
+    d.NamHocID == diem.NamHocID
+);
             if (diems != null)
             {
 
