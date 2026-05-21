@@ -1447,6 +1447,21 @@ Thu: $('#addThu').val(),
             + '&caHoc=@Model.CaHoc';
     }
 
+    ////chon nhiu ngay nghi
+    //flatpickr("#txtNgayNghi", {
+    //    mode: "multiple",
+    //    dateFormat: "Y-m-d",
+    //    locale: "vn",
+    //    minDate: "today",
+
+    //    disable: [
+    //        function (date) {
+    //            return date.getDay() === 0; //  chặn Chủ nhật
+    //        }
+    //    ]
+
+    //});
+
     $('#btnXacNhanNghi').click(async function () {
 
     let loai = $('#loaiNghi').val();
@@ -1534,7 +1549,30 @@ Thu: $('#addThu').val(),
         await new Promise(r => setTimeout(r, 150));
     }
 
-    alert("✅ Đã nghỉ các tiết đã chọn");    
+    alert("✅ Đã nghỉ các tiết đã chọn");
+
+}
+
+
+        //$('#modalNghiHoc').modal('hide');
+        // ✅ ĐÓNG MODAL CƯỠNG BỨC (KHÔNG PHỤ THUỘC BOOTSTRAP EVENT)
+        //$('#modalNghiHoc').removeClass('show');
+        //$('#modalNghiHoc').css('display', 'none');
+        //$('body').removeClass('modal-open');
+        //$('.modal-backdrop').remove();
+        //$('#modalNghiHoc').modal('hide');
+        //// ✅ RESET FORM NGAY LẬP TỨC
+        //$('#loaiNghi').val('ngay');
+        //$('#boxNgay').show();
+        //$('#boxTiet').hide();
+
+        //$('#txtNgayNghi').val('');
+        //$('#ngayNghiTiet').val('');
+        //$('.chkTiet').prop('checked', false);
+
+        // ✅ reload T reloadTKB();KB
+
+        //reloadTKB();
         setTimeout(() => {
 
             // ✅ đóng modal mạnh tay

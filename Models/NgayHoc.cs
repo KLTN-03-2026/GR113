@@ -28,7 +28,7 @@ namespace demomvc.Models
         public Nullable<int> NamHocID { get; set; }
         public Nullable<int> HocKyID { get; set; }
         public Nullable<int> TietHoc { get; set; }
-    
+
         public virtual ICollection<HocBu> HocBu { get; set; }
         public virtual ICollection<HocBu> HocBu1 { get; set; }
     }

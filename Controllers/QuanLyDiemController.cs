@@ -65,7 +65,7 @@ namespace demomvc.Controllers
                 GiaoVienID = giaoVien.GiaoVienID,
 
                 DsNamHoc = db.NamHoc.ToList(),
-                DsHocKi = db.HocKy.ToList(),
+                DsHocKi = db.HocKy.GroupBy(x=>x.TenHocKy).Select(g=>g.FirstOrDefault()).ToList(),
                 NamHocID = NamHocID,
                 HocKyID = HocKyID
 
@@ -205,15 +205,14 @@ namespace demomvc.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(diem); 
+                return View(diem);
             }
 
-            var diems = db.Diem.FirstOrDefault(d =>
-    d.HocSinhID == diem.HocSinhID &&
-    d.MonHocID == diem.MonHocID &&
-    d.HocKyID == diem.HocKyID &&
-    d.NamHocID == diem.NamHocID
-);
+            var diems = db.Diem.FirstOrDefault(d => d.HocSinhID == diem.HocSinhID &&
+                                                    d.MonHocID == diem.MonHocID &&
+                                                    d.HocKyID == diem.HocKyID &&
+                                                    d.NamHocID == diem.NamHocID);
+
             if (diems != null)
             {
 
@@ -224,7 +223,7 @@ namespace demomvc.Controllers
                 diems.DiemTB = diem.DiemTB;
 
                 db.SaveChanges();
-                UpdateKQ(diem.HocSinhID, diem.HocKyID, diem.NamHocID); 
+                UpdateKQ(diem.HocSinhID, diem.HocKyID, diem.NamHocID);
                 return RedirectToAction("BangDiem", new { id = diem.LopHocID, idGV = diem.GiaoVienID, idMH = diem.MonHocID, idHocKi = diem.HocKyID });
             }
             else
@@ -249,7 +248,7 @@ namespace demomvc.Controllers
 
                 UpdateKQ(diem.HocSinhID, diem.HocKyID, diem.NamHocID);
 
-                
+
                 return RedirectToAction("BangDiem", new { id = diem.LopHocID, idGV = diem.GiaoVienID, idMH = diem.MonHocID, idHocKi = diem.HocKyID });
             }
         }
@@ -275,13 +274,13 @@ namespace demomvc.Controllers
                 var monHoc = db.MonHoc.FirstOrDefault(m => m.MonHocID == giaovien.MonHocID);
                 int row = 2;
 
-                var listDiem = db.Diem.Where(x => x.MonHocID ==monHoc.MonHocID && x.HocKyID == HocKiID).ToList();
+                var listDiem = db.Diem.Where(x => x.MonHocID == monHoc.MonHocID && x.HocKyID == HocKiID).ToList();
 
                 foreach (var hs in listHs)
                 {
                     ws.Cells[row, 1].Value = hs.HocSinhID;
                     ws.Cells[row, 2].Value = hs.NguoiDung.HoTen;
-                    
+
 
                     var diem = listDiem.FirstOrDefault(x => x.HocSinhID == hs.HocSinhID);
 
@@ -325,7 +324,7 @@ namespace demomvc.Controllers
             var errors = new List<string>();
             var DsUpdate = new HashSet<int>();
 
-            using(var package = new ExcelPackage(file.InputStream))
+            using (var package = new ExcelPackage(file.InputStream))
             {
                 var ws = package.Workbook.Worksheets[0];
                 if (ws == null)
@@ -341,11 +340,11 @@ namespace demomvc.Controllers
                 }
                 int rowCount = ws.Dimension.Rows;
 
-                for(int row=2; row<=rowCount; row++)
+                for (int row = 2; row <= rowCount; row++)
                 {
                     try
                     {
-                        if (!int.TryParse(ws.Cells[row,1].Text, out int hocSinhID))
+                        if (!int.TryParse(ws.Cells[row, 1].Text, out int hocSinhID))
                         {
                             errors.Add($"Dòng {row}: Học Sinh ID sai định dạng");
                             continue;
@@ -361,7 +360,7 @@ namespace demomvc.Controllers
                             TempData["Error"] = "Bảng điểm mà bạn import khong phải của lớp này";
                             return RedirectToAction("BangDiem", new { id = LopHocID, idGV = GiaoVienID, idMH = giaovien.MonHocID, idHocKi = HocKiID });
                         }
-                       
+
                         double? diemMieng = ParseDiem(ws.Cells[row, 3].Text, row, "Miệng", errors);
                         double? diem15p = ParseDiem(ws.Cells[row, 4].Text, row, "15p", errors);
                         double? diemGK = ParseDiem(ws.Cells[row, 5].Text, row, "GK", errors);
@@ -373,7 +372,7 @@ namespace demomvc.Controllers
                             Diem15p = diem15p,
                             DiemGK = diemGK,
                             DiemCK = diemCK,
-                            
+
                         };
                         var existing = db.Diem.FirstOrDefault(x =>
                             x.HocSinhID == hocSinhID &&
@@ -382,9 +381,9 @@ namespace demomvc.Controllers
 
                         if (existing != null)
                         {
-                           
+
                             existing.Diem15p = dsDiem.Diem15p;
-                            existing.DiemMieng =dsDiem.DiemMieng;
+                            existing.DiemMieng = dsDiem.DiemMieng;
                             existing.DiemGK = dsDiem.DiemGK;
                             existing.DiemCK = dsDiem.DiemCK;
                             existing.DiemTB = dsDiem.DiemTB;
@@ -406,31 +405,31 @@ namespace demomvc.Controllers
                                 DiemGK = dsDiem.DiemGK,
                                 DiemCK = dsDiem.DiemCK,
                                 DiemTB = dsDiem.DiemTB,
-                                
+
                             });
                             DsUpdate.Add(hocSinhID);
 
                             insertCount++;
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         errors.Add($"Dòng {row}: {ex.Message}");
                     }
                 }
 
                 db.SaveChanges();
-                foreach(var hs in DsUpdate)
+                foreach (var hs in DsUpdate)
                 {
                     UpdateKQ(hs, HocKiID, hocky.NamHocID);
                 }
-                
+
 
                 TempData["Success"] = $"✔ Thêm mới: {insertCount}, ✔ Ghi đè: {updateCount}";
                 TempData["Errors"] = errors;
 
-                return RedirectToAction("BangDiem", new { id=LopHocID, idGV=GiaoVienID, idMH=giaovien.MonHocID, idHocKi=HocKiID });
-             }
+                return RedirectToAction("BangDiem", new { id = LopHocID, idGV = GiaoVienID, idMH = giaovien.MonHocID, idHocKi = HocKiID });
+            }
 
         }
 
@@ -471,7 +470,7 @@ namespace demomvc.Controllers
                 DSdiemTB = diemhs,
             };
             var KQua = db.KetQuaHocTap.FirstOrDefault(kq => kq.HocSinhID == HocSinhID && kq.HocKyID == HocKyID);
-            if(KQua!= null)
+            if (KQua != null)
             {
                 KQua.DTBTong = diemTong.DTBTong();
                 KQua.HocLuc = diemTong.HocLuc();
@@ -486,7 +485,7 @@ namespace demomvc.Controllers
                     NamHocID = NamHocID,
                     DTBTong = diemTong.DTBTong(),
                     HocLuc = diemTong.HocLuc(),
-                    
+
                 };
                 db.KetQuaHocTap.Add(KetQuaHT);
             }
@@ -494,8 +493,8 @@ namespace demomvc.Controllers
         }
 
     }
-   
 
 
-    }
+
+}
 

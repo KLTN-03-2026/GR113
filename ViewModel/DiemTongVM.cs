@@ -29,6 +29,10 @@ namespace demomvc.ViewModel
 
             foreach (var item in DSdiemTB)
             {
+                if (item.MonHoc == null || item.MonHoc.TenMonHoc == null)
+                {
+                    continue;
+                }
                 tenMon = RemoveDiacritics.RemoveDiacritic(
                     item.MonHoc.TenMonHoc
                 ).ToLower();
