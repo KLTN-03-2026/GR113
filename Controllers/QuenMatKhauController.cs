@@ -18,7 +18,6 @@ namespace demomvc.Controllers
         {
             return View();
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Index(string email)
@@ -28,7 +27,6 @@ namespace demomvc.Controllers
                 ViewBag.Error = "Vui lòng nhập email";
                 return View();
             }
-
             var user = db.NguoiDung.FirstOrDefault(x => x.Email == email);
 
             if (user != null)
@@ -46,7 +44,6 @@ namespace demomvc.Controllers
             ViewBag.Message = "Nếu email tồn tại, link reset đã được gửi.";
             return View();
         }
-
         // 2. mo link email
         public ActionResult DatLaiMatKhau(string token)
         {
@@ -63,7 +60,6 @@ namespace demomvc.Controllers
 
             return View(new ResetModel { Token = token });
         }
-
         //luu lai mat khau
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -91,9 +87,7 @@ namespace demomvc.Controllers
             TempData["Success"] = "Đặt lại mật khẩu thành công";
             return RedirectToAction("Index", "DangNhap");
         }
-
         //helper
-
         private string GenerateToken()
         {
             byte[] data = new byte[32];
@@ -113,7 +107,7 @@ namespace demomvc.Controllers
                  protocol: Request.Url.Scheme
             );
 
-            // 👇 THÊM DÒNG NÀY
+            //  
             System.Diagnostics.Debug.WriteLine("RESET LINK: " + link);
 
             using (MailMessage mail = new MailMessage())

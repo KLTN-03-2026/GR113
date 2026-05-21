@@ -505,6 +505,29 @@
                                             return ngayHocBu.Tuan == Model.Tuan
                                         && ngayHocBu.Thu == thu;
                                         });
+                                    //                        var hocBu = Model.DsHocBu
+                                    //?.ToList()   // ✅ ÉP RAM
+                                    //.FirstOrDefault(x =>
+                                    //{
+                                    //    var ngayHocBu = Model.DsNgayHoc
+                                    //        .FirstOrDefault(n => n.NgayHocID == x.NgayHocBuID);
+
+                                    //    var ngayNghi = Model.DsNgayHoc
+                                    //        .FirstOrDefault(n => n.NgayHocID == x.NgayNghiID);
+
+                                    //    if (ngayHocBu == null || ngayNghi == null)
+                                    //        return false;
+
+                                    //    if (ngayNghi.TietHoc != null)
+                                    //    {
+                                    //        return ngayHocBu.Tuan == Model.Tuan
+                                    //            && ngayHocBu.Thu == thu
+                                    //            && ngayHocBu.TietHoc == tiet;
+                                    //    }
+
+                                    //    return ngayHocBu.Tuan == Model.Tuan
+                                    //            && ngayHocBu.Thu == thu;
+                                    //});
 
                                 }
                                 @if (laTietNghi)
@@ -527,7 +550,7 @@
                                     </div>
                                 }
 
-                                // ✅ HỌC BÙ
+                                //  HỌC BÙ
                                 else if (hocBu != null)
                                 {
                                     var ngayHocBu = Model.DsNgayHoc
@@ -542,34 +565,78 @@
 
                                         using (var db2 = new demomvc.Models.QuanLyTruongHocEntities2())
                                         {
-                                            listHocBu = db2.ThoiKhoaBieu
-                                                .Include("PhongHoc")
-                                                .Include("LopHoc")
-                                                .Include("MonHoc")
-                                                .Include("GiaoVien.NguoiDung")
-                                                .Where(x =>
-                                                    x.NamHocID == Model.NamHocID &&
-                                                    x.HocKyID == Model.HocKyID &&
-                                                    x.Tuan == ngayNghi.Tuan &&
-                                                    x.Thu == ngayNghi.Thu &&
+                                            //listHocBu = db2.ThoiKhoaBieu
+                                            //    .Include("PhongHoc")
+                                            //    .Include("LopHoc")
+                                            //    .Include("MonHoc")
+                                            //    .Include("GiaoVien.NguoiDung")
+                                            //    .Where(x =>
+                                            //        x.NamHocID == Model.NamHocID &&
+                                            //        x.HocKyID == Model.HocKyID &&
+                                            //        x.Tuan == ngayNghi.Tuan &&
+                                            //        x.Thu == ngayNghi.Thu &&
 
-                                                    (
-                                                    // ✅ nghỉ tiết
-                                                    (ngayNghi.TietHoc != null && x.TietHoc == ngayNghi.TietHoc)
+                                            //        (
+                                            //        // ✅ nghỉ tiết
+                                            //        (ngayNghi.TietHoc != null && x.TietHoc == ngayNghi.TietHoc)
 
-                                                    ||
+                                            //        ||
 
-                                                    // ✅ nghỉ ngày → map theo tiết hiện tại
-                                                    (ngayNghi.TietHoc == null && x.TietHoc == tiet)
+                                            //        // ✅ nghỉ ngày → map theo tiết hiện tại
+                                            //        (ngayNghi.TietHoc == null && x.TietHoc == tiet)
+                                            //        )
+                                            //        &&
+                                            //        (
+                                            //        (Model.CaHoc == "Sang" && x.LopHoc.CaHoc == "SANG") ||
+                                            //        (Model.CaHoc == "Chieu" && x.LopHoc.CaHoc == "CHIEU")
+                                            //        )
+                                            //       )
+
+                                            //    .ToList();
+                                            //List<ThoiKhoaBieu> listHocBu;
+
+                                            if (ngayNghi.TietHoc != null)
+                                            {
+                                                int tietNghi = ngayNghi.TietHoc.Value;
+
+                                                listHocBu = db2.ThoiKhoaBieu
+                                                    .Include("PhongHoc")
+                                                    .Include("LopHoc")
+                                                    .Include("MonHoc")
+                                                    .Include("GiaoVien.NguoiDung")
+                                                    .Where(x =>
+                                                        x.NamHocID == Model.NamHocID &&
+                                                        x.HocKyID == Model.HocKyID &&
+                                                        x.Tuan == ngayNghi.Tuan &&
+                                                        x.Thu == ngayNghi.Thu &&
+                                                        x.TietHoc == tietNghi &&
+                                                        (
+                                                            (Model.CaHoc == "Sang" && x.LopHoc.CaHoc == "SANG") ||
+                                                            (Model.CaHoc == "Chieu" && x.LopHoc.CaHoc == "CHIEU")
+                                                        )
                                                     )
-                                                    &&
-                                                    (
-                                                    (Model.CaHoc == "Sang" && x.LopHoc.CaHoc == "SANG") ||
-                                                    (Model.CaHoc == "Chieu" && x.LopHoc.CaHoc == "CHIEU")
+                                                    .ToList();
+                                            }
+                                            else
+                                            {
+                                                listHocBu = db2.ThoiKhoaBieu
+                                                    .Include("PhongHoc")
+                                                    .Include("LopHoc")
+                                                    .Include("MonHoc")
+                                                    .Include("GiaoVien.NguoiDung")
+                                                    .Where(x =>
+                                                        x.NamHocID == Model.NamHocID &&
+                                                        x.HocKyID == Model.HocKyID &&
+                                                        x.Tuan == ngayNghi.Tuan &&
+                                                        x.Thu == ngayNghi.Thu &&
+                                                        x.TietHoc == tiet &&
+                                                        (
+                                                            (Model.CaHoc == "Sang" && x.LopHoc.CaHoc == "SANG") ||
+                                                            (Model.CaHoc == "Chieu" && x.LopHoc.CaHoc == "CHIEU")
+                                                        )
                                                     )
-                                                   )
-
-                                                .ToList();
+                                                    .ToList();
+                                            }
                                         }
 
                                         <div class="tkb-add btn-add-tkb"
@@ -1662,7 +1729,7 @@ $(document).on('click', '.tkb-bo-nghi', function () {
         error: function () {
             showToast("Không load được học kỳ", "error");
         }
-        
+
     });
     });
     //---------------------

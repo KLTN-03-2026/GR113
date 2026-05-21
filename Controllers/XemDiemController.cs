@@ -120,5 +120,24 @@ namespace demomvc.Controllers
 
             return View(model);
         }
+
+
+        [HttpGet]
+        public JsonResult GetHocKyByNamHoc(int namHocId)
+        {
+            using (var db = new QuanLyTruongHocEntities2())
+            {
+                var dsHocKy = db.HocKy
+                    .Where(h => h.NamHocID == namHocId)
+                    .Select(h => new
+                    {
+                        h.HocKyID,
+                        h.TenHocKy
+                    })
+                    .ToList();
+
+                return Json(dsHocKy, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }

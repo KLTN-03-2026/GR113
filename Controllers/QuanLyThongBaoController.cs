@@ -126,7 +126,7 @@ namespace demomvc.Controllers
         {
             try
             {
-                using (var db = new QuanLyTruongHocEntities2()) // đổi theo DbContext của bạn
+                using (var db = new QuanLyTruongHocEntities2()) 
                 {
                     var tb = db.ThongBao.FirstOrDefault(x => x.ThongBaoID == id);
                     if (tb == null)
@@ -145,39 +145,10 @@ namespace demomvc.Controllers
             }
         }
 
-        //[HttpPost]
-        //public JsonResult SuaThongBao(ThongBao model)
-        //{
-        //    try
-        //    {
-        //        if (model == null || model.ThongBaoID == 0)
-        //        {
-        //            return Json(new { success = false, message = "Dữ liệu không hợp lệ" });
-        //        }
-
-        //        var tb = db.ThongBao.Find(model.ThongBaoID); // ✅ SỬA Ở ĐÂY
-        //        if (tb == null)
-        //        {
-        //            return Json(new { success = false, message = "Không tìm thấy thông báo" });
-        //        }
-
-        //        tb.TieuDe = model.TieuDe;
-        //        tb.NoiDung = model.NoiDung;
-        //        tb.GuiChoHocSinh = model.GuiChoHocSinh;
-        //        tb.GuiChoGiaoVien = model.GuiChoGiaoVien;
-
-        //        db.SaveChanges();
-
-        //        return Json(new { success = true });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { success = false, message = ex.Message });
-        //    }
-        //}
+      
 
         [HttpPost]
-        [ValidateInput(false)] // ⭐ BẮT BUỘC KHI NHẬN HTML
+        [ValidateInput(false)] //  BẮT BUỘC KHI NHẬN HTML
         public JsonResult SuaThongBao(ThongBao model)
         {
             try
@@ -306,11 +277,11 @@ namespace demomvc.Controllers
 
                 using (var ms = new MemoryStream())
                 {
-                    // 🔥 BẮT BUỘC: copy sang stream ghi được
+                    
                     file.InputStream.CopyTo(ms);
                     ms.Position = 0;
 
-                    using (var wordDoc = WordprocessingDocument.Open(ms, true)) // ✅ TRUE
+                    using (var wordDoc = WordprocessingDocument.Open(ms, true)) 
                     {
                         var settings = new HtmlConverterSettings()
                         {

@@ -485,7 +485,6 @@ namespace demomvc.Controllers
                     NamHocID = NamHocID,
                     DTBTong = diemTong.DTBTong(),
                     HocLuc = diemTong.HocLuc(),
-
                 };
                 db.KetQuaHocTap.Add(KetQuaHT);
             }

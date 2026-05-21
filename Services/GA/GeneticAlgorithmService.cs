@@ -279,8 +279,8 @@ namespace demomvc.Services.GA
                                         bool laTinHoacTD = g.MonHocID == 18 || g.MonHocID == 14;
 
                                         bool hopLeCa = laTinHoacTD
-                                            ? g.CaHoc != ca       // ✅ Tin + TD học trái ca
-                                            : g.CaHoc == ca;      // ✅ môn thường học đúng ca
+                                            ? g.CaHoc != ca       //  Tin + TD học trái ca
+                                            : g.CaHoc == ca;      // môn thường học đúng ca
 
                                         if (!hopLeCa)
                                             return false;
