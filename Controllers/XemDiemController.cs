@@ -54,7 +54,7 @@ namespace demomvc.Controllers
 
                 // ĐÁNH GIÁ Đ / CĐ CHO Âm nhạc + Mỹ thuật + Thể dục
                 if (item.TenMon.Contains("Âm nhạc")
-                    || item.TenMon.Contains("Mỹ thuật")
+                    || item.TenMon.Contains("Mĩ thuật")
                     || item.TenMon.Contains("Thể dục"))
                 {
                     item.DiemDanhGia = item.DiemTBMon >= 6 ? "Đ" : "CĐ";
