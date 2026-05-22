@@ -200,10 +200,10 @@ namespace demomvc.Controllers
             SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
             smtp.EnableSsl = true;
 
-            // 👉 App password: viết liền, không khoảng trắng
+            //  App password: 
             smtp.Credentials = new NetworkCredential(
                 "caoquangtuanhung2004@gmail.com",
-                "qbmnapuiioipbjly"   // <-- sửa lại đúng 
+                "qbmnapuiioipbjly"   
             );
 
             smtp.Send(mail);

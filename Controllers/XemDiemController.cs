@@ -54,7 +54,7 @@ namespace demomvc.Controllers
 
                 // ĐÁNH GIÁ Đ / CĐ CHO Âm nhạc + Mỹ thuật + Thể dục
                 if (item.TenMon.Contains("Âm nhạc")
-                    || item.TenMon.Contains("Mỹ thuật")
+                    || item.TenMon.Contains("Mĩ thuật")
                     || item.TenMon.Contains("Thể dục"))
                 {
                     item.DiemDanhGia = item.DiemTBMon >= 6 ? "Đ" : "CĐ";
@@ -78,12 +78,7 @@ namespace demomvc.Controllers
                    x.HocSinhID == hs.HocSinhID &&
                    x.NamHocID == NamHocID &&
                    x.HocKyID == 2);
-
-
-
-            //diem ca nam 
-          
-
+       
             //hanh kiem ca nam
             string hanhKiemCN = hk2?.HanhKiem ?? hk1?.HanhKiem ?? "";
 
@@ -104,6 +99,25 @@ namespace demomvc.Controllers
             };
 
             return View(model);
+        }
+
+
+        [HttpGet]
+        public JsonResult GetHocKyByNamHoc(int namHocId)
+        {
+            using (var db = new QuanLyTruongHocEntities2())
+            {
+                var dsHocKy = db.HocKy
+                    .Where(h => h.NamHocID == namHocId)
+                    .Select(h => new
+                    {
+                        h.HocKyID,
+                        h.TenHocKy
+                    })
+                    .ToList();
+
+                return Json(dsHocKy, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

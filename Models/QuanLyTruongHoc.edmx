@@ -601,18 +601,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ThongBao_NguoiDung">
-          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
-          <End Role="ThongBao" Type="Self.ThongBao" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="NguoiDung">
-              <PropertyRef Name="NguoiDungID" />
-            </Principal>
-            <Dependent Role="ThongBao">
-              <PropertyRef Name="NguoiTaoID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_TKB_GiaoVien">
           <End Role="GiaoVien" Type="Self.GiaoVien" Multiplicity="1" />
           <End Role="ThoiKhoaBieu" Type="Self.ThoiKhoaBieu" Multiplicity="*" />
@@ -682,6 +670,18 @@
             </Principal>
             <Dependent Role="ThoiKhoaBieu">
               <PropertyRef Name="PhongHocID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ThongBao_NguoiDung">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="ThongBao" Type="Self.ThongBao" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="NguoiDungID" />
+            </Principal>
+            <Dependent Role="ThongBao">
+              <PropertyRef Name="NguoiTaoID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -820,10 +820,6 @@
             <End Role="ThongBao" EntitySet="ThongBao" />
             <End Role="ThongBaoDaDoc" EntitySet="ThongBaoDaDoc" />
           </AssociationSet>
-          <AssociationSet Name="FK_ThongBao_NguoiDung" Association="Self.FK_ThongBao_NguoiDung">
-            <End Role="NguoiDung" EntitySet="NguoiDung" />
-            <End Role="ThongBao" EntitySet="ThongBao" />
-          </AssociationSet>
           <AssociationSet Name="FK_TKB_GiaoVien" Association="Self.FK_TKB_GiaoVien">
             <End Role="GiaoVien" EntitySet="GiaoVien" />
             <End Role="ThoiKhoaBieu" EntitySet="ThoiKhoaBieu" />
@@ -847,6 +843,10 @@
           <AssociationSet Name="FK_TKB_PhongHoc" Association="Self.FK_TKB_PhongHoc">
             <End Role="PhongHoc" EntitySet="PhongHoc" />
             <End Role="ThoiKhoaBieu" EntitySet="ThoiKhoaBieu" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ThongBao_NguoiDung" Association="Self.FK_ThongBao_NguoiDung">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="ThongBao" EntitySet="ThongBao" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>

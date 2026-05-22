@@ -3,7 +3,7 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/Tranhchu_LayoutPage1.cshtml";
 }
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <style>
     .ket-qua-wrapper {
         display: flex;
@@ -40,16 +40,14 @@
             font-size: 16px; /* badge cũng to hơn */
             padding: 6px 10px;
         }
-
-
-
 </style>
 <div class="container mt-4">
 
     <form method="post" class="row">
         <div class="col-md-4">
             <label>Năm học</label>
-            <select class="form-control" name="NamHocID">
+            <select class="form-control" name="NamHocID" id="namHoc">
+                <option value="">-- Chọn năm học --</option>
                 @foreach (var item in Model.NamHocs)
                 {
                     <option value="@item.NamHocID">@item.TenNamHoc</option>
@@ -57,18 +55,15 @@
             </select>
         </div>
 
-        <div class="col-md-4" style="margin-bottom:0px;">
+        <div class="col-md-4">
             <label>Kỳ học</label>
-            <select class="form-control" name="HocKyID">
-                @foreach (var hk in Model.HocKys)
-                {
-                    <option value="@hk.HocKyID">@hk.TenHocKy</option>
-                }
+            <select class="form-control" name="HocKyID" id="hocKy">
+                <option value="">-- Học kỳ --</option>
             </select>
         </div>
 
         <div class="col-md-4 pt-4">
-            <button class="btn btn-primary mt-2" style="margin-bottom:10px;">Xem bảng điểm</button>
+            <button class="btn btn-primary mt-2">Xem bảng điểm</button>
         </div>
     </form>
 
@@ -115,37 +110,64 @@
 
 
     }
-<div>
-    <div class="ket-qua-wrapper">
+    <div>
+        <div class="ket-qua-wrapper">
 
-        @if (Model.DiemMonList != null)
-        {
-            <div class="ket-qua-box">
-                <h3>Kết quả học kỳ</h3>
-                <h4>Hạnh kiểm: <b>@Model.HanhKiem</b></h4>
-                <h4>Điểm TB học kỳ: <b>@(Model.DiemTBHocKy?.ToString("0.0") ?? "-")</b></h4>
-                <h4>Xếp loại: <span class="badge bg-success">@Model.XepLoai</span></h4>
-            </div>
-        }
 
-        @if (Model.HocKyID == 2)
-        {
-            <div class="ket-qua-box">
-                <h3>Kết quả cả năm</h3>
-                <h4>Hạnh kiểm: <b>@Model.HanhKiemCaNam</b></h4>
-                <h4>Điểm TB: <b>@(Model.DiemTBHocCaNam?.ToString("0.0") ?? "-")</b></h4>
-                <h4>Xếp loại: <span class="badge bg-warning">@Model.XepLoaiCaNam</span></h4>
-            </div>
-        }
+            @if (Model.DiemMonList != null)
+            {
+                <div class="ket-qua-box">
+                    <h3>Kết quả học kỳ</h3>
+                    <h4>Hạnh kiểm: <b>@Model.HanhKiem</b></h4>
+                    <h4>Điểm TB học kỳ: <b>@(Model.DiemTBHocKy?.ToString("0.0") ?? "-")</b></h4>
+                    <h4>Xếp loại: <span class="badge bg-success">@Model.XepLoai</span></h4>
+                </div>
+            }
+
+            @if (Model.HocKyID == 2)
+            {
+                <div class="ket-qua-box">
+                    <h3>Kết quả cả năm</h3>
+                    <h4>Hạnh kiểm: <b>@Model.HanhKiemCaNam</b></h4>
+                    <h4>Điểm TB: <b>@(Model.DiemTBHocCaNam?.ToString("0.0") ?? "-")</b></h4>
+                    <h4>Xếp loại: <span class="badge bg-warning">@Model.XepLoaiCaNam</span></h4>
+                </div>
+            }
+
+        </div>
+
+
 
     </div>
 
-
-</div>
-   
-
-
-
 </div>
 
+<script>
+    $("#namHoc").change(function () {
+        var namHocId = $(this).val();
 
+        // reset
+        $("#hocKy").html('<option value="">-- Học kỳ --</option>');
+
+        if (namHocId !== "") {
+            $.ajax({
+                url: '/XemDiem/GetHocKyByNamHoc', 
+                type: 'GET',
+                data: { namHocId: namHocId },
+                success: function (res) {
+
+                    console.log(res); 
+
+                    $.each(res, function (i, item) {
+                        $("#hocKy").append(
+                            `<option value="${item.HocKyID}">${item.TenHocKy}</option>`
+                        );
+                    });
+                },
+                error: function () {
+                    alert("Lỗi load học kỳ!");
+                }
+            });
+        }
+    });
+</script>
