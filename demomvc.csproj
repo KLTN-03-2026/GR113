@@ -57,8 +57,11 @@
     <Reference Include="EntityFramework, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="EPPlus">
-      <HintPath>..\..\newlpp\EPPlus.dll</HintPath>
+    <Reference Include="EPPlus, Version=8.0.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>packages\EPPlus.8.0.1\lib\net462\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus.Interfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=a694d7f3b0907a61, processorArchitecture=MSIL">
+      <HintPath>packages\EPPlus.Interfaces.8.0.0\lib\net462\EPPlus.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="itext.barcodes, Version=9.4.0.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>packages\itext.9.4.0\lib\net461\itext.barcodes.dll</HintPath>
@@ -368,7 +371,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\RemoveDiacritics.cs" />
-    <Compile Include="Helpers\UpdateKQ.cs" />
+    <Compile Include="Helpers\KetQuaService.cs" />
     <Compile Include="Models\BangDiemVM.cs" />
     <Compile Include="Models\BoMon.cs">
       <DependentUpon>QuanLyTruongHoc.tt</DependentUpon>

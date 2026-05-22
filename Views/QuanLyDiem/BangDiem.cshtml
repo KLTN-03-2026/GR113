@@ -114,11 +114,38 @@
         font-weight: 600;
         padding: 0.5rem 1.2rem;
         transition: all 0.3s;
+        
     }
+    .btn-back {
+        background: #6c757d;
+        color: #fff;
+        border-radius: 8px;
+        padding: 0.5rem 1.2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+        border: none;
+        margin: 10px;
+    }
+
+        .btn-back:hover {
+            background: #5a6268;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
 </style>
 
 <div class="page-wrapper">
     <div class="container">
+
+        <a href="@Url.Action("DsLop", "QuanLyDiem", new {NamHocID= ViewBag.NamHocID,HocKyID=ViewBag.HocKiID})"
+           class="btn-back">
+            ⬅️ Quay lại
+        </a>
         <div class="glass-card">
             @if (TempData["Errors"] != null)
             {
@@ -142,6 +169,7 @@
                     }
                 </div>
             }
+
             <!-- Phần Header: Tiêu đề & Công cụ -->
             <div class="card-header-custom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
 
@@ -158,6 +186,7 @@
 
                 <!-- Nút Tải file & Form Upload -->
                 <div class="toolbar-actions">
+
                     <!-- Nút tải file -->
                     <a href="@Url.Action("DownLoadBangDiem", new { LopHocID = ViewBag.LopHocID,GiaoVienID = ViewBag.GiaoVienID, HocKiID = ViewBag.HocKiID })"
                        class="btn btn-outline-success btn-custom d-flex align-items-center">
@@ -216,7 +245,7 @@
                                                 hs = item.HocSinhID,
                                                 mh = item.MonHocID,
                                                 hk = item.HocKyID,
-                                                nh = item.HocKyID,
+                                                nh = item.NamHocID,
                                                 gv = item.GiaoVienID
                                             }, new { @class = "btn-action" })
                                         </td>

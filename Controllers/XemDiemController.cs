@@ -44,7 +44,7 @@ namespace demomvc.Controllers
 
                 DiemGK = d.DiemGK,
                 DiemCK = d.DiemCK,
-                DiemTBMon = d.DiemTB ?? 0,
+                DiemTBMon = d.DiemTB ?? null ,
             }).ToList();
 
             //DTBMON
@@ -66,7 +66,7 @@ namespace demomvc.Controllers
                         && x.NamHocID == NamHocID
                         && x.HocKyID == HocKyID);
 
-            double tbHocKy = ketQua?.DTBTong ?? 0;
+            double? tbHocKy = ketQua?.DTBTong ?? null ;
             string xepLoai = ketQua?.HocLuc ?? "_";
             string hanhKiem = ketQua?.HanhKiem ?? "_";
 
@@ -78,30 +78,10 @@ namespace demomvc.Controllers
                    x.HocSinhID == hs.HocSinhID &&
                    x.NamHocID == NamHocID &&
                    x.HocKyID == 2);
-
-
-
-            //diem ca nam 
-            double? DiemTB_CN = null;
-            if (hk1 != null && hk2 != null)
-            {
-                DiemTB_CN = Math.Round(((hk1.DTBTong ?? 0) + (hk2.DTBTong ?? 0) * 2) / 3, 2);
-                
-            }
-
+       
             //hanh kiem ca nam
             string hanhKiemCN = hk2?.HanhKiem ?? hk1?.HanhKiem ?? "";
 
-            //xep loai hoc luc ca nam
-            string xepLoaiCN = "_";
-            if (DiemTB_CN != null)
-            {
-                if (DiemTB_CN >= 8) xepLoaiCN = "Giỏi";
-                else if (DiemTB_CN >= 6.5) xepLoaiCN = "Khá";
-                else if (DiemTB_CN >= 5) xepLoaiCN = "Trung bình";
-                else if (DiemTB_CN >= 3.5) xepLoaiCN = "Yếu";
-                else xepLoaiCN = "Kém";
-            }
 
             var model = new BangDiemViewModel
             {
@@ -113,9 +93,9 @@ namespace demomvc.Controllers
                 DiemTBHocKy = tbHocKy,
                 XepLoai = xepLoai,
                 HanhKiem = hanhKiem,
-                DiemTBHocCaNam = DiemTB_CN,
+                DiemTBHocCaNam = hk2.DTBCaNam,
                 HanhKiemCaNam = hanhKiemCN,
-                XepLoaiCaNam = xepLoaiCN
+                XepLoaiCaNam = hk2.HocLucCaNam
             };
 
             return View(model);

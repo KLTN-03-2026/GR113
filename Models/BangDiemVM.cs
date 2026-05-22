@@ -13,7 +13,7 @@ namespace demomvc.Models
         public double? Diem15p { get; set; }
         public double? DiemGK { get; set; }
         public double? DiemCK { get; set; }
-        public double DiemTBMon { get; set; }
+        public double? DiemTBMon { get; set; }
         public bool LaMonDanhGia { get; set; }  // Âm nhạc / Thể dục
         public string DiemDanhGia { get; set; } // Đ hoặc S
     }
@@ -26,7 +26,7 @@ namespace demomvc.Models
         public List<DiemMonViewModel> DiemMonList { get; set; }
 
         public string HanhKiem { get; set; }
-        public double DiemTBHocKy { get; set; }
+        public double? DiemTBHocKy { get; set; }
         public string XepLoai { get; set; }
 
         public List<NamHoc> NamHocs { get; set; }

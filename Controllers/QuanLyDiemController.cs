@@ -1,4 +1,5 @@
 ﻿using demomvc.App_Start;
+using demomvc.Helpers;
 using demomvc.Models;
 using demomvc.ViewModel;
 using DocumentFormat.OpenXml.Drawing.Charts;
@@ -33,7 +34,7 @@ namespace demomvc.Controllers
                     TenMonHoc = monHoc.TenMonHoc,
                     TenGiaoVien = nguoiDung.HoTen,
                     DsNamHoc = db.NamHoc.ToList(),
-                    DsHocKi = db.HocKy.ToList()
+                    DsHocKi = db.HocKy.GroupBy(x => x.TenHocKy).Select(g => g.FirstOrDefault()).ToList(),
                 });
             }
 
@@ -80,6 +81,7 @@ namespace demomvc.Controllers
             var lophoc = db.LopHoc.FirstOrDefault(l => l.LopHocID == id);
             var giaoVien = db.GiaoVien.FirstOrDefault(g => g.GiaoVienID == idGV);
             var monhoc = db.MonHoc.FirstOrDefault(mh => mh.MonHocID == idMH);
+            var HocKi = db.HocKy.FirstOrDefault(hk => hk.HocKyID == idHocKi);
             ViewBag.GiaoVien = giaoVien.NguoiDung.HoTen;
             ViewBag.MonHoc = monhoc.TenMonHoc;
             ViewBag.GiaoVienID = giaoVien.GiaoVienID;
@@ -87,6 +89,7 @@ namespace demomvc.Controllers
             ViewBag.TenLop = lophoc.TenLop;
             ViewBag.MonHocID = idMH;
             ViewBag.HocKiID = idHocKi;
+            ViewBag.NamHocID = HocKi.NamHocID;
             var bangdiem = (from hs in db.HocSinh
                             join l in db.LopHoc on hs.LopHocID equals l.LopHocID
 
@@ -223,7 +226,8 @@ namespace demomvc.Controllers
                 diems.DiemTB = diem.DiemTB;
 
                 db.SaveChanges();
-                UpdateKQ(diem.HocSinhID, diem.HocKyID, diem.NamHocID);
+                var service = new KetQuaService();
+                service.UpdateKQ(diem.HocSinhID, diem.HocKyID, diem.NamHocID);
                 return RedirectToAction("BangDiem", new { id = diem.LopHocID, idGV = diem.GiaoVienID, idMH = diem.MonHocID, idHocKi = diem.HocKyID });
             }
             else
@@ -246,7 +250,8 @@ namespace demomvc.Controllers
                 db.Diem.Add(newDiem);
                 db.SaveChanges();
 
-                UpdateKQ(diem.HocSinhID, diem.HocKyID, diem.NamHocID);
+                var service = new KetQuaService();
+                service.UpdateKQ(diem.HocSinhID, diem.HocKyID, diem.NamHocID);
 
 
                 return RedirectToAction("BangDiem", new { id = diem.LopHocID, idGV = diem.GiaoVienID, idMH = diem.MonHocID, idHocKi = diem.HocKyID });
@@ -419,9 +424,11 @@ namespace demomvc.Controllers
                 }
 
                 db.SaveChanges();
+                var service = new KetQuaService();
                 foreach (var hs in DsUpdate)
                 {
-                    UpdateKQ(hs, HocKiID, hocky.NamHocID);
+                     
+                    service.UpdateKQ(hs, HocKiID, hocky.NamHocID);
                 }
 
 
@@ -454,42 +461,73 @@ namespace demomvc.Controllers
             return diem;
         }
 
-        private void UpdateKQ(int HocSinhID, int HocKyID, int NamHocID)
-        {
-            var diemhs = db.Diem.Where(d => d.HocSinhID == HocSinhID && d.HocKyID == HocKyID && d.DiemTB != null).ToList();
+        //private void UpdateKQ(int HocSinhID, int HocKyID, int NamHocID)
+        //{
+        //    var diemhs = db.Diem.Where(d => d.HocSinhID == HocSinhID && d.HocKyID == HocKyID && d.DiemTB != null).ToList();
 
-            if (!diemhs.Any())
-            {
-                return;
-            }
-            var diemTong = new DiemTongVM()
-            {
-                HocSinhID = HocSinhID,
-                HocKyID = HocKyID,
-                NamHocID = NamHocID,
-                DSdiemTB = diemhs,
-            };
-            var KQua = db.KetQuaHocTap.FirstOrDefault(kq => kq.HocSinhID == HocSinhID && kq.HocKyID == HocKyID);
-            if (KQua != null)
-            {
-                KQua.DTBTong = diemTong.DTBTong();
-                KQua.HocLuc = diemTong.HocLuc();
 
-            }
-            else
-            {
-                var KetQuaHT = new KetQuaHocTap()
-                {
-                    HocSinhID = HocSinhID,
-                    HocKyID = HocKyID,
-                    NamHocID = NamHocID,
-                    DTBTong = diemTong.DTBTong(),
-                    HocLuc = diemTong.HocLuc(),
-                };
-                db.KetQuaHocTap.Add(KetQuaHT);
-            }
-            db.SaveChanges();
-        }
+        //    if (!diemhs.Any())
+        //    {
+        //        return;
+        //    }
+        //    var hocSinh = db.HocSinh.FirstOrDefault(h => h.HocSinhID == HocSinhID);
+
+        //    int khoi = hocSinh.LopHoc.KhoiLopID;
+        //    var tongmon = db.MonHoc.Count();
+
+        //    if (khoi == 1 || khoi == 2)
+        //    {
+        //        tongmon = tongmon - 1;
+        //    }
+        //    var diemTong = new DiemTongVM()
+        //    {
+        //        HocSinhID = HocSinhID,
+        //        HocKyID = HocKyID,
+        //        NamHocID = NamHocID,
+        //        DSdiemTB = diemhs,
+        //    };
+
+        //    var monDaCoDiem = db.Diem.Where(d => d.HocSinhID == HocSinhID
+        //    && d.HocKyID == HocKyID && d.DiemTB != null).Select(d => d.MonHocID).Distinct().Count();
+        //    if (tongmon > monDaCoDiem)
+        //    {
+        //        var kqCu = db.KetQuaHocTap
+        //.FirstOrDefault(k => k.HocSinhID == HocSinhID
+        //                  && k.HocKyID == HocKyID);
+
+        //        if (kqCu != null)
+        //        {
+        //            kqCu.DTBTong = null;
+        //            kqCu.HocLuc = null;
+
+        //            db.SaveChanges();
+        //        }
+
+        //        return;
+        //    }
+        //    var KQua = db.KetQuaHocTap.FirstOrDefault(kq => kq.HocSinhID == HocSinhID && kq.HocKyID == HocKyID);
+        //    if (KQua != null)
+        //    {
+        //        KQua.DTBTong = diemTong.DTBTong();
+        //        KQua.HocLuc = diemTong.HocLuc();
+
+        //    }
+        //    else
+        //    {
+        //        var KetQuaHT = new KetQuaHocTap()
+        //        {
+        //            HocSinhID = HocSinhID,
+        //            HocKyID = HocKyID,
+        //            NamHocID = NamHocID,
+        //            DTBTong = diemTong.DTBTong(),
+        //            HocLuc = diemTong.HocLuc(),
+
+        //        };
+        //        db.KetQuaHocTap.Add(KetQuaHT);
+        //    }
+        //    db.SaveChanges();
+        //}
+
     }
 
 }
