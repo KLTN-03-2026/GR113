@@ -104,7 +104,7 @@
                             }
                             else
                             {
-                                <b>@(d.DiemTBMon.ToString("0.0") ?? "-")</b>
+                                <b>@(d.DiemTBMon?.ToString("0.0") ?? "-")</b>
                             }
                         </td>
 
@@ -123,7 +123,7 @@
             <div class="ket-qua-box">
                 <h3>Kết quả học kỳ</h3>
                 <h4>Hạnh kiểm: <b>@Model.HanhKiem</b></h4>
-                <h4>Điểm TB học kỳ: <b>@(Model.DiemTBHocKy.ToString("0.0") ?? "-")</b></h4>
+                <h4>Điểm TB học kỳ: <b>@(Model.DiemTBHocKy?.ToString("0.0") ?? "-")</b></h4>
                 <h4>Xếp loại: <span class="badge bg-success">@Model.XepLoai</span></h4>
             </div>
         }
